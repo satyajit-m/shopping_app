@@ -3,6 +3,7 @@ add badge when backend is implemented
 https://stackoverflow.com/questions/45155104/displaying-notification-badge-on-bottomnavigationbars-icon
 */
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 
@@ -11,6 +12,10 @@ import 'screens/profile.dart';
 import 'screens/help.dart';
 
 class App extends StatefulWidget {
+
+//  FirebaseUser user;
+//  App(this.user);
+
   AppState createState() {
     return AppState();
   }
