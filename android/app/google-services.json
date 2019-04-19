@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1023493184585",
+    "firebase_url": "https://testauth-b4ac7.firebaseio.com",
+    "project_id": "testauth-b4ac7",
+    "storage_bucket": "testauth-b4ac7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1023493184585:android:1e1b68cd29007343",
+        "android_client_info": {
+          "package_name": "com.example.shopping_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1023493184585-6hec2jqhuls9ippdlm4vf90i8gtc7tti.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKl798VWh1wdl05Wn4m8nbzseeRziKjQk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1023493184585-6hec2jqhuls9ippdlm4vf90i8gtc7tti.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
