@@ -3,16 +3,14 @@ add badge when backend is implemented
 https://stackoverflow.com/questions/45155104/displaying-notification-badge-on-bottomnavigationbars-icon
 */
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 
 import 'screens/home.dart';
 import 'screens/profile.dart';
 import 'screens/help.dart';
+import 'package:bmnav/bmnav.dart' as bmnav;
 
 class App extends StatefulWidget {
-
 //  FirebaseUser user;
 //  App(this.user);
 
@@ -42,27 +40,19 @@ class AppState extends State<App> {
           child: currentScreen,
           bucket: bucket,
         ),
-        bottomNavigationBar: BottomNavyBar(
-          currentIndex: currentTab,
-          onItemSelected: (index) => setState(() {
-                currentTab = index;
-                currentScreen = screens[currentTab];
-              }),
+        bottomNavigationBar: bmnav.BottomNav(
+          onTap: (index) {
+            setState(() {
+              currentTab = index;
+              currentScreen = screens[index];
+            });
+          },
           items: [
-            BottomNavyBarItem(
-              icon: Icon(Icons.apps),
-              title: Text('Home'),
-              activeColor: Colors.red,
-            ),
-            BottomNavyBarItem(
-              icon: Icon(Icons.help),
-              title: Text('Help'),
-              activeColor: Colors.purpleAccent),
-            BottomNavyBarItem(
-              icon: Icon(Icons.people),
-              title: Text('Account'),
-              activeColor: Colors.greenAccent),
+            bmnav.BottomNavItem(Icons.home, label: 'Home'),
+            bmnav.BottomNavItem(Icons.help, label: 'Help'),
+            bmnav.BottomNavItem(Icons.person, label: 'profile'),
           ],
+          iconStyle: bmnav.IconStyle(onSelectSize: 30.0),
         ),
       ),
     );
