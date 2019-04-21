@@ -4,9 +4,7 @@ import 'package:flushbar/flushbar.dart';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shopping_app/auth/home_page.dart';
 import '../src/app.dart';
-
 
 class PhoneAuth extends StatefulWidget {
   @override
@@ -14,6 +12,18 @@ class PhoneAuth extends StatefulWidget {
 }
 
 class _PhoneAuthState extends State<PhoneAuth> {
+  bool _saving = true;
+  _PhoneAuthState() {
+    getUser();
+  }
+
+  Future getUser() async {
+    user = await FirebaseAuth.instance.currentUser();
+    if (user != null) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => App()));
+    }
+  }
+
   final TextEditingController _phoneController = new TextEditingController();
   final TextEditingController _smsController = new TextEditingController();
   String _phoneCode = '91';
@@ -25,7 +35,6 @@ class _PhoneAuthState extends State<PhoneAuth> {
         children: <Widget>[
           CountryPickerDropdown(
             initialValue: 'in',
-
           ),
           SizedBox(
             width: 8.0,
@@ -124,10 +133,8 @@ class _PhoneAuthState extends State<PhoneAuth> {
                     if (user != null) {
                       Navigator.of(context).pop();
                       print("Successful verification user is: ${user}");
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => App()));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => App()));
                     } else {
                       print("Failed verification");
                     }
@@ -156,6 +163,10 @@ class _PhoneAuthState extends State<PhoneAuth> {
 
   @override
   Widget build(BuildContext context) {
+    //loader();
+    // setState(() {
+    //   _saving = true;
+    // });
     return SafeArea(
       child: new Scaffold(
         appBar: new AppBar(),
