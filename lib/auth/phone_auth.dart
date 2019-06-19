@@ -13,6 +13,7 @@ class PhoneAuth extends StatefulWidget {
 
 class _PhoneAuthState extends State<PhoneAuth> {
   bool _saving = true;
+  bool _isload = true;
   _PhoneAuthState() {
     getUser();
   }
@@ -20,7 +21,13 @@ class _PhoneAuthState extends State<PhoneAuth> {
   Future getUser() async {
     user = await FirebaseAuth.instance.currentUser();
     if (user != null) {
+      await Future.delayed(const Duration(seconds: 3));
       Navigator.push(context, MaterialPageRoute(builder: (context) => App()));
+    }
+    else  {
+      setState(() {
+              _isload =false;
+      });
     }
   }
 
@@ -167,6 +174,14 @@ class _PhoneAuthState extends State<PhoneAuth> {
     // setState(() {
     //   _saving = true;
     // });
+    if(_isload == true){
+      return new Scaffold(
+        appBar: new AppBar(),
+        body: new Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return SafeArea(
       child: new Scaffold(
         appBar: new AppBar(),
@@ -177,9 +192,9 @@ class _PhoneAuthState extends State<PhoneAuth> {
               new Card(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
+                  children:  <Widget>[
                     Text(
-                      'Phone Authentication',
+                      'Get Started',
                       textAlign: TextAlign.center,
                       style: new TextStyle(fontSize: 24),
                     ),
@@ -188,7 +203,7 @@ class _PhoneAuthState extends State<PhoneAuth> {
                 ),
               ),
               new RaisedButton(
-                child: new Text("Verification"),
+                child: new Text("Verify"),
                 color: Colors.green.shade800,
                 textColor: Colors.white,
                 onPressed: () {
