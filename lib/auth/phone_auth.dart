@@ -95,7 +95,7 @@ class _PhoneAuthState extends State<PhoneAuth> {
         } else {
           print("user is null");
         }
-      };
+      } as PhoneVerificationCompleted;
 
       final PhoneVerificationFailed veriFailed = (AuthException exception) {
         print('Failed verification: ${exception.message}');

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shopping_app/auth/ui/screens/sign_in.dart';
+import 'package:shopping_app/auth/ui/screens/sign_up.dart';
 
-import 'LoginPage.dart';
-import 'SignupPage.dart';
+
 
 class LoginScreen3 extends StatefulWidget {
   @override
@@ -194,7 +195,7 @@ class _LoginScreen3State extends State<LoginScreen3>
         body: PageView(
           controller: _controller,
           physics: new AlwaysScrollableScrollPhysics(),
-          children: <Widget>[LoginPage(),homePage(),SignupPage()],
+          children: <Widget>[SignInScreen(),homePage(),SignUpScreen()],
           scrollDirection: Axis.horizontal,
         ),
       ),
