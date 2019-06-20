@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shopping_app/auth/models/state.dart';
 import 'package:shopping_app/auth/phone_auth.dart';
+import 'package:shopping_app/auth/util/state_widget.dart';
 
 class ProfileScreen extends StatefulWidget {
   // FirebaseUser user;
@@ -10,6 +12,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class ProfileScreenState extends State<ProfileScreen> {
+  StateModel appState;
+
   FirebaseUser user;
   String phone;
   bool _lOut = false;
@@ -25,6 +29,12 @@ class ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget build(BuildContext context) {
+    appState = StateWidget.of(context).state;
+
+    final userId = appState?.firebaseUserAuth?.uid ?? '';
+    final email = appState?.firebaseUserAuth?.email ?? '';
+    final firstName = appState?.user?.firstName ?? '';
+
     return new Scaffold(
       body: Stack(
         children: <Widget>[
@@ -36,7 +46,7 @@ class ProfileScreenState extends State<ProfileScreen> {
             width: 350.0,
             top: MediaQuery.of(context).size.height / 10,
             child: Container(
-                    height: MediaQuery.of(context).size.height,
+              height: MediaQuery.of(context).size.height,
               child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
@@ -55,7 +65,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                             ])),
                     SizedBox(height: 90.0),
                     Text(
-                      'SM',
+                      firstName.toString(),
                       style: TextStyle(
                           fontSize: 30.0,
                           fontWeight: FontWeight.bold,
@@ -63,7 +73,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                     ),
                     SizedBox(height: 15.0),
                     Text(
-                      '${phone}',
+                      email.toString(),
                       style: TextStyle(
                           fontSize: 17.0,
                           fontStyle: FontStyle.italic,

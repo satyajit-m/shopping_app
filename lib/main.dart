@@ -5,6 +5,7 @@ import 'package:shopping_app/auth/ui/screens/home.dart';
 import 'package:shopping_app/auth/ui/screens/sign_in.dart';
 import 'package:shopping_app/auth/ui/screens/sign_up.dart';
 import 'package:shopping_app/auth/ui/screens/forgot_password.dart';
+import 'package:shopping_app/src/app.dart';
 
 import 'auth/login_screen3.dart';
 
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routes: {
         '/': (context) => LoginScreen3(),
+        '/home': (context) => App(),
         '/signin': (context) => SignInScreen(),
         '/signup': (context) => SignUpScreen(),
         '/forgot-password': (context) => ForgotPasswordScreen(),

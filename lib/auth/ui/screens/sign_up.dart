@@ -7,11 +7,16 @@ import 'package:shopping_app/auth/util/auth.dart';
 import 'package:shopping_app/auth/util/validator.dart';
 import 'package:shopping_app/auth/ui/widgets/loading.dart';
 
+import '../../login_screen3.dart';
+
 class SignUpScreen extends StatefulWidget {
   _SignUpScreenState createState() => _SignUpScreenState();
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+
+  final LoginScreen3 loginScreen = new LoginScreen3();
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _firstName = new TextEditingController();
   final TextEditingController _lastName = new TextEditingController();
@@ -143,7 +148,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         style: TextStyle(color: Colors.black54),
       ),
       onPressed: () {
-        Navigator.pushNamed(context, '/signin');
+   
+         Navigator.pushReplacementNamed(context, '/signin');
       },
     );
 
@@ -210,7 +216,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         });
         //now automatically login user too
         //await StateWidget.of(context).logInUser(email, password);
-        await Navigator.pushNamed(context, '/signin');
+        Flushbar(
+          title: "Account Created Successfully",
+          message: 'Sign In To Continue',
+          duration: Duration(seconds: 5),
+        )..show(context);
+        await Future.delayed(const Duration(seconds: 5), () => Navigator.popAndPushNamed(context, '/signin') );
+        // await Navigator.popAndPushNamed(context, '/signin');
       } catch (e) {
         _changeLoadingVisible();
         print("Sign Up Error: $e");
@@ -226,17 +238,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
-  gotoLogin() {
-    //controller_0To1.forward(from: 0.0);
-    _controller.animateToPage(
-      0,
-      duration: Duration(milliseconds: 1000),
-      curve: Curves.bounceOut,
-    );
-  }
+  
 
   
 
-  PageController _controller =
-      new PageController(initialPage: 1, viewportFraction: 1.0);
 }

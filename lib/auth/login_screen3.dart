@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shopping_app/auth/ui/screens/sign_in.dart';
 import 'package:shopping_app/auth/ui/screens/sign_up.dart';
+import 'package:shopping_app/auth/util/state_widget.dart';
 
-
+import 'models/state.dart';
 
 class LoginScreen3 extends StatefulWidget {
   @override
@@ -15,6 +16,8 @@ class _LoginScreen3State extends State<LoginScreen3>
   void initState() {
     super.initState();
   }
+
+  StateModel appState;
 
   MediaQueryData queryData;
 
@@ -36,7 +39,7 @@ class _LoginScreen3State extends State<LoginScreen3>
           new Expanded(
             flex: 2,
             child: Container(
-              margin: EdgeInsets.only(top: 0.05*queryData.size.height),
+              margin: EdgeInsets.only(top: 0.05 * queryData.size.height),
               child: new Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -89,14 +92,15 @@ class _LoginScreen3State extends State<LoginScreen3>
                   new Expanded(
                     child: new OutlineButton(
                       shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(0.3*queryData.size.height)),
+                          borderRadius: new BorderRadius.circular(
+                              0.3 * queryData.size.height)),
                       color: Colors.redAccent,
                       highlightedBorderColor: Colors.white,
                       onPressed: () => gotoSignup(),
                       child: new Container(
-                        padding:  EdgeInsets.symmetric(
-                          vertical: 0.03*queryData.size.height,
-                          horizontal: 0.1*queryData.size.width,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 0.03 * queryData.size.height,
+                          horizontal: 0.1 * queryData.size.width,
                         ),
                         child: new Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -123,7 +127,10 @@ class _LoginScreen3State extends State<LoginScreen3>
             flex: 1,
             child: new Container(
               width: MediaQuery.of(context).size.width,
-              margin: const EdgeInsets.only(left: 30.0, right: 30.0,),
+              margin: const EdgeInsets.only(
+                left: 30.0,
+                right: 30.0,
+              ),
               alignment: Alignment.center,
               child: new Row(
                 children: <Widget>[
@@ -134,9 +141,9 @@ class _LoginScreen3State extends State<LoginScreen3>
                       color: Colors.white,
                       onPressed: () => gotoLogin(),
                       child: new Container(
-                        padding:  EdgeInsets.symmetric(
-                          vertical: 0.03*queryData.size.height,
-                          horizontal: 0.1*queryData.size.width,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 0.03 * queryData.size.height,
+                          horizontal: 0.1 * queryData.size.width,
                         ),
                         child: new Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -164,9 +171,6 @@ class _LoginScreen3State extends State<LoginScreen3>
     );
   }
 
-  
-  
-
   gotoLogin() {
     //controller_0To1.forward(from: 0.0);
     _controller.animateToPage(
@@ -190,12 +194,19 @@ class _LoginScreen3State extends State<LoginScreen3>
 
   @override
   Widget build(BuildContext context) {
+    appState = StateWidget.of(context).state;
+
+    // if(appState.firebaseUserAuth != null || appState.user != null)
+    // {
+    //     Navigator.pushNamed(context, '/home');
+    // }
+
     return SafeArea(
       child: new Scaffold(
         body: PageView(
           controller: _controller,
           physics: new AlwaysScrollableScrollPhysics(),
-          children: <Widget>[SignInScreen(),homePage(),SignUpScreen()],
+          children: <Widget>[SignInScreen(), homePage(), SignUpScreen()],
           scrollDirection: Axis.horizontal,
         ),
       ),
