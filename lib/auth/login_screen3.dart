@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shopping_app/auth/ui/screens/sign_in.dart';
 import 'package:shopping_app/auth/ui/screens/sign_up.dart';
@@ -15,6 +16,21 @@ class _LoginScreen3State extends State<LoginScreen3>
   @override
   void initState() {
     super.initState();
+
+  getUser();
+  }
+
+
+
+  Future getUser() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    if (user != null) {
+      await Future.delayed(const Duration(seconds: 3));
+      Navigator.pushReplacementNamed(context, '/home');
+    }
+    
+    
+    
   }
 
   StateModel appState;

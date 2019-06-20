@@ -33,9 +33,7 @@ class AppState extends State<App> {
     return MaterialApp(
       title: 'Shopping',
       home: Scaffold(
-        appBar: AppBar(
-          title: Text('Shopping'),
-        ),
+        
         body: PageStorage(
           child: currentScreen,
           bucket: bucket,

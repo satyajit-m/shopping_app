@@ -160,6 +160,7 @@ class _SignInScreenState extends State<SignInScreen> {
         await _changeLoadingVisible();
         //need await so it has chance to go through error if found.
         await StateWidget.of(context).logInUser(email, password);
+        Navigator.pop(context);
         await Navigator.pushNamed(context, '/home');
       } catch (e) {
         _changeLoadingVisible();
@@ -175,7 +176,7 @@ class _SignInScreenState extends State<SignInScreen> {
       setState(() => _autoValidate = true);
     }
   }
- 
+
   gotoSignup() {
     //controller_minus1To0.reverse(from: 0.0);
     _controller.animateToPage(
