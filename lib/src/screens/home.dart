@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../widgets/ServicesList.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -23,6 +23,19 @@ class HomeScreenState extends State<HomeScreen> {
     'https://images.unsplash.com/photo-1502943693086-33b5b1cfdf2f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80'
   ];
 
+  List<String> services = [
+    'Home Appliances',
+    'House Repairing/Renovation',
+    'Cleaning',
+    'Electronic Gadget',
+    'Wedding & Event Management',
+    'Beauty & SPA',
+    'Packers & Movers',
+    'Milk, Bread Home Delivery',
+    'Industry service',
+    'Others',
+  ];
+
   List<T> map<T>(List list, Function handler) {
     List<T> result = [];
     for (var i = 0; i < list.length; i++) {
@@ -37,11 +50,10 @@ class HomeScreenState extends State<HomeScreen> {
       headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
         return <Widget>[
           SliverAppBar(
-            expandedHeight: MediaQuery.of(context).size.height*0.16,
+            expandedHeight: MediaQuery.of(context).size.height * 0.16,
             floating: false,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-                
                 title: Text("Shopping App",
                     style: TextStyle(
                       color: Colors.white,
@@ -66,8 +78,8 @@ class HomeScreenState extends State<HomeScreen> {
               autoPlay: true,
               reverse: false,
               enableInfiniteScroll: true,
-              autoPlayInterval: Duration(seconds: 5),
-              autoPlayAnimationDuration: Duration(milliseconds: 5000),
+              autoPlayInterval: Duration(seconds: 1),
+              autoPlayAnimationDuration: Duration(milliseconds: 50000),
               pauseAutoPlayOnTouch: Duration(seconds: 10),
               scrollDirection: Axis.horizontal,
               onPageChanged: (index) {
@@ -94,7 +106,7 @@ class HomeScreenState extends State<HomeScreen> {
               }).toList(),
             ),
             SizedBox(
-              height: 20,
+              height: 10,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -113,7 +125,15 @@ class HomeScreenState extends State<HomeScreen> {
             SizedBox(
               height: 20.0,
             ),
-           
+            /*
+            Column(
+              children: <Widget>[
+                Text('yo'),
+                ServicesList(services),
+              ],
+            )*/
+            CategoryCard(services[0]),
+            CategoryCard(services[1]),
           ],
         ),
       ),

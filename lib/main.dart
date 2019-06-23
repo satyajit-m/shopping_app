@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       //onGenerateRoute: Navigation.router.generator,
       debugShowCheckedModeBanner: false,
       routes: {
-        '/': (context) => LoginScreen3(),
+        '/': (context) => App(),
         '/home': (context) => App(),
         '/signin': (context) => SignInScreen(),
         '/signup': (context) => SignUpScreen(),
