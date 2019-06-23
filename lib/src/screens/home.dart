@@ -67,74 +67,81 @@ class HomeScreenState extends State<HomeScreen> {
         ];
       },
       body: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            carouselSlider = CarouselSlider(
-              height: MediaQuery.of(context).size.height * 0.2,
-              initialPage: 0,
-              enlargeCenterPage: true,
-              autoPlay: true,
-              reverse: false,
-              enableInfiniteScroll: true,
-              autoPlayInterval: Duration(seconds: 1),
-              autoPlayAnimationDuration: Duration(milliseconds: 50000),
-              pauseAutoPlayOnTouch: Duration(seconds: 10),
-              scrollDirection: Axis.horizontal,
-              onPageChanged: (index) {
-                setState(() {
-                  _current = index;
-                });
-              },
-              items: imgList.map((imgUrl) {
-                return Builder(
-                  builder: (BuildContext context) {
-                    return Container(
-                      width: MediaQuery.of(context).size.width,
-                      margin: EdgeInsets.symmetric(horizontal: 10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                      ),
-                      child: Image.network(
-                        imgUrl,
-                        fit: BoxFit.fill,
-                      ),
-                    );
-                  },
-                );
-              }).toList(),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: map<Widget>(imgList, (index, url) {
-                return Container(
-                  width: 10.0,
-                  height: 10.0,
-                  margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _current == index ? Colors.redAccent : Colors.green,
-                  ),
-                );
-              }),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            /*
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              carouselSlider = CarouselSlider(
+                height: MediaQuery.of(context).size.height * 0.2,
+                initialPage: 0,
+                enlargeCenterPage: true,
+                autoPlay: true,
+                reverse: false,
+                enableInfiniteScroll: true,
+                autoPlayInterval: Duration(seconds: 1),
+                autoPlayAnimationDuration: Duration(milliseconds: 50000),
+                pauseAutoPlayOnTouch: Duration(seconds: 10),
+                scrollDirection: Axis.horizontal,
+                onPageChanged: (index) {
+                  setState(() {
+                    _current = index;
+                  });
+                },
+                items: imgList.map((imgUrl) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin: EdgeInsets.symmetric(horizontal: 10.0),
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                        ),
+                        child: Image.network(
+                          imgUrl,
+                          fit: BoxFit.fill,
+                        ),
+                      );
+                    },
+                  );
+                }).toList(),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: map<Widget>(imgList, (index, url) {
+                  return Container(
+                    width: 10.0,
+                    height: 10.0,
+                    margin:
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color:
+                          _current == index ? Colors.redAccent : Colors.green,
+                    ),
+                  );
+                }),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              /*
             Column(
               children: <Widget>[
                 Text('yo'),
                 ServicesList(services),
               ],
             )*/
-            CategoryCard(services[0]),
-            CategoryCard(services[1]),
-          ],
+              CategoryCard(services[0]),
+              CategoryCard(services[1]),
+              CategoryCard(services[2]),
+              CategoryCard(services[3]),
+              CategoryCard(services[4]),
+            ],
+          ),
         ),
       ),
     );

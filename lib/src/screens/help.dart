@@ -1,65 +1,117 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class HelpScreen extends StatefulWidget {
- HelpScreenState createState() => HelpScreenState();
+  // HelpScreen({ Key key }) : super(key: key);
+  @override
+  _HelpScreenState createState() => new _HelpScreenState();
 }
 
-class HelpScreenState extends State<HelpScreen> {
+class _HelpScreenState extends State<HelpScreen> {
+ // final formKey = new GlobalKey<FormState>();
+ // final key = new GlobalKey<ScaffoldState>();
+  final TextEditingController _filter = new TextEditingController();
+  final dio = new Dio();
+  String _searchText = "";
+  List names = new List();
+  List filteredNames = new List();
+  Icon _searchIcon = new Icon(Icons.search);
+  Widget _appBarTitle = new Text( 'Search Example' );
+
+  _HelpScreenState() {
+    _filter.addListener(() {
+      if (_filter.text.isEmpty) {
+        setState(() {
+          _searchText = "";
+          filteredNames = names;
+        });
+      } else {
+        setState(() {
+          _searchText = _filter.text;
+        });
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    this._getNames();
+    super.initState();
+  }
 
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        child: Stack(
-        children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/mountains.jpg'),
-                fit: BoxFit.fitHeight,
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 48.0,
-            left: 10.0,
-            right: 10.0,
-            child: Card(
-              color: Colors.black26,
-              elevation: 8.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      "New York",
-            
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.tealAccent,
-                        
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-
-                        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+    return Scaffold(
+      appBar: _buildBar(context),
+      body: Container(
+        child: _buildList(),
       ),
+      resizeToAvoidBottomPadding: false,
+    );
+  }
+
+  Widget _buildBar(BuildContext context) {
+    return new AppBar(
+      centerTitle: true,
+      title: _appBarTitle,
+      leading: new IconButton(
+        icon: _searchIcon,
+        onPressed: _searchPressed,
+
       ),
     );
+  }
+
+  Widget _buildList() {
+    if (!(_searchText.isEmpty)) {
+      List tempList = new List();
+      for (int i = 0; i < filteredNames.length; i++) {
+        if (filteredNames[i]['name'].toLowerCase().contains(_searchText.toLowerCase())) {
+          tempList.add(filteredNames[i]);
+        }
+      }
+      filteredNames = tempList;
+    }
+    return ListView.builder(
+      itemCount: names == null ? 0 : filteredNames.length,
+      itemBuilder: (BuildContext context, int index) {
+        return new ListTile(
+          title: Text(filteredNames[index]['name']),
+          onTap: () => print(filteredNames[index]['name']),
+        );
+      },
+    );
+  }
+
+  void _searchPressed() {
+    setState(() {
+      if (this._searchIcon.icon == Icons.search) {
+        this._searchIcon = new Icon(Icons.close);
+        this._appBarTitle = new TextField(
+          controller: _filter,
+          decoration: new InputDecoration(
+            prefixIcon: new Icon(Icons.search),
+            hintText: 'Search...'
+          ),
+        );
+      } else {
+        this._searchIcon = new Icon(Icons.search);
+        this._appBarTitle = new Text( 'Search Example' );
+        filteredNames = names;
+        _filter.clear();
+      }
+    });
+  }
+
+  void _getNames() async {
+    final response = await dio.get('https://swapi.co/api/people');
+    List tempList = new List();
+    for (int i = 0; i < response.data['results'].length; i++) {
+      tempList.add(response.data['results'][i]);
+    }
+    setState(() {
+      names = tempList;
+      names.shuffle();
+      filteredNames = names;
+    });
   }
 }
