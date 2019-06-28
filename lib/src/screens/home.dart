@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/ServicesList.dart';
+import '../widgets/CategoryCard.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -23,18 +23,39 @@ class HomeScreenState extends State<HomeScreen> {
     'https://images.unsplash.com/photo-1502943693086-33b5b1cfdf2f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80'
   ];
 
-  List<String> services = [
-    'Home Appliances',
-    'House Repairing/Renovation',
-    'Cleaning',
-    'Electronic Gadget',
-    'Wedding & Event Management',
-    'Beauty & SPA',
-    'Packers & Movers',
-    'Milk, Bread Home Delivery',
-    'Industry service',
-    'Others',
-  ];
+  List<Widget> services = [];
+
+  HomeScreenState() {
+    //implement firestore here.
+    //static list
+    List<String> fetchList = [
+      'Home Appliances',
+      'House Repairing/Renovation',
+      'Cleaning',
+      'Electronic Gadget',
+      'Wedding & Event Management',
+      'Beauty & SPA',
+      'Packers & Movers',
+      'Milk, Bread Home Delivery',
+      'Industry service',
+      'Others',
+    ];
+
+    if (fetchList.length % 2 != 0) {
+      fetchList.add('');
+    }
+
+    for (int i = 0; i < fetchList.length; i += 2) {
+      services.add(
+        Row(
+          children: <Widget>[
+            Expanded(child: Column(children: <Widget>[CategoryCard(fetchList[i])])),
+            Expanded(child: Column(children: <Widget>[CategoryCard(fetchList[i+1])])),
+          ],
+        )
+      );
+    }
+  }
 
   List<T> map<T>(List list, Function handler) {
     List<T> result = [];
@@ -128,18 +149,9 @@ class HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 height: 20.0,
               ),
-              /*
-            Column(
-              children: <Widget>[
-                Text('yo'),
-                ServicesList(services),
-              ],
-            )*/
-              CategoryCard(services[0]),
-              CategoryCard(services[1]),
-              CategoryCard(services[2]),
-              CategoryCard(services[3]),
-              CategoryCard(services[4]),
+              Column(
+                children: services,
+              ),
             ],
           ),
         ),
