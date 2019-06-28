@@ -7,15 +7,21 @@ class CategoryCard extends StatelessWidget {
   CategoryCard(this.cardName);
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
+      margin: const EdgeInsets.all(2),
+      padding: const EdgeInsets.all(1),
+      child:Card(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            ListTile(
-              title: Text(cardName, textAlign: TextAlign.center,),
+            Expanded(child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[Image.asset('assets/images/services/test.png')],)
             ),
+            Expanded(child: Row(children: <Widget>[Expanded(child: Text(this.cardName, textAlign: TextAlign.center,))],)),
           ],
         ),
-      );
+      ),
+      height: 150,
+    );
   }
 }
