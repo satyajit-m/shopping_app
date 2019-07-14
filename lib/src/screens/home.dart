@@ -32,7 +32,8 @@ class HomeScreenState extends State<HomeScreen> {
   CarouselSlider carouselSlider;
   int _current = 0;
   int servNo = 0;
-  List imgList = [
+  List imgList = ["https://firebasestorage.googleapis.com/v0/b/fixr-3b596.appspot.com/o/images%2FHomeSpa%2F6593a723.jpeg?alt=media&token=4453a0d3-2d1e-42ec-80db-2d4200a556c9",
+  "https://firebasestorage.googleapis.com/v0/b/fixr-3b596.appspot.com/o/images%2FHomeSpa%2F6593a723.jpeg?alt=media&token=4453a0d3-2d1e-42ec-80db-2d4200a556c9"
     ];
 
   List<Widget> services = [];
