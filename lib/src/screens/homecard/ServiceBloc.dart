@@ -36,7 +36,7 @@ class ServiceBloc {
   //Core functions
   Future<void> fetchCollection() async {
     final QuerySnapshot result =
-        await Firestore.instance.collection('testServ').getDocuments();
+        await Firestore.instance.collection('ServiceTypes').getDocuments();
     List<DocumentSnapshot> documents = result.documents;
     var list = result.documents;
 
@@ -44,7 +44,7 @@ class ServiceBloc {
       // _serviceList[i].serviceName = documents[i].documentID;
       var doc = documents[i].documentID.toString();
       DocumentSnapshot querySnapshot = await Firestore.instance
-          .collection('testServ')
+          .collection('ServiceTypes')
           .document('$doc')
           .get();
       if (querySnapshot.exists) {
