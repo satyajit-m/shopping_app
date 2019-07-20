@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shopping_app/auth/login_screen3.dart';
 import 'package:shopping_app/auth/models/state.dart';
+import 'package:shopping_app/auth/phone_auth.dart';
 import 'package:shopping_app/auth/util/state_widget.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -146,7 +147,7 @@ class ProfileScreenState extends State<ProfileScreen> {
     await Future.delayed(const Duration(seconds: 4));
     Navigator.of(context).pop();
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => LoginScreen3()));
+        context, MaterialPageRoute(builder: (context) => PhoneAuth()));
   }
 }
 
