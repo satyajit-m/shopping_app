@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../src/app.dart';
 
+import '../size_config.dart';
+
 class PhoneAuth extends StatefulWidget {
   @override
   _PhoneAuthState createState() => _PhoneAuthState();
@@ -23,10 +25,9 @@ class _PhoneAuthState extends State<PhoneAuth> {
     if (user != null) {
       await Future.delayed(const Duration(seconds: 3));
       Navigator.push(context, MaterialPageRoute(builder: (context) => App()));
-    }
-    else  {
+    } else {
       setState(() {
-              _isload =false;
+        _isload = false;
       });
     }
   }
@@ -44,7 +45,7 @@ class _PhoneAuthState extends State<PhoneAuth> {
             initialValue: 'in',
           ),
           SizedBox(
-            width: 8.0,
+            width: SizeConfig.blockSizeHorizontal * 2.0,
           ),
           Expanded(
             child: TextFormField(
@@ -87,7 +88,7 @@ class _PhoneAuthState extends State<PhoneAuth> {
         });
       };
 
-      final PhoneVerificationCompleted verifiedSuccess = (FirebaseUser user) {
+      final PhoneVerificationCompleted verifiedSuccess = (AuthCredential user) {
         print('Successful verification');
         if (user != null) {
           Navigator.push(
@@ -100,7 +101,6 @@ class _PhoneAuthState extends State<PhoneAuth> {
       final PhoneVerificationFailed veriFailed = (AuthException exception) {
         print('Failed verification: ${exception.message}');
       };
-
       await FirebaseAuth.instance.verifyPhoneNumber(
           phoneNumber: "+${_phoneCode + _phoneController.text.trim()}",
           codeAutoRetrievalTimeout: autoRetrieve,
@@ -110,6 +110,7 @@ class _PhoneAuthState extends State<PhoneAuth> {
           verificationFailed: veriFailed);
     } catch (e) {
       print("error: $e");
+      print('sex');
     }
   }
 
@@ -139,7 +140,7 @@ class _PhoneAuthState extends State<PhoneAuth> {
                       .then((user) {
                     if (user != null) {
                       Navigator.of(context).pop();
-                      print("Successful verification user is: ${user}");
+                      print("Successful verification user is: $user");
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => App()));
                     } else {
@@ -170,42 +171,55 @@ class _PhoneAuthState extends State<PhoneAuth> {
 
   @override
   Widget build(BuildContext context) {
-    //loader();
+    // loader();
     // setState(() {
     //   _saving = true;
     // });
-    if(_isload == true){
+    SizeConfig().init(context);
+    if (_isload == true) {
       return new Scaffold(
+        resizeToAvoidBottomInset: true,
         appBar: new AppBar(),
         body: new Center(
           child: CircularProgressIndicator(),
         ),
       );
     }
-    return SafeArea(
-      child: new Scaffold(
-        appBar: new AppBar(),
-        body: new Center(
+    return Scaffold(
+      body: Container(
+        color: Colors.pink[400],
+        child: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              new Card(
+              Card(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children:  <Widget>[
-                    Text(
-                      'Get Started',
-                      textAlign: TextAlign.center,
-                      style: new TextStyle(fontSize: 24),
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(top: 20.0),
+                      child: Text(
+                        'Get Started',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 24, color: Colors.pink[500]),
+                      ),
                     ),
-                    ListTile(title: _buildCountryPickerDropdown()),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 20.0),
+                      child: ListTile(title: _buildCountryPickerDropdown()),
+                    )
                   ],
                 ),
               ),
-              new RaisedButton(
-                child: new Text("Verify"),
-                color: Colors.green.shade800,
-                textColor: Colors.white,
+              RaisedButton(
+                child: Text("Verify"),
+                color: Colors.white,
+                textColor: Colors.pink[500],
                 onPressed: () {
                   if (_phoneCode != null) {
                     if (_keyField.currentState.validate()) {

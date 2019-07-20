@@ -6,7 +6,7 @@ https://stackoverflow.com/questions/45155104/displaying-notification-badge-on-bo
 import 'package:flutter/material.dart';
 
 import 'screens/home.dart';
-import 'screens/profile.dart';
+//import 'screens/profile.dart';
 import 'screens/help.dart';
 import 'package:bmnav/bmnav.dart' as bmnav;
 
@@ -24,7 +24,7 @@ class AppState extends State<App> {
   final List<Widget> screens = [
     HomeScreen(),
     HelpScreen(),
-    ProfileScreen(),
+//    ProfileScreen(),
   ];
   Widget currentScreen = HomeScreen();
   final PageStorageBucket bucket = PageStorageBucket();

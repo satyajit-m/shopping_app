@@ -1,3 +1,4 @@
+/*
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shopping_app/auth/login_screen3.dart';
@@ -166,3 +167,4 @@ class getClipper extends CustomClipper<Path> {
     return true;
   }
 }
+*/
