@@ -35,6 +35,7 @@
 **/android/gradlew.bat
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
+.gradle/
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
@@ -68,6 +69,12 @@
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+<<<<<<< HEAD
 pubspec.lock
 android/app/build.gradle
 android/app/google-services.json
+=======
+
+# API
+/android/app/google-services.json
+>>>>>>> af9db3801e63d581a83889e3ff95cee55db55ce2

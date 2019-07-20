@@ -136,7 +136,11 @@ packages:
       name: google_sign_in
       url: "https://pub.dartlang.org"
     source: hosted
+<<<<<<< HEAD
     version: "4.0.4"
+=======
+    version: "4.0.1+3"
+>>>>>>> af9db3801e63d581a83889e3ff95cee55db55ce2
   location_permissions:
     dependency: transitive
     description:
