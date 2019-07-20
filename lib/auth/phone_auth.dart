@@ -87,7 +87,7 @@ class _PhoneAuthState extends State<PhoneAuth> {
         });
       };
 
-      final PhoneVerificationCompleted verifiedSuccess = (FirebaseUser user) {
+      final PhoneVerificationCompleted verifiedSuccess = (AuthCredential user) {
         print('Successful verification');
         if (user != null) {
           Navigator.push(
