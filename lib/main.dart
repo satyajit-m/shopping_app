@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shopping_app/auth/util/state_widget.dart';
-import 'package:shopping_app/auth/ui/theme.dart';
-import 'package:shopping_app/auth/ui/screens/sign_in.dart';
-import 'package:shopping_app/auth/ui/screens/sign_up.dart';
-import 'package:shopping_app/auth/ui/screens/forgot_password.dart';
+import 'auth/auth_page.dart';
 import 'package:shopping_app/src/app.dart';
-
-import 'auth/phone_auth.dart';
 
 class MyApp extends StatelessWidget {
   MyApp() {
@@ -16,23 +10,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'MyApp Title',
-      theme: buildTheme(),
+      theme: ThemeData(
+        accentColor: Colors.pinkAccent,
+      ),
       //onGenerateRoute: Navigation.router.generator,
       debugShowCheckedModeBanner: false,
       routes: {
-        '/': (context) => App(),
+        '/': (context) => AuthPage(),
         '/home': (context) => App(),
-        '/signin': (context) => SignInScreen(),
-        '/signup': (context) => SignUpScreen(),
-        '/forgot-password': (context) => ForgotPasswordScreen(),
       },
     );
   }
 }
 
 void main() {
-  StateWidget stateWidget = new StateWidget(
-    child: new MyApp(),
-  );
-  runApp(stateWidget);
+  runApp(MyApp());
 }
