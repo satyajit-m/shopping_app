@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 's2.dart';
 
 class ServicesCat extends StatefulWidget {
   String something;
@@ -15,36 +16,19 @@ class ServicesCatState extends State<ServicesCat> {
 
   @override
   Widget build(BuildContext context) {
-    Future<bool> _onWillPop() {
-      return showDialog(
-            context: context,
-            builder: (context) => new AlertDialog(
-              title: new Text('Are you sure?'),
-              content: new Text('Do you want to exit an App'),
-              actions: <Widget>[
-                new FlatButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: new Text('No'),
-                ),
-                new FlatButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: new Text('Yes'),
-                ),
-              ],
-            ),
-          ) ??
-          false;
-    }
-
-    // TODO: implement build
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: new Scaffold(
-        appBar: new AppBar(
-          title: new Text("$something"),
-        ),
-        body: new Center(
-          child: new Text("$something"),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Ok'),
+      ),
+      body: Container(
+        child: RaisedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => S2()),
+            );
+          },
+          child: Text('Press'),
         ),
       ),
     );
