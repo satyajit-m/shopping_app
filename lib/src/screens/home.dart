@@ -55,9 +55,7 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Shopping App'),
-      ),
+      
       body: Container(
         child: SingleChildScrollView(
           child: Column(
