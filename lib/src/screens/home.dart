@@ -55,9 +55,7 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Shopping App'),
-      ),
+      
       body: Container(
         child: SingleChildScrollView(
           child: Column(
@@ -90,7 +88,7 @@ class HomeScreenState extends State<HomeScreen> {
                         width: MediaQuery.of(context).size.width,
                         margin: EdgeInsets.symmetric(horizontal: 10.0),
                         decoration: BoxDecoration(
-                          color: Colors.white10,
+                          color: Colors.white30,
                         ),
                         child: ClipRRect(
                           borderRadius: new BorderRadius.circular(10.0),

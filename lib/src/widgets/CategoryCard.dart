@@ -8,12 +8,13 @@ class CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(2),
+      
+      margin: const EdgeInsets.all(1),
       padding: const EdgeInsets.all(1),
       child: Card(
+        
         child: InkWell(
           onTap: () {
-            
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ServicesCat('$cardName')),
@@ -22,10 +23,11 @@ class CategoryCard extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Expanded(
-                  child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[Image.network('$cardUrl')],
-              )),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[Image.network('$cardUrl')],
+                ),
+              ),
               Expanded(
                   child: Row(
                 children: <Widget>[
