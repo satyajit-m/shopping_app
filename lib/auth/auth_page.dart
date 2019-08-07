@@ -122,7 +122,7 @@ class AuthPageState extends State<AuthPage> {
                       textColor: TextColor,
                       child: Text("Skip"),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/home');
+                        Navigator.pushReplacementNamed(context, '/home');
                       },
                     ),
                   ],

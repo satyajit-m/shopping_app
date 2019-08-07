@@ -47,7 +47,7 @@ class AppState extends State<App> {
           },
           items: [
             bmnav.BottomNavItem(Icons.home, label: 'Home'),
-            bmnav.BottomNavItem(Icons.help, label: 'Help'),
+            bmnav.BottomNavItem(Icons.location_on, label: 'Location'),
             bmnav.BottomNavItem(Icons.person, label: 'profile'),
           ],
           iconStyle: bmnav.IconStyle(onSelectSize: 30.0),
