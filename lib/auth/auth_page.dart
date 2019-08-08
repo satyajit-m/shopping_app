@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shopping_app/src/app.dart';
 import './phone_auth.dart';
 import '../size_config.dart';
+import 'google_auth.dart';
 
 class AuthPage extends StatefulWidget {
   AuthPageState createState() {
@@ -9,6 +12,22 @@ class AuthPage extends StatefulWidget {
 }
 
 class AuthPageState extends State<AuthPage> {
+
+  /* GOOGLE SIGNIN START */
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  bool _isLoading = false;
+
+  Future<bool> _loginUser() async {
+    final api = await FBApi.signInWithGoogle();
+    if (api != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  /* GOOGLE SIGNIN END */
+
   final PageColor = Colors.white;
   final LogoColor = Colors.green[600];
   final TextColor = Colors.green[600];
@@ -21,6 +40,7 @@ class AuthPageState extends State<AuthPage> {
       child: Container(
         decoration: BoxDecoration(color: PageColor),
         child: Scaffold(
+          key: _scaffoldKey,
           backgroundColor: Colors.transparent,
           body: Builder(builder: (BuildContext context) {
             return Container(
@@ -82,7 +102,20 @@ class AuthPageState extends State<AuthPage> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
-                        onPressed: () {},
+                        onPressed: () async {
+                          setState(() => _isLoading = true);
+                          bool b = await _loginUser();
+                          setState(() => _isLoading = false);
+                          if (b == true) {
+                            Navigator.of(context).push(MaterialPageRoute<Null>(
+                                builder: (BuildContext context) {
+                              return new App();
+                            }));
+                          } else {
+                            Scaffold.of(context).showSnackBar(
+                                SnackBar(content: Text("Wrong email or")));
+                          }
+                        },
                       ),
                     ),
                     FlatButton(

@@ -110,7 +110,6 @@ class _PhoneAuthState extends State<PhoneAuth> {
           verificationFailed: veriFailed);
     } catch (e) {
       print("error: $e");
-      print('sex');
     }
   }
 
