@@ -1,4 +1,4 @@
-class Address {
+class Profile {
   final name;
   final phone;
   final pinCode;
@@ -6,7 +6,7 @@ class Address {
   final locality;
   final landmark;
   final altPhone;
-  Address(this.name, this.phone, this.pinCode,
+  Profile(this.name, this.phone, this.pinCode,
           this.areaAndStreet, this.locality, this.landmark,
           this.altPhone);
 }
