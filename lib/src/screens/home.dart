@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shopping_app/src/screens/CustomShapeClipper.dart';
 import '../widgets/CategoryCard.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -32,9 +33,10 @@ class HomeScreenState extends State<HomeScreen> {
   CarouselSlider carouselSlider;
   int _current = 0;
   int servNo = 0;
-  List imgList = ["https://firebasestorage.googleapis.com/v0/b/fixr-3b596.appspot.com/o/images%2FHomeSpa%2F6593a723.jpeg?alt=media&token=4453a0d3-2d1e-42ec-80db-2d4200a556c9",
-  "https://firebasestorage.googleapis.com/v0/b/fixr-3b596.appspot.com/o/images%2FHomeSpa%2F6593a723.jpeg?alt=media&token=4453a0d3-2d1e-42ec-80db-2d4200a556c9"
-    ];
+  List imgList = [
+    "https://firebasestorage.googleapis.com/v0/b/fixr-3b596.appspot.com/o/images%2FHomeSpa%2F6593a723.jpeg?alt=media&token=4453a0d3-2d1e-42ec-80db-2d4200a556c9",
+    "https://firebasestorage.googleapis.com/v0/b/fixr-3b596.appspot.com/o/images%2FHomeSpa%2F6593a723.jpeg?alt=media&token=4453a0d3-2d1e-42ec-80db-2d4200a556c9"
+  ];
 
   List<Widget> services = [];
 
@@ -55,74 +57,89 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
+      appBar: AppBar(
+        title: Text('Shopping'),
+      ),
       body: Container(
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(
-                height: 10,
-              ),
-              carouselSlider = CarouselSlider(
-                height: MediaQuery.of(context).size.height * 0.2,
-                initialPage: 0,
-                enlargeCenterPage: true,
-                autoPlay: true,
-                reverse: false,
-                enableInfiniteScroll: true,
-                autoPlayInterval: Duration(seconds: 5),
-                autoPlayAnimationDuration: Duration(milliseconds: 5000),
-                pauseAutoPlayOnTouch: Duration(seconds: 10),
-                scrollDirection: Axis.horizontal,
-                onPageChanged: (index) {
-                  setState(() {
-                    _current = index;
-                  });
-                },
-                items: imgList.map((imgUrl) {
-                  return Builder(
-                    builder: (BuildContext context) {
-                      return Container(
-                        width: MediaQuery.of(context).size.width,
-                        margin: EdgeInsets.symmetric(horizontal: 10.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white30,
-                        ),
-                        child: ClipRRect(
-                          borderRadius: new BorderRadius.circular(10.0),
-                          child: Image.network(
-                            imgUrl,
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                }).toList(),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: map<Widget>(imgList, (index, url) {
-                  return Container(
-                    width: 10.0,
-                    height: 10.0,
-                    margin:
-                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color:
-                          _current == index ? Colors.redAccent : Colors.green,
+              ClipPath(
+                clipper: CustomShapeClipper(),
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.43,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.deepOrange, Colors.orangeAccent],
                     ),
-                  );
-                }),
-              ),
-              SizedBox(
-                height: 20.0,
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height*0.05,
+                      ),
+                      carouselSlider = CarouselSlider(
+                        height: MediaQuery.of(context).size.height * 0.25,
+                        initialPage: 0,
+                        enlargeCenterPage: true,
+                        autoPlay: true,
+                        reverse: false,
+                        enableInfiniteScroll: true,
+                        autoPlayInterval: Duration(seconds: 5),
+                        autoPlayAnimationDuration: Duration(milliseconds: 5000),
+                        pauseAutoPlayOnTouch: Duration(seconds: 10),
+                        scrollDirection: Axis.horizontal,
+                        onPageChanged: (index) {
+                          setState(() {
+                            _current = index;
+                          });
+                        },
+                        items: imgList.map((imgUrl) {
+                          return Builder(
+                            builder: (BuildContext context) {
+                              return Container(
+                                width: MediaQuery.of(context).size.width,
+                                margin: EdgeInsets.symmetric(horizontal: 10.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white30,
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: new BorderRadius.circular(10.0),
+                                  child: Image.network(
+                                    imgUrl,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }).toList(),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: map<Widget>(imgList, (index, url) {
+                          return Container(
+                            width: 10.0,
+                            height: 10.0,
+                            margin: EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 2.0),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: _current == index
+                                  ? Colors.redAccent
+                                  : Colors.green,
+                            ),
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+                ),
               ),
               Column(
                 children: <Widget>[
@@ -130,28 +147,31 @@ class HomeScreenState extends State<HomeScreen> {
                     stream: _servicesBloc.employeeListStream,
                     builder: (BuildContext context,
                         AsyncSnapshot<List<Service>> snapshot) {
-                      if (!snapshot.hasData) return Container(
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(height: 20.0),
-                            CircularProgressIndicator(),
-                            SizedBox(height: 5.0)
-                          ],
-                        ),
-                      );
+                      if (!snapshot.hasData)
+                        return Container(
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(height: 20.0),
+                              CircularProgressIndicator(),
+                              SizedBox(height: 5.0)
+                            ],
+                          ),
+                        );
                       return new Container(
                         child: ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: snapshot.data.length,
                           itemBuilder: (context, index) {
-                            if(index%2==0){
-                            return callCategoryCard(
-                                snapshot.data[index].serviceName,snapshot.data[index+1].serviceName,
-                                snapshot.data[index].serviceUrl,snapshot.data[index+1].serviceUrl);}
-                                else {
-                                 return SizedBox(); 
-                                }
+                            if (index % 2 == 0) {
+                              return callCategoryCard(
+                                  snapshot.data[index].serviceName,
+                                  snapshot.data[index + 1].serviceName,
+                                  snapshot.data[index].serviceUrl,
+                                  snapshot.data[index + 1].serviceUrl);
+                            } else {
+                              return SizedBox();
+                            }
                             // return Card(
                             //   elevation: 4.0,
                             //   child: Row(
@@ -192,16 +212,17 @@ class HomeScreenState extends State<HomeScreen> {
         duration: Duration(milliseconds: 300), curve: Curves.decelerate);
   }
 
-  Widget callCategoryCard(String serviceName1,String serviceName2 ,String serviceUrl1,String serviceUrl2) {
+  Widget callCategoryCard(String serviceName1, String serviceName2,
+      String serviceUrl1, String serviceUrl2) {
     return Row(
       children: <Widget>[
         Expanded(
-          child:
-              Column(children: <Widget>[CategoryCard(serviceName1, serviceUrl1)]),
+          child: Column(
+              children: <Widget>[CategoryCard(serviceName1, serviceUrl1)]),
         ),
         Expanded(
-          child:
-              Column(children: <Widget>[CategoryCard(serviceName2, serviceUrl2)]),
+          child: Column(
+              children: <Widget>[CategoryCard(serviceName2, serviceUrl2)]),
         ),
       ],
     );
