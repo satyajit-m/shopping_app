@@ -6,6 +6,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'homecard/ServiceBloc.dart';
 import 'homecard/ServiceModel.dart';
 
+import '../widgets/cube_grid.dart';
+
 class HomeScreen extends StatefulWidget {
   HomeScreen() : super();
 
@@ -152,7 +154,10 @@ class HomeScreenState extends State<HomeScreen> {
                           child: Column(
                             children: <Widget>[
                               SizedBox(height: 20.0),
-                              CircularProgressIndicator(),
+                              CubeGrid(
+                                color: Colors.orange,
+                                size: 150,
+                              ),
                               SizedBox(height: 5.0)
                             ],
                           ),
