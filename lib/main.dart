@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'auth/auth_page.dart';
 import 'package:shopping_app/src/app.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MyApp extends StatelessWidget {
-  MyApp() {
-    //Navigation.initPaths();
-  }
+
+  final FirebaseUser user;
+
+  MyApp(this.user);
+
+  // MyApp() {
+  //   //Navigation.initPaths();
+  // }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -17,12 +23,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routes: {
         '/': (context) => App(),
-        '/home': (context) => AuthPage(),
+        '/home': (context) => user == null ? AuthPage() : App(),
       },
     );
   }
 }
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  FirebaseUser user = await FirebaseAuth.instance.currentUser();
+  runApp(MyApp(user));
 }
