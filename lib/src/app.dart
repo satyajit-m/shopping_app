@@ -11,9 +11,6 @@ import 'screens/help.dart';
 import 'package:bmnav/bmnav.dart' as bmnav;
 
 class App extends StatefulWidget {
-//  FirebaseUser user;
-//  App(this.user);
-
   AppState createState() {
     return AppState();
   }
@@ -33,7 +30,6 @@ class AppState extends State<App> {
     return MaterialApp(
       title: 'Shopping',
       home: Scaffold(
-        
         body: PageStorage(
           child: currentScreen,
           bucket: bucket,
