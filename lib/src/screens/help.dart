@@ -11,11 +11,10 @@ class _HelpScreenState extends State<HelpScreen> {
   List<String> kWords = [];
   List<String> pin = [];
   _SearchAppBarDelegate _searchDelegate;
-
+  bool loaded = false;
   //Initializing with sorted list of english words
   _HelpScreenState() {
     _fetchPlaces();
-    
   }
 
   @override
@@ -27,6 +26,9 @@ class _HelpScreenState extends State<HelpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!loaded) {
+      return Center(child: CircularProgressIndicator());
+    }
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -47,23 +49,30 @@ class _HelpScreenState extends State<HelpScreen> {
         //Displaying all English words in list in app's main page
         child: ListView.builder(
           itemCount: kWords.length,
-          itemBuilder: (context, idx) => Card(child: ListTile(
-            leading: Icon(Icons.location_city,
-            color: Colors.green,),
-            title: Text(kWords[idx]),
-            trailing: Text(pin[idx],style: TextStyle(color: Colors.orangeAccent),),
-            onTap: () {
-              Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text("Click the Search action"),
-                  action: SnackBarAction(
-                    label: 'Search',
-                    onPressed: () {
-                      showSearchPage(context, _searchDelegate);
-                    },
-                  )));
-            },
+          itemBuilder: (context, idx) => Card(
+            child: ListTile(
+              leading: Icon(
+                Icons.location_city,
+                color: Colors.green,
+              ),
+              title: Text(kWords[idx]),
+              trailing: Text(
+                pin[idx],
+                style: TextStyle(color: Colors.orangeAccent),
+              ),
+              onTap: () {
+                Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text("Click the Search action"),
+                    action: SnackBarAction(
+                      label: 'Search',
+                      onPressed: () {
+                        showSearchPage(context, _searchDelegate);
+                      },
+                    )));
+              },
+            ),
           ),
-        ),),
+        ),
       ),
     );
   }
@@ -86,27 +95,19 @@ class _HelpScreenState extends State<HelpScreen> {
   }
 
   void _fetchPlaces() async {
-    final QuerySnapshot result =
-        await Firestore.instance.collection('ServArea').getDocuments();
+    List<String> test = [];
+    final QuerySnapshot result =await Firestore.instance.collection('ServArea').getDocuments();
     List<DocumentSnapshot> documents = result.documents;
     for (var i = 0; i < documents.length; i++) {
       // _serviceList[i].serviceName = documents[i].documentID;
       var doc = documents[i].documentID.toString();
       kWords.add(doc);
-
-      DocumentSnapshot querySnapshot = await Firestore.instance
-          .collection('ServArea')
-          .document('$doc')
-          .get();
-          if(querySnapshot.exists){
-            pin.add(querySnapshot.data['pin'].toString());
-          }
-      }
-      print(kWords);
-      print(pin);
-      setState(() {
-        
-      });
+      pin.add(documents[i].data["pin"].toString());
+    }
+    print("bando haha");
+    setState(() {
+      loaded = true;
+    });
   }
 }
 
