@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../widgets/cube_grid.dart';
 
 class HelpScreen extends StatefulWidget {
   // HelpScreen({ Key key }) : super(key: key);
@@ -96,7 +97,7 @@ class _HelpScreenState extends State<HelpScreen> {
 
   void _fetchPlaces() async {
     List<String> test = [];
-    final QuerySnapshot result =await Firestore.instance.collection('ServArea').getDocuments();
+    QuerySnapshot result = await Firestore.instance.collection('ServArea').getDocuments();
     List<DocumentSnapshot> documents = result.documents;
     for (var i = 0; i < documents.length; i++) {
       // _serviceList[i].serviceName = documents[i].documentID;
@@ -104,7 +105,6 @@ class _HelpScreenState extends State<HelpScreen> {
       kWords.add(doc);
       pin.add(documents[i].data["pin"].toString());
     }
-    print("bando haha");
     setState(() {
       loaded = true;
     });
@@ -116,7 +116,7 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
   final List<String> _words;
   final List<String> _history;
 
-  _SearchAppBarDelegate(List<String> words)
+  _SearchAppBarDelegate(List<String> words) 
       : _words = words,
         //pre-populated history of words
         _history = <String>[],
@@ -174,7 +174,7 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
   Widget buildSuggestions(BuildContext context) {
     final Iterable<String> suggestions = this.query.isEmpty
         ? _history
-        : _words.where((word) => word.startsWith(query));
+        : _words.where((word) => word.toLowerCase().startsWith(query.toLowerCase()));
 
     return _WordSuggestionList(
       query: this.query,
