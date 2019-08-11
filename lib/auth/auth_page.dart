@@ -4,7 +4,6 @@ import './phone_auth.dart';
 import '../src/widgets/cube_grid.dart';
 import '../size_config.dart';
 import 'google_auth.dart';
-import 'package:flutter/scheduler.dart';
 
 class AuthPage extends StatefulWidget {
   AuthPageState createState() {
