@@ -86,7 +86,7 @@ class ProfileFormState extends State<ProfileForm> {
                         if (formKey.currentState.validate()) {
                           formKey.currentState.save();
                           Profile transactionData = Profile(this.name, this.phone, this.pinCode, this.areaAndStreet, this.locality, this.landmark, altPhone);
-                          var transactionMap = profileTransaction(transactionData);
+                          var transactionMap = profileToMap(transactionData);
                           DocumentReference user = Firestore.instance.collection("users").document(currentUser.uid);
                           Firestore.instance.runTransaction((transaction) async {
                             await transaction.update(user, transactionMap);
