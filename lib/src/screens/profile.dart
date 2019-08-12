@@ -1,10 +1,8 @@
-/*
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shopping_app/auth/login_screen3.dart';
-import 'package:shopping_app/auth/models/state.dart';
-import 'package:shopping_app/auth/phone_auth.dart';
-import 'package:shopping_app/auth/util/state_widget.dart';
+import 'package:shopping_app/auth/auth_page.dart';
+
+import '../app.dart';
 
 class ProfileScreen extends StatefulWidget {
   // FirebaseUser user;
@@ -14,27 +12,26 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class ProfileScreenState extends State<ProfileScreen> {
-  StateModel appState;
-
   FirebaseUser user;
-  String phone;
+  String phone = " Login To Continue ";
+  String picUrl="";
   bool _lOut = false;
-  ProfileScreenState() {}
+  ProfileScreenState() {
+    getUser();
+  }
 
-  // Future getUser() async {
-  //   user = await FirebaseAuth.instance.currentUser();
-  //   phone = user.phoneNumber.toString();
-  //   print(phone);
-  //   setState(() {});
-  // }
+  Future getUser() async {
+    user = await FirebaseAuth.instance.currentUser();
+    print(user);
+    if (user != null) {
+      phone = user.phoneNumber.toString();
+      picUrl = user.photoUrl.toString();
+      print(phone);
+      setState(() {});
+    }
+  }
 
   Widget build(BuildContext context) {
-    appState = StateWidget.of(context).state;
-
-    final userId = appState?.firebaseUserAuth?.uid ?? '';
-    final email = appState?.firebaseUserAuth?.email ?? '';
-    final firstName = appState?.user?.firstName ?? '';
-
     return new Scaffold(
       body: Stack(
         children: <Widget>[
@@ -57,7 +54,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                             color: Colors.red,
                             image: DecorationImage(
                                 image: NetworkImage(
-                                    'https://media.amtrak.com/wp-content/uploads/2015/09/acela.jpg'),
+                                    '$picUrl'),
                                 fit: BoxFit.cover),
                             borderRadius: BorderRadius.all(Radius.circular(75.0)),
                             boxShadow: [
@@ -65,20 +62,20 @@ class ProfileScreenState extends State<ProfileScreen> {
                             ])),
                     SizedBox(height: 90.0),
                     Text(
-                      firstName.toString(),
+                      phone.toString(),
                       style: TextStyle(
                           fontSize: 30.0,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Montserrat'),
                     ),
                     SizedBox(height: 15.0),
-                    Text(
-                      email.toString(),
-                      style: TextStyle(
-                          fontSize: 17.0,
-                          fontStyle: FontStyle.italic,
-                          fontFamily: 'Montserrat'),
-                    ),
+                    // Text(
+                    //   email.toString(),
+                    //   style: TextStyle(
+                    //       fontSize: 17.0,
+                    //       fontStyle: FontStyle.italic,
+                    //       fontFamily: 'Montserrat'),
+                    // ),
                     SizedBox(height: 8.0),
                     Container(
                       height: 40.0,
@@ -147,7 +144,7 @@ class ProfileScreenState extends State<ProfileScreen> {
     await Future.delayed(const Duration(seconds: 4));
     Navigator.of(context).pop();
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => PhoneAuth()));
+        context, MaterialPageRoute(builder: (context) => AuthPage()));
   }
 }
 
@@ -168,4 +165,3 @@ class getClipper extends CustomClipper<Path> {
     return true;
   }
 }
-*/
