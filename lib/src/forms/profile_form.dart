@@ -11,7 +11,6 @@ class ProfileForm extends StatefulWidget {
 }
 
 class ProfileFormState extends State<ProfileForm> {
-
   FocusNode nameFocus = FocusNode();
   FocusNode phoneFocus = FocusNode();
   FocusNode areaAndStreetFocus = FocusNode();
@@ -20,6 +19,8 @@ class ProfileFormState extends State<ProfileForm> {
 
   FirebaseUser currentUser;
   bool dataloaded = false;
+
+  Map<String, dynamic> profile;
 
   List<String> localityList = [];
   List<String> pinList = [];
@@ -36,7 +37,18 @@ class ProfileFormState extends State<ProfileForm> {
   var landmark;
   var altPhone;
 
+  List<TextEditingController> controller = [
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+  ];
+
   void initState() {
+    for (int i = 0; i < 5; i++) {
+      controller.add(TextEditingController());
+    }
     loadData();
     super.initState();
   }
@@ -71,29 +83,82 @@ class ProfileFormState extends State<ProfileForm> {
                   SizedBox(height: 20),
                   phoneField(context),
                   SizedBox(height: 20),
-                  altPhoneFiled(context),
+                  altPhoneFieled(context),
                   SizedBox(height: 20),
                   areaAndStreetField(context),
                   SizedBox(height: 20),
                   localitySelector(),
                   SizedBox(height: 20),
                   landmarkField(context),
-                  Padding(
-                    padding: EdgeInsets.only(top: 20),
-                    child: RaisedButton(
-                      child: Text("Save"),
-                      onPressed: () {
-                        if (formKey.currentState.validate()) {
-                          formKey.currentState.save();
-                          Profile transactionData = Profile(this.name, this.phone, this.pinCode, this.areaAndStreet, this.locality, this.landmark, altPhone);
-                          var transactionMap = profileToMap(transactionData);
-                          DocumentReference user = Firestore.instance.collection("users").document(currentUser.uid);
-                          Firestore.instance.runTransaction((transaction) async {
-                            await transaction.update(user, transactionMap);
-                          });
-                          Navigator.of(context).pop();
-                        }
-                      },
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Expanded(
+                          child: Padding(
+                            padding:
+                                EdgeInsets.only(top: 20, left: 5, right: 5),
+                            child: RaisedButton(
+                              color: Colors.red,
+                              child: Text(
+                                "Reset",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400
+                                ),
+                              ),
+                              onPressed: () {
+                                for (int i = 0; i < controller.length; i++) {
+                                  controller[i].text = "";
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding:
+                                EdgeInsets.only(top: 20, left: 5, right: 5),
+                            child: RaisedButton(
+                              color: Colors.green,
+                              child: Text(
+                                "Save",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400
+                                ),
+                              ),
+                              onPressed: () async {
+                                if (formKey.currentState.validate()) {
+                                  formKey.currentState.save();
+                                  Profile transactionData = Profile(
+                                      this.name,
+                                      this.phone,
+                                      this.pinCode,
+                                      this.areaAndStreet,
+                                      this.locality,
+                                      this.landmark,
+                                      altPhone);
+                                  var transactionMap =
+                                      profileToMap(transactionData);
+                                  DocumentReference user = Firestore.instance
+                                      .collection("users")
+                                      .document(currentUser.uid);
+                                  var something = await Firestore.instance
+                                      .runTransaction((transaction) async {
+                                    await transaction.update(
+                                        user, transactionMap);
+                                  });
+                                  print(something);
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(
@@ -110,6 +175,7 @@ class ProfileFormState extends State<ProfileForm> {
 
   TextFormField nameField(BuildContext context) {
     return TextFormField(
+      controller: controller[0],
       inputFormatters: [LengthLimitingTextInputFormatter(30)],
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.next,
@@ -141,6 +207,7 @@ class ProfileFormState extends State<ProfileForm> {
 
   TextFormField phoneField(BuildContext context) {
     return TextFormField(
+      controller: controller[1],
       keyboardType: TextInputType.number,
       inputFormatters: <TextInputFormatter>[
         WhitelistingTextInputFormatter.digitsOnly,
@@ -172,8 +239,9 @@ class ProfileFormState extends State<ProfileForm> {
     );
   }
 
-  TextFormField altPhoneFiled(BuildContext context) {
+  TextFormField altPhoneFieled(BuildContext context) {
     return TextFormField(
+      controller: controller[2],
       keyboardType: TextInputType.number,
       inputFormatters: <TextInputFormatter>[
         WhitelistingTextInputFormatter.digitsOnly,
@@ -193,20 +261,15 @@ class ProfileFormState extends State<ProfileForm> {
           borderSide: BorderSide(),
         ),
       ),
-      validator: (value) {
-        if (value.length == 10) {
-          return null;
-        }
-        return "Should be a 10 digit phone number";
-      },
       onSaved: (value) {
-        altPhone = value;
+        altPhone = value == null ? "" : value;
       },
     );
   }
 
   TextFormField areaAndStreetField(BuildContext context) {
     return TextFormField(
+      controller: controller[3],
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.next,
       focusNode: areaAndStreetFocus,
@@ -237,7 +300,9 @@ class ProfileFormState extends State<ProfileForm> {
   DropdownButtonFormField localitySelector() {
     return DropdownButtonFormField(
       hint: Text('Locality'),
-      value: localityList[index],
+      value: profile["locality"] == null
+          ? localityList[index]
+          : profile["locality"],
       items: localityList.map((String value) {
         return DropdownMenuItem<String>(
           value: value,
@@ -247,6 +312,7 @@ class ProfileFormState extends State<ProfileForm> {
       onChanged: (value) {
         setState(() {
           index = localityList.indexOf(value);
+          profile["locality"] = null;
         });
       },
       onSaved: (value) {
@@ -267,11 +333,12 @@ class ProfileFormState extends State<ProfileForm> {
 
   TextFormField landmarkField(BuildContext context) {
     return TextFormField(
+      controller: controller[4],
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.done,
       focusNode: landmarkFocus,
       decoration: InputDecoration(
-        hintText: "Near Jagannath M",
+        hintText: "Ram Mandir",
         labelText: "Landmark (optional)",
         icon: Icon(Icons.business),
         border: OutlineInputBorder(
@@ -299,8 +366,17 @@ class ProfileFormState extends State<ProfileForm> {
     }
     currentUser = await FirebaseAuth.instance.currentUser();
 
+    DocumentSnapshot prof =
+        await Firestore.instance.document("/users/" + currentUser.uid).get();
+    profile = prof.data == null ? {} : prof.data;
+    print(profile);
     setState(() {
       dataloaded = true;
+      controller[0].text = profile["name"];
+      controller[1].text = profile["phone"];
+      controller[2].text = profile["altPhone"];
+      controller[3].text = profile["areaAndStreet"];
+      controller[4].text = profile["landmark"];
     });
   }
 }
