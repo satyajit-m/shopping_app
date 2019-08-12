@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shopping_app/src/app.dart';
 import './phone_auth.dart';
-import '../src/widgets/cube_grid.dart';
 import '../size_config.dart';
 import 'google_auth.dart';
 
@@ -12,17 +12,11 @@ class AuthPage extends StatefulWidget {
 }
 
 class AuthPageState extends State<AuthPage> {
+
   /* GOOGLE SIGNIN START */
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  FirebaseUser user;
-  bool userLoaded = false;
-
   bool _isLoading = false;
-
-  AuthPageState() {
-    getUser();
-  }
 
   Future<bool> _loginUser() async {
     final api = await FBApi.signInWithGoogle();
@@ -32,7 +26,6 @@ class AuthPageState extends State<AuthPage> {
       return false;
     }
   }
-
   /* GOOGLE SIGNIN END */
 
   final PageColor = Colors.white;
@@ -42,23 +35,7 @@ class AuthPageState extends State<AuthPage> {
   final IconColor = Colors.blue[200];
 
   Widget build(BuildContext context) {
-    // SchedulerBinding.instance.addPostFrameCallback((_) => getUser);
-
-    if (!userLoaded) {
-      return SafeArea(
-        child: Scaffold(
-          body: Center(
-            child: CubeGrid(
-              color: LogoColor,
-              size: MediaQuery.of(context).size.width * 0.90,
-            ),
-          ),
-        ),
-      );
-    }
-
     SizeConfig().init(context);
-
     return SafeArea(
       child: Container(
         decoration: BoxDecoration(color: PageColor),
@@ -101,9 +78,7 @@ class AuthPageState extends State<AuthPage> {
                         onPressed: () {
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) => PhoneAuth(
-                              user: user,
-                            ),
+                            builder: (BuildContext context) => PhoneAuth(),
                           );
                         },
                       ),
@@ -132,14 +107,13 @@ class AuthPageState extends State<AuthPage> {
                           bool b = await _loginUser();
                           setState(() => _isLoading = false);
                           if (b == true) {
-                            Navigator.pushReplacementNamed(context, '/home');
+                            Navigator.of(context).push(MaterialPageRoute<Null>(
+                                builder: (BuildContext context) {
+                              return new App();
+                            }));
                           } else {
                             Scaffold.of(context).showSnackBar(
-                              SnackBar(
-                                content:
-                                    Text("Something wrong with Google Sign In"),
-                              ),
-                            );
+                                SnackBar(content: Text("Wrong email or")));
                           }
                         },
                       ),
@@ -159,17 +133,5 @@ class AuthPageState extends State<AuthPage> {
         ),
       ),
     );
-  }
-
-  void getUser() async {
-    user = await FirebaseAuth.instance.currentUser();
-
-    if (user != null) {
-      Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      setState(() {
-        userLoaded = true;
-      });
-    }
   }
 }
