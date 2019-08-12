@@ -33,13 +33,11 @@ class CartScreenState extends State<CartScreen> {
     service = widget.service;
     user = widget.user;
     super.initState();
-    getAddress();
   }
 
   void getAddress() async {
     final DocumentSnapshot result =
         await Firestore.instance.document('users/' + user.uid).get();
-    print(result.data);
     setState(() {
       if (result.data.isNotEmpty) {
         address = mapToProfile(result.data);
@@ -51,160 +49,200 @@ class CartScreenState extends State<CartScreen> {
 
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return ListView(
-      shrinkWrap: true,
-      children: <Widget>[
-        Container(
-          height: 250,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Stack(
-                children: [
-                  Stack(
-                    children: <Widget>[
-                      Container(
-                        height: 250,
-                        width: double.infinity,
-                      ),
-                      Container(
-                        height: 250.0,
-                        width: double.infinity,
-                        color: Colors.orange[700],
-                      ),
-                      Positioned(
-                        bottom: 60.0,
-                        right: 100.0,
-                        child: Container(
-                          height: 400,
-                          width: 400.0,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(200.0),
-                            color: Colors.orange[500],
+    return SafeArea(
+      child: ListView(
+        shrinkWrap: true,
+        children: <Widget>[
+          Container(
+            height: 250,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Stack(
+                  children: [
+                    Stack(
+                      children: <Widget>[
+                        Container(
+                          height: 250,
+                          width: double.infinity,
+                        ),
+                        Container(
+                          height: 250.0,
+                          width: double.infinity,
+                          color: Colors.orange[700],
+                        ),
+                        Positioned(
+                          bottom: 60.0,
+                          right: 100.0,
+                          child: Container(
+                            height: 400,
+                            width: 400.0,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(200.0),
+                              color: Colors.orange[500],
+                            ),
                           ),
                         ),
-                      ),
-                      Positioned(
-                        bottom: 110.0,
-                        left: 150.0,
-                        child: Container(
-                            height: 300.0,
-                            width: 300.0,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(150.0),
-                                color: Colors.orange.withOpacity(0.5))),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 15.0),
-                        child: IconButton(
-                          alignment: Alignment.topLeft,
-                          icon: Icon(Icons.arrow_back),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
+                        Positioned(
+                          bottom: 110.0,
+                          left: 150.0,
+                          child: Container(
+                              height: 300.0,
+                              width: 300.0,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(150.0),
+                                  color: Colors.orange.withOpacity(0.5))),
                         ),
-                      ),
-                      Positioned(
-                        top: 75.0,
-                        left: 15.0,
-                        child: Text(
-                          service.name,
-                          style: TextStyle(
-                              fontSize: 30.0, fontWeight: FontWeight.bold),
+                        Padding(
+                          padding: EdgeInsets.only(top: 15.0),
+                          child: IconButton(
+                            alignment: Alignment.topLeft,
+                            icon: Icon(Icons.arrow_back),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
                         ),
-                      ),
-                      // Positioned(
-                      //     top: 125.0,
-                      //     left: 15,
-                      //     child: Container(
-                      //       child: Column(
-                      //         children: <Widget>[
-                      //           Text("Final Pricing will be based on inspection")
-                      //         ],
-                      //       ),
-                      //     )),
-                    ],
-                  )
-                ],
-              ),
-            ],
+                        Positioned(
+                          top: 75.0,
+                          left: 15.0,
+                          child: Text(
+                            service.name,
+                            style: TextStyle(
+                                fontSize: 30.0, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-        Container(
-          height: 200,
-          width: 600,
-          padding: EdgeInsets.all(10),
-          child: addressFetched
+          SizedBox(
+            height: 200,
+          ),
+          addressFetched
               ? (addressPresent ? yesAddress() : noAddress())
               : loadingAddress(),
-          //noAddress(), //addressPresent ? yesAddress() : noAddress(),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget yesAddress() {
-    return Card(
-      elevation: 2,
-      child: Container(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: Align(
-                child: Text(
-                  modify(profileToString(address)),
-                  softWrap: true,
+    String currentAddress = modify(profileToString(address));
+    double containerHeight = (currentAddress.split("\n").length + 3) * 23.0;
+    return Container(
+      height: containerHeight,
+      padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+      child: Card(
+        elevation: 10,
+        child: Container(
+          child: Column(
+            children: <Widget>[
+              Container(
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Align(
+                        child: Text(
+                          "Address",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        alignment: Alignment.centerLeft,
+                      ),
+                    ),
+                    Expanded(
+                      child: Align(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context)
+                                .pushNamed('/profile/form')
+                                .then((onValue) => setState(() {
+                                      addressFetched = false;
+                                    }));
+                          },
+                          child: Icon(Icons.mode_edit),
+                        ),
+                        alignment: Alignment.centerRight,
+                      ),
+                    ),
+                  ],
                 ),
-                alignment: Alignment.topLeft,
+                padding:
+                    EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+                color: Colors.green,
               ),
-            ),
-            Expanded(
-              child: Align(
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pushNamed('/profile/form');
-                  },
-                  child: Icon(Icons.mode_edit),
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+                  child: Align(
+                    child: Text(
+                      modify(profileToString(address)),
+                      softWrap: true,
+                    ),
+                    alignment: Alignment.topLeft,
+                  ),
                 ),
-                alignment: Alignment.bottomRight,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget noAddress() {
-    return Card(
-      elevation: 2,
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: Align(
-                child: Text(
-                  "Add Address",
-                  softWrap: true,
-                  style: TextStyle(fontSize: 15),
+    return Container(
+      height: 64,
+      padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+      child: Card(
+        elevation: 10,
+        child: Container(
+          child: Column(
+            children: <Widget>[
+              Container(
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Align(
+                        child: Text(
+                          "Address",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        alignment: Alignment.centerLeft,
+                      ),
+                    ),
+                    Expanded(
+                      child: Align(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context)
+                                .pushNamed('/profile/form')
+                                .then((onValue) => setState(() {
+                                      addressFetched = false;
+                                    }));
+                          },
+                          child: Icon(Icons.add),
+                        ),
+                        alignment: Alignment.centerRight,
+                      ),
+                    ),
+                  ],
                 ),
-                alignment: Alignment.bottomCenter,
+                padding:
+                    EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+                color: Colors.green,
               ),
-            ),
-            Expanded(
-              child: Align(
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pushNamed('/profile/form');
-                  },
-                  child: Icon(Icons.edit),
-                  ),
-                alignment: Alignment.bottomRight,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -217,6 +255,7 @@ class CartScreenState extends State<CartScreen> {
   }
 
   Widget loadingAddress() {
+    getAddress();
     return Card(
       elevation: 2,
       child: Container(
