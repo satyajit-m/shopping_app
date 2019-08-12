@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../models/cart_model.dart';
 import './cart_screen/cart_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Cart extends StatefulWidget {
   final Service service;
-
-  Cart({Key key, @required this.service}) : super(key: key);
+  final FirebaseUser user;
+  Cart({Key key, @required this.service, this.user}) : super(key: key);
 
   CartState createState() {
     return CartState();
@@ -13,24 +14,15 @@ class Cart extends StatefulWidget {
 }
 
 class CartState extends State<Cart> {
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: CartScreen(
         service: widget.service,
+        user: widget.user,
       ),
-      /*Center(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-                  Text("Price : " + widget.service.price.toString())
-            ],
-          ),
-        ),
-      )*/
       bottomNavigationBar: Material(
-        elevation: 7.0,
+        elevation: 10.0,
         color: Colors.white,
         child: Container(
           height: MediaQuery.of(context).size.height * 0.10,
@@ -49,13 +41,13 @@ class CartState extends State<Cart> {
                       children: <Widget>[
                         Expanded(
                           child: Container(
-                            padding: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 5),
+                            padding: EdgeInsets.only(
+                                top: 10, left: 10, right: 10, bottom: 5),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  'Price: ₹ ' +
-                                      widget.service.price.toString(),
+                                  'Price: ₹ ' + widget.service.price.toString(),
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 20,
@@ -64,7 +56,8 @@ class CartState extends State<Cart> {
                                 Text(
                                   "Final Pricing will be based on inspection",
                                   style: TextStyle(
-                                      fontWeight: FontWeight.w300, fontSize: 10),
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 10),
                                 ),
                               ],
                             ),
