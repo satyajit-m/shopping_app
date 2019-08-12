@@ -9,17 +9,14 @@ import '../src/app.dart';
 import '../size_config.dart';
 
 class PhoneAuth extends StatefulWidget {
-  final FirebaseUser user;
-  PhoneAuth({Key key, @required this.user});
-
   @override
-  _PhoneAuthState createState() => _PhoneAuthState(user);
+  _PhoneAuthState createState() => _PhoneAuthState();
 }
 
 class _PhoneAuthState extends State<PhoneAuth> {
   bool _saving = true;
   bool _isload = true;
-  _PhoneAuthState(this.user) {
+  _PhoneAuthState() {
     getUser();
   }
 

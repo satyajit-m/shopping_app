@@ -1,10 +1,6 @@
 # shopping_app
 
-This project is not licensed, all code below cannot be used anywhere else.
-
-https://help.github.com/en/articles/licensing-a-repository
-
-https://choosealicense.com/no-permission/
+A new Flutter project.
 
 ## Getting Started
 

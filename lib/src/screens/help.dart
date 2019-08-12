@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../widgets/cube_grid.dart';
 
 class HelpScreen extends StatefulWidget {
   // HelpScreen({ Key key }) : super(key: key);
@@ -12,10 +11,11 @@ class _HelpScreenState extends State<HelpScreen> {
   List<String> kWords = [];
   List<String> pin = [];
   _SearchAppBarDelegate _searchDelegate;
-  bool loaded = false;
+
   //Initializing with sorted list of english words
   _HelpScreenState() {
     _fetchPlaces();
+    
   }
 
   @override
@@ -27,9 +27,6 @@ class _HelpScreenState extends State<HelpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (!loaded) {
-      return Center(child: CircularProgressIndicator());
-    }
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -50,30 +47,23 @@ class _HelpScreenState extends State<HelpScreen> {
         //Displaying all English words in list in app's main page
         child: ListView.builder(
           itemCount: kWords.length,
-          itemBuilder: (context, idx) => Card(
-            child: ListTile(
-              leading: Icon(
-                Icons.location_city,
-                color: Colors.green,
-              ),
-              title: Text(kWords[idx]),
-              trailing: Text(
-                pin[idx],
-                style: TextStyle(color: Colors.orangeAccent),
-              ),
-              onTap: () {
-                Scaffold.of(context).showSnackBar(SnackBar(
-                    content: Text("Click the Search action"),
-                    action: SnackBarAction(
-                      label: 'Search',
-                      onPressed: () {
-                        showSearchPage(context, _searchDelegate);
-                      },
-                    )));
-              },
-            ),
+          itemBuilder: (context, idx) => Card(child: ListTile(
+            leading: Icon(Icons.location_city,
+            color: Colors.green,),
+            title: Text(kWords[idx]),
+            trailing: Text(pin[idx],style: TextStyle(color: Colors.orangeAccent),),
+            onTap: () {
+              Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text("Click the Search action"),
+                  action: SnackBarAction(
+                    label: 'Search',
+                    onPressed: () {
+                      showSearchPage(context, _searchDelegate);
+                    },
+                  )));
+            },
           ),
-        ),
+        ),),
       ),
     );
   }
@@ -96,18 +86,27 @@ class _HelpScreenState extends State<HelpScreen> {
   }
 
   void _fetchPlaces() async {
-    List<String> test = [];
-    QuerySnapshot result = await Firestore.instance.collection('ServArea').getDocuments();
+    final QuerySnapshot result =
+        await Firestore.instance.collection('ServArea').getDocuments();
     List<DocumentSnapshot> documents = result.documents;
     for (var i = 0; i < documents.length; i++) {
       // _serviceList[i].serviceName = documents[i].documentID;
       var doc = documents[i].documentID.toString();
       kWords.add(doc);
-      pin.add(documents[i].data["pin"].toString());
-    }
-    setState(() {
-      loaded = true;
-    });
+
+      DocumentSnapshot querySnapshot = await Firestore.instance
+          .collection('ServArea')
+          .document('$doc')
+          .get();
+          if(querySnapshot.exists){
+            pin.add(querySnapshot.data['pin'].toString());
+          }
+      }
+      print(kWords);
+      print(pin);
+      setState(() {
+        
+      });
   }
 }
 
@@ -116,7 +115,7 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
   final List<String> _words;
   final List<String> _history;
 
-  _SearchAppBarDelegate(List<String> words) 
+  _SearchAppBarDelegate(List<String> words)
       : _words = words,
         //pre-populated history of words
         _history = <String>[],
@@ -174,7 +173,7 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
   Widget buildSuggestions(BuildContext context) {
     final Iterable<String> suggestions = this.query.isEmpty
         ? _history
-        : _words.where((word) => word.toLowerCase().startsWith(query.toLowerCase()));
+        : _words.where((word) => word.startsWith(query));
 
     return _WordSuggestionList(
       query: this.query,
