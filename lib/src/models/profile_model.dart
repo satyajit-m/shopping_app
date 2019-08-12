@@ -1,10 +1,10 @@
 class Profile {
-  final name;
+  final String name;
   final phone;
   final pinCode;
-  final areaAndStreet;
-  final locality;
-  final landmark;
+  final String areaAndStreet;
+  final String locality;
+  final String landmark;
   final altPhone;
   Profile(this.name, this.phone, this.pinCode, this.areaAndStreet,
       this.locality, this.landmark, this.altPhone);
@@ -29,18 +29,31 @@ Profile mapToProfile(Map<String, dynamic> map) {
 }
 
 String profileToString(Profile profile) {
-  print(profile.name);
-  return profile.name +
-      "\n" +
-      [
-        profile.areaAndStreet,
-      ].join(", ") +
-      "\nNear " +
-      profile.landmark +
-      "\n" +
-      profile.locality +
-      "\nPin : " +
-      profile.pinCode +
-      "\nPhone No : " +
-      [profile.phone, profile.altPhone].join(", ");
+  String areaAndStreet = "";
+  List tlist = profile.areaAndStreet.split(" ");
+  final split = 30;
+  int currentLineLength = 0;
+  for (int i = 0; i < tlist.length; i++) {
+    if (currentLineLength + tlist[i].length >= split) {
+      areaAndStreet += tlist[i] + "\n";
+      currentLineLength = 0;
+    } else {
+      areaAndStreet += tlist[i] + " ";
+      currentLineLength += tlist[i].length;
+    }
+  }
+
+  areaAndStreet = areaAndStreet.trim();
+
+  return (profile.name +
+          "\n" +
+          areaAndStreet +
+          (profile.landmark.length != 0 ? ("\nNear " + profile.landmark) : "") +
+          "\n" +
+          profile.locality +
+          "\nPin : " +
+          profile.pinCode +
+          "\nPhone No : " +
+          [profile.phone, profile.altPhone].join(", "))
+      .trim();
 }
