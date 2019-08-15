@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../CustomShapeClipper.dart';
-import 's2.dart';
+import '../../models/sub_service_model.dart';
+import '../../screens/cart.dart';
 
 class ServicesCat extends StatefulWidget {
-  String something;
+  final String something;
   ServicesCat(this.something);
 
   @override
@@ -12,9 +13,12 @@ class ServicesCat extends StatefulWidget {
 }
 
 class ServicesCatState extends State<ServicesCat> {
+  FirebaseUser user;
   String something;
   List<String> subs = [];
   List<String> subsImg = [];
+  List<int> subsPrice = [];
+  List<int> subsSid = [];
   bool load;
 
   ServicesCatState(this.something) {
@@ -38,22 +42,35 @@ class ServicesCatState extends State<ServicesCat> {
                 itemBuilder: (context, position) {
                   return Card(
                     elevation: 5.0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.fromLTRB(20.0,0,0,0),
-                          child: Image.network('${subsImg[position]}'),
-                          height: 100,
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(20.0),
-                          child: Text(
-                            "${subs[position]}",
-                            style: TextStyle(fontSize: 18.0),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => Cart(
+                                service: SubServiceModel(
+                                    subs[position], subsPrice[position], subs),
+                                user: user,
+                              ),
                           ),
-                        ),
-                      ],
+                        );
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.fromLTRB(20.0, 0, 0, 0),
+                            child: Image.network(subsImg[position]),
+                            height: 100,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(20.0),
+                            child: Text(
+                              subs[position],
+                              style: TextStyle(fontSize: 18.0),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
@@ -64,9 +81,10 @@ class ServicesCatState extends State<ServicesCat> {
   }
 
   void getsubs(String something) async {
+    user = await FirebaseAuth.instance.currentUser();
     final QuerySnapshot result = await Firestore.instance
         .collection('ServiceTypes')
-        .document('$something')
+        .document(something)
         .collection('sub')
         .getDocuments();
 
@@ -74,7 +92,11 @@ class ServicesCatState extends State<ServicesCat> {
     for (int i = 0; i < documents.length; i++) {
       subs.add(documents[i].documentID);
       subsImg.add(documents[i].data['url']);
+      subsPrice.add(documents[i].data['price']);
+      subsSid.add(documents[i].data['sid']);
     }
+    print(subsPrice);
+    print(subsSid);
     setState(() {
       load = false;
     });

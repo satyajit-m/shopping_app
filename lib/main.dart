@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        accentColor: Colors.pinkAccent,
+        accentColor: Colors.blueAccent,
       ),
       //onGenerateRoute: Navigation.router.generator,
       debugShowCheckedModeBanner: false,

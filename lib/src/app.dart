@@ -12,6 +12,7 @@ import './screens/cart_tester.dart';
 import 'screens/help.dart';
 import 'package:bmnav/bmnav.dart' as bmnav;
 
+import 'screens/profile.dart';
 import 'widgets/cube_grid.dart';
 
 class App extends StatefulWidget {
@@ -74,10 +75,10 @@ class AppState extends State<App> {
     screens = [
       HomeScreen(),
       HelpScreen(),
-      //    ProfileScreen(),
-      Tester(
-        user: user,
-      )
+         ProfileScreen(),
+      // Tester(
+      //   user: user,
+      // )
     ];
     setState(() {
       dataLoaded = true;

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '../models/cart_model.dart';
+import '../models/sub_service_model.dart';
 import './cart_screen/cart_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class Cart extends StatefulWidget {
-  final Service service;
+  final SubServiceModel service;
   final FirebaseUser user;
-  Cart({Key key, @required this.service, this.user}) : super(key: key);
+  Cart({Key key, @required this.service, @required this.user}) : super(key: key);
 
   CartState createState() {
     return CartState();

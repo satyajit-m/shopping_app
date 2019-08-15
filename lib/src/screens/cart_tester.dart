@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'cart.dart';
 
-import '../models/cart_model.dart';
+import '../models/sub_service_model.dart';
 
 class Tester extends StatefulWidget {
   final FirebaseUser user;
@@ -24,7 +24,7 @@ class TesterState extends State<Tester> {
             final name = "Bull Milk";
             final price = "699";
             final serviceId = "78";
-            final x = Service(name, price, serviceId);
+            final x = SubServiceModel(name, price, serviceId);
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => Cart(

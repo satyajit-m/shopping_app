@@ -24,7 +24,7 @@ class ProfileScreenState extends State<ProfileScreen> {
     user = await FirebaseAuth.instance.currentUser();
     print(user);
     if (user != null) {
-      phone = user.phoneNumber.toString();
+      phone = user.displayName.toString();
       picUrl = user.photoUrl.toString();
       print(phone);
       setState(() {});

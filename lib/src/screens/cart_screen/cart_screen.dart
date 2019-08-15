@@ -3,13 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../widgets/cube_grid.dart';
-import '../../models/cart_model.dart';
+import '../../models/sub_service_model.dart';
 import '../../../size_config.dart';
 import '../../models/profile_model.dart';
 import '../../forms/profile_form.dart';
 
 class CartScreen extends StatefulWidget {
-  final Service service;
+  final SubServiceModel service;
   final FirebaseUser user;
 
   CartScreen({Key key, @required this.service, @required this.user})
@@ -22,11 +22,10 @@ class CartScreen extends StatefulWidget {
 
 class CartScreenState extends State<CartScreen> {
   Profile address;
-  var z = 0;
   bool addressFetched = false;
   bool addressPresent = false;
 
-  Service service;
+  SubServiceModel service;
   FirebaseUser user;
 
   void initState() {
@@ -38,6 +37,7 @@ class CartScreenState extends State<CartScreen> {
   void getAddress() async {
     final DocumentSnapshot result =
         await Firestore.instance.document('users/' + user.uid).get();
+    print(result.data);
     setState(() {
       if (result.data.isNotEmpty) {
         address = mapToProfile(result.data);
@@ -132,7 +132,7 @@ class CartScreenState extends State<CartScreen> {
 
   Widget yesAddress() {
     String currentAddress = modify(profileToString(address));
-    double containerHeight = (currentAddress.split("\n").length + 3) * 23.0;
+    double containerHeight = (currentAddress.split("\n").length + 5) * 25.0;
     return Container(
       height: containerHeight,
       padding: EdgeInsets.only(left: 10, right: 10, top: 10),
