@@ -142,7 +142,7 @@ class ProfileFormState extends State<ProfileForm> {
                                       this.landmark,
                                       altPhone);
                                   var transactionMap =
-                                      profileToMap(transactionData);
+                                      Profile.profileToMap(transactionData);
                                   DocumentReference user = Firestore.instance
                                       .collection("users")
                                       .document(currentUser.uid);
@@ -151,7 +151,6 @@ class ProfileFormState extends State<ProfileForm> {
                                     await transaction.update(
                                         user, transactionMap);
                                   });
-                                  print(something);
                                   Navigator.of(context).pop();
                                 }
                               },

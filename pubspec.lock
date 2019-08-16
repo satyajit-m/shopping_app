@@ -42,7 +42,7 @@ packages:
       name: cloud_firestore
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.12.7+1"
+    version: "0.12.9"
   collection:
     dependency: transitive
     description:
@@ -105,7 +105,7 @@ packages:
       name: flushbar
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.8.0"
+    version: "1.8.2"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -122,7 +122,7 @@ packages:
       name: geolocator
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.1.0"
+    version: "5.1.2"
   google_api_availability:
     dependency: transitive
     description:
@@ -136,7 +136,7 @@ packages:
       name: google_sign_in
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.4"
+    version: "4.0.6"
   location_permissions:
     dependency: transitive
     description:

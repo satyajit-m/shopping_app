@@ -40,7 +40,7 @@ class CartScreenState extends State<CartScreen> {
     print(result.data);
     setState(() {
       if (result.data.isNotEmpty) {
-        address = mapToProfile(result.data);
+        address = Profile.mapToProfile(result.data);
         addressPresent = true;
       }
       addressFetched = true;
@@ -131,7 +131,7 @@ class CartScreenState extends State<CartScreen> {
   }
 
   Widget yesAddress() {
-    String currentAddress = modify(profileToString(address));
+    String currentAddress = modify(Profile.profileToString(address));
     double containerHeight = (currentAddress.split("\n").length + 5) * 25.0;
     return Container(
       height: containerHeight,
@@ -182,7 +182,7 @@ class CartScreenState extends State<CartScreen> {
                   padding: EdgeInsets.only(left: 10, right: 10, top: 10),
                   child: Align(
                     child: Text(
-                      modify(profileToString(address)),
+                      modify(Profile.profileToString(address)),
                       softWrap: true,
                     ),
                     alignment: Alignment.topLeft,
