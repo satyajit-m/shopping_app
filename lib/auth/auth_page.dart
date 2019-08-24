@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import './phone_auth.dart';
+import '../src/models/profile_model.dart';
 import '../src/widgets/cube_grid.dart';
 import '../size_config.dart';
 import 'google_auth.dart';
@@ -24,9 +27,29 @@ class AuthPageState extends State<AuthPage> {
     getUser();
   }
 
+  Future<dynamic> createUserDb() async {
+    user = await FirebaseAuth.instance.currentUser();
+
+    if (user != null) {
+      Map<String, dynamic> transactionMap = {};
+      DocumentReference dbUserRef =
+          Firestore.instance.collection("users").document(user.uid);
+      var debugMe =
+          await Firestore.instance.runTransaction((transaction) async {
+        DocumentSnapshot snapshot = await transaction.get(dbUserRef);
+        if (!snapshot.exists) {
+          await transaction.set(dbUserRef, transactionMap);
+        }
+      });
+      return debugMe;
+    }
+  }
+
   Future<bool> _loginUser() async {
     final api = await FBApi.signInWithGoogle();
     if (api != null) {
+      var debugMe = await createUserDb();
+      print("BHOSDK : " + debugMe.toString());
       return true;
     } else {
       return false;
@@ -131,6 +154,7 @@ class AuthPageState extends State<AuthPage> {
                           setState(() => _isLoading = true);
                           bool b = await _loginUser();
                           setState(() => _isLoading = false);
+
                           if (b == true) {
                             Navigator.pushReplacementNamed(context, '/home');
                           } else {

@@ -4,6 +4,7 @@ import 'package:flushbar/flushbar.dart';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../src/app.dart';
 
 import '../size_config.dart';
@@ -22,6 +23,27 @@ class _PhoneAuthState extends State<PhoneAuth> {
   _PhoneAuthState(this.user) {
     getUser();
   }
+
+
+  Future<dynamic> createUserDb() async {
+    user = await FirebaseAuth.instance.currentUser();
+
+    if (user != null) {
+      Map<String, dynamic> transactionMap = {};
+      DocumentReference dbUserRef =
+          Firestore.instance.collection("users").document(user.uid);
+      var debugMe =
+          await Firestore.instance.runTransaction((transaction) async {
+        DocumentSnapshot snapshot = await transaction.get(dbUserRef);
+        if (!snapshot.exists) {
+          await transaction.set(dbUserRef, transactionMap);
+        }
+      });
+      return debugMe;
+    }
+  }
+
+
 
   Future getUser() async {
     user = await FirebaseAuth.instance.currentUser();
@@ -111,6 +133,8 @@ class _PhoneAuthState extends State<PhoneAuth> {
           timeout: const Duration(seconds: 5),
           verificationCompleted: verifiedSuccess,
           verificationFailed: veriFailed);
+      var check = await createUserDb();
+      print("HAHA : " + check.toString());
     } catch (e) {
       print("error: $e");
     }

@@ -40,7 +40,7 @@ class CartScreenState extends State<CartScreen> {
     print(result.data);
     setState(() {
       if (result.data.isNotEmpty) {
-        address = mapToProfile(result.data);
+        address = Profile.mapToProfile(result.data);
         addressPresent = true;
       }
       addressFetched = true;
@@ -131,17 +131,24 @@ class CartScreenState extends State<CartScreen> {
   }
 
   Widget yesAddress() {
-    String currentAddress = modify(profileToString(address));
+    String currentAddress = modify(Profile.profileToString(address));
     double containerHeight = (currentAddress.split("\n").length + 5) * 25.0;
     return Container(
       height: containerHeight,
       padding: EdgeInsets.only(left: 10, right: 10, top: 10),
       child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         elevation: 10,
         child: Container(
           child: Column(
             children: <Widget>[
               Container(
+                decoration: BoxDecoration(
+color: Colors.green,
+borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0))
+                ),
                 child: Row(
                   children: <Widget>[
                     Expanded(
@@ -175,14 +182,14 @@ class CartScreenState extends State<CartScreen> {
                 ),
                 padding:
                     EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-                color: Colors.green,
+                
               ),
               Expanded(
                 child: Container(
                   padding: EdgeInsets.only(left: 10, right: 10, top: 10),
                   child: Align(
                     child: Text(
-                      modify(profileToString(address)),
+                      modify(Profile.profileToString(address)),
                       softWrap: true,
                     ),
                     alignment: Alignment.topLeft,
@@ -201,6 +208,10 @@ class CartScreenState extends State<CartScreen> {
       height: 64,
       padding: EdgeInsets.only(left: 10, right: 10, top: 10),
       child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        color: Colors.green,
         elevation: 10,
         child: Container(
           child: Column(
@@ -239,7 +250,6 @@ class CartScreenState extends State<CartScreen> {
                 ),
                 padding:
                     EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-                color: Colors.green,
               ),
             ],
           ),

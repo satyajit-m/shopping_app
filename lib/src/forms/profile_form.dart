@@ -55,14 +55,6 @@ class ProfileFormState extends State<ProfileForm> {
 
   @override
   Widget build(BuildContext context) {
-    if (dataloaded) {
-      return getForm();
-    } else {
-      return Center(child: CircularProgressIndicator());
-    }
-  }
-
-  Widget getForm() {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -71,102 +63,104 @@ class ProfileFormState extends State<ProfileForm> {
             child: Text("Profile"),
           ),
         ),
-        body: Container(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.only(left: 15, right: 15),
-            child: Form(
-              key: formKey,
-              child: Column(
-                children: <Widget>[
-                  SizedBox(height: 20),
-                  nameField(context),
-                  SizedBox(height: 20),
-                  phoneField(context),
-                  SizedBox(height: 20),
-                  altPhoneFieled(context),
-                  SizedBox(height: 20),
-                  areaAndStreetField(context),
-                  SizedBox(height: 20),
-                  localitySelector(),
-                  SizedBox(height: 20),
-                  landmarkField(context),
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Expanded(
-                          child: Padding(
-                            padding:
-                                EdgeInsets.only(top: 20, left: 5, right: 5),
-                            child: RaisedButton(
-                              color: Colors.red,
-                              child: Text(
-                                "Reset",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400
-                                ),
-                              ),
-                              onPressed: () {
-                                for (int i = 0; i < controller.length; i++) {
-                                  controller[i].text = "";
-                                }
-                              },
-                            ),
+        body: dataloaded ? getForm() : loader(),
+      ),
+    );
+  }
+
+  Widget loader() {
+    return Center(child: CircularProgressIndicator());
+  }
+
+  Widget getForm() {
+    return Container(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.only(left: 15, right: 15),
+        child: Form(
+          key: formKey,
+          child: Column(
+            children: <Widget>[
+              SizedBox(height: 20),
+              nameField(context),
+              SizedBox(height: 20),
+              phoneField(context),
+              SizedBox(height: 20),
+              altPhoneFieled(context),
+              SizedBox(height: 20),
+              areaAndStreetField(context),
+              SizedBox(height: 20),
+              localitySelector(),
+              SizedBox(height: 20),
+              landmarkField(context),
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 20, left: 5, right: 5),
+                        child: RaisedButton(
+                          color: Colors.red,
+                          child: Text(
+                            "Reset",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400),
                           ),
+                          onPressed: () {
+                            for (int i = 0; i < controller.length; i++) {
+                              controller[i].text = "";
+                            }
+                          },
                         ),
-                        Expanded(
-                          child: Padding(
-                            padding:
-                                EdgeInsets.only(top: 20, left: 5, right: 5),
-                            child: RaisedButton(
-                              color: Colors.green,
-                              child: Text(
-                                "Save",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400
-                                ),
-                              ),
-                              onPressed: () async {
-                                if (formKey.currentState.validate()) {
-                                  formKey.currentState.save();
-                                  Profile transactionData = Profile(
-                                      this.name,
-                                      this.phone,
-                                      this.pinCode,
-                                      this.areaAndStreet,
-                                      this.locality,
-                                      this.landmark,
-                                      altPhone);
-                                  var transactionMap =
-                                      profileToMap(transactionData);
-                                  DocumentReference user = Firestore.instance
-                                      .collection("users")
-                                      .document(currentUser.uid);
-                                  var something = await Firestore.instance
-                                      .runTransaction((transaction) async {
-                                    await transaction.update(
-                                        user, transactionMap);
-                                  });
-                                  print(something);
-                                  Navigator.of(context).pop();
-                                }
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                ],
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 20, left: 5, right: 5),
+                        child: RaisedButton(
+                          color: Colors.green,
+                          child: Text(
+                            "Save",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          onPressed: () async {
+                            if (formKey.currentState.validate()) {
+                              formKey.currentState.save();
+                              Profile transactionData = Profile(
+                                  this.name,
+                                  this.phone,
+                                  this.pinCode,
+                                  this.areaAndStreet,
+                                  this.locality,
+                                  this.landmark,
+                                  altPhone);
+                              var transactionMap =
+                                  Profile.profileToMap(transactionData);
+                              DocumentReference user = Firestore.instance
+                                  .collection("users")
+                                  .document(currentUser.uid);
+                              var something = await Firestore.instance
+                                  .runTransaction((transaction) async {
+                                await transaction.update(user, transactionMap);
+                              });
+                              Navigator.of(context).pop();
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+              SizedBox(
+                height: 20,
+              ),
+            ],
           ),
         ),
       ),
@@ -369,7 +363,6 @@ class ProfileFormState extends State<ProfileForm> {
     DocumentSnapshot prof =
         await Firestore.instance.document("/users/" + currentUser.uid).get();
     profile = prof.data == null ? {} : prof.data;
-    print(profile);
     setState(() {
       dataloaded = true;
       controller[0].text = profile["name"];
