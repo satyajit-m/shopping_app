@@ -95,8 +95,6 @@ class ServicesCatState extends State<ServicesCat> {
       subsPrice.add(documents[i].data['price']);
       subsSid.add(documents[i].data['sid']);
     }
-    print(subsPrice);
-    print(subsSid);
     setState(() {
       load = false;
     });

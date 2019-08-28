@@ -38,23 +38,9 @@ class ServiceBloc {
     final QuerySnapshot result =
         await Firestore.instance.collection('ServiceTypes').getDocuments();
     List<DocumentSnapshot> documents = result.documents;
-    var list = result.documents;
-
     for (var i = 0; i < documents.length; i++) {
-      // _serviceList[i].serviceName = documents[i].documentID;
-      var doc = documents[i].documentID.toString();
-      DocumentSnapshot querySnapshot = await Firestore.instance
-          .collection('ServiceTypes')
-          .document('$doc')
-          .get();
-      if (querySnapshot.exists) {
-        _serviceList.add(new Service(
-            documents[i].documentID, querySnapshot.data['url']));
-      } else {
-        print('ok');
-      }
-
-      //_serviceList[i].serviceUrl = documents[i].documentID;
+      _serviceList
+          .add(new Service(documents[i].documentID, documents[i].data['url']));
     }
     _serviceListStreamController.add(_serviceList);
   }
