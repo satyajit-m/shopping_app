@@ -36,40 +36,45 @@ class ProfileScreenState extends State<ProfileScreen> {
       body: Column(
         children: <Widget>[
           Container(
-            height: MediaQuery.of(context).size.height * 0.6,
-            
-            decoration: BoxDecoration(
-              // Box decoration takes a gradient
-              gradient: LinearGradient(
-                // Where the linear gradient begins and ends
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                // Add one stop for each color. Stops should increase from 0 to 1
-                colors: [
-                  // Colors are easy thanks to Flutter's Colors class.
-                  Colors.teal[400],
-                  Colors.teal[300],
-                  Colors.teal[200]
-              
-                ],
+            color: Colors.grey[100],
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.6,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  bottomRight: const Radius.circular(50.0),
+                ),
+                // Box decoration takes a gradient
+                gradient: LinearGradient(
+                  // Where the linear gradient begins and ends
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  // Add one stop for each color. Stops should increase from 0 to 1
+                  colors: [
+                    // Colors are easy thanks to Flutter's Colors class.
+                    Colors.teal[400],
+                    Colors.teal[300],
+                    Colors.teal[200]
+                  ],
+                ),
               ),
             ),
           ),
-          Expanded(child:
-          Container(
-            
-            color: Colors.teal[200],
-            child: new Container(
-              decoration: new BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: new BorderRadius.only(
-                      topLeft: const Radius.circular(30.0),
-                      topRight: const Radius.circular(30.0))),
-              child: new Center(
-                child: new Text("Hi modal sheet"),
-              )),
-
-          ),),
+          Expanded(
+            child: Container(
+              color: Colors.teal[200],
+              child: new Container(
+                  decoration: new BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: new BorderRadius.only(
+                      topLeft: const Radius.circular(50.0),
+                      //topRight: const Radius.circular(30.0),
+                    ),
+                  ),
+                  child: new Center(
+                    child: new Text("Hi modal sheet"),
+                  )),
+            ),
+          ),
 
           // Positioned(
           //   width: 350.0,

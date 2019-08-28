@@ -5,13 +5,14 @@ https://stackoverflow.com/questions/45155104/displaying-notification-badge-on-bo
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shopping_app/src/screens/MyOrders/myorders.dart';
 
 import 'screens/home.dart';
 import './screens/cart_tester.dart';
 import 'screens/help.dart';
 import 'package:bmnav/bmnav.dart' as bmnav;
 
-import 'screens/prof.dart';
+import 'screens/profile.dart';
 import 'widgets/cube_grid.dart';
 
 class App extends StatefulWidget {

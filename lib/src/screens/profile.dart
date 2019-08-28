@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shopping_app/auth/auth_page.dart';
+import 'package:shopping_app/src/screens/MyOrders/myorders.dart';
 
 import '../app.dart';
 
@@ -56,7 +57,8 @@ class ProfileScreenState extends State<ProfileScreen> {
                       decoration: BoxDecoration(
                         color: Colors.red,
                         image: DecorationImage(
-                            image: NetworkImage('$picUrl'), fit: BoxFit.contain),
+                            image: NetworkImage('$picUrl'),
+                            fit: BoxFit.contain),
                         borderRadius: BorderRadius.all(Radius.circular(75.0)),
                         boxShadow: [
                           BoxShadow(blurRadius: 7.0, color: Colors.black)
@@ -89,7 +91,12 @@ class ProfileScreenState extends State<ProfileScreen> {
                         color: Colors.indigo,
                         elevation: 7.0,
                         child: GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MyOrders()));
+                          },
                           child: Center(
                             child: Text(
                               'My Orders',
