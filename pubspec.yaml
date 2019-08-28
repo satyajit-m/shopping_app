@@ -24,6 +24,7 @@ dependencies:
   geolocator: ^5.0.1
   dio: ^2.1.7
   sqflite: 1.1.6+2
+  flutter_upi: ^0.0.2
 
 
 
@@ -42,4 +43,6 @@ flutter:
     - assets/images/default.png
     - assets/images/logo.png
     - assets/images/google_logo.png
-
+    - assets/images/otp-icon.png
+    - assets/images/delete.png
+    - assets/images/success.png

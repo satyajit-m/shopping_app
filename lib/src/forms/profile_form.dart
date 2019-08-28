@@ -144,7 +144,7 @@ class ProfileFormState extends State<ProfileForm> {
                               DocumentReference user = Firestore.instance
                                   .collection("users")
                                   .document(currentUser.uid);
-                              var something = await Firestore.instance
+                              await Firestore.instance
                                   .runTransaction((transaction) async {
                                 await transaction.update(user, transactionMap);
                               });

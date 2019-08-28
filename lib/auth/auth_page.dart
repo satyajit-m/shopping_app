@@ -27,29 +27,28 @@ class AuthPageState extends State<AuthPage> {
     getUser();
   }
 
-  Future<dynamic> createUserDb() async {
+  Future createUserDb() async {
     user = await FirebaseAuth.instance.currentUser();
-
+    bool newuser = false;
     if (user != null) {
       Map<String, dynamic> transactionMap = {};
       DocumentReference dbUserRef =
           Firestore.instance.collection("users").document(user.uid);
-      var debugMe =
-          await Firestore.instance.runTransaction((transaction) async {
+      await Firestore.instance.runTransaction((transaction) async {
         DocumentSnapshot snapshot = await transaction.get(dbUserRef);
         if (!snapshot.exists) {
           await transaction.set(dbUserRef, transactionMap);
+          newuser = true;
         }
       });
-      return debugMe;
     }
+    return newuser;
   }
 
   Future<bool> _loginUser() async {
-    final api = await FBApi.signInWithGoogle();
+    FirebaseUser api = await signInWithGoogle();
     if (api != null) {
-      var debugMe = await createUserDb();
-      print("BHOSDK : " + debugMe.toString());
+      print(await createUserDb());
       return true;
     } else {
       return false;
@@ -81,7 +80,15 @@ class AuthPageState extends State<AuthPage> {
     }
 
     SizeConfig().init(context);
-
+    if (_isLoading) {
+      return SafeArea(
+        child: Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+    }
     return SafeArea(
       child: Container(
         decoration: BoxDecoration(color: PageColor),
@@ -122,15 +129,14 @@ class AuthPageState extends State<AuthPage> {
                           borderRadius: BorderRadius.circular(30.0),
                         ),
                         onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) => PhoneAuth(
-                              user: user,
-                            ),
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => PhoneAuth()),
                           );
                         },
                       ),
                     ),
+                    /*
                     Container(
                       color: TextBoxColor,
                       width: SizeConfig.blockSizeHorizontal * 60,
@@ -152,22 +158,17 @@ class AuthPageState extends State<AuthPage> {
                         ),
                         onPressed: () async {
                           setState(() => _isLoading = true);
+
                           bool b = await _loginUser();
+
                           setState(() => _isLoading = false);
 
                           if (b == true) {
                             Navigator.pushReplacementNamed(context, '/home');
-                          } else {
-                            Scaffold.of(context).showSnackBar(
-                              SnackBar(
-                                content:
-                                    Text("Something wrong with Google Sign In"),
-                              ),
-                            );
                           }
                         },
                       ),
-                    ),
+                    ),*/
                     FlatButton(
                       textColor: TextColor,
                       child: Text("Skip"),

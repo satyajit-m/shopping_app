@@ -1,24 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-class FBApi {
-  static FirebaseAuth _auth = FirebaseAuth.instance;
-  static GoogleSignIn _googleSignIn = GoogleSignIn();
-
-  FirebaseUser firebaseUser;
-
-  FBApi(FirebaseUser user) {
-    this.firebaseUser = user;
-  }
-
-  static Future<FBApi> signInWithGoogle() async {
+Future<FirebaseUser> signInWithGoogle() async {
     GoogleSignInAccount googleUser;
-    try {
-      googleUser = await _googleSignIn.signIn();
-    } on Exception catch(e) {
-      print("error caught : $e");
-    }
-    
+    googleUser = await _googleSignIn.signIn();
+    if (googleUser == null)
+      return null;
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
 
@@ -37,6 +26,5 @@ class FBApi {
     final FirebaseUser currentUser = await _auth.currentUser();
     assert(user.uid == currentUser.uid);
     
-    return FBApi(user);
+    return user;
   }
-}
