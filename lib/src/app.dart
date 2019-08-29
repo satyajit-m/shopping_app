@@ -5,9 +5,9 @@ https://stackoverflow.com/questions/45155104/displaying-notification-badge-on-bo
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shopping_app/src/screens/MyOrders/myorders.dart';
 
 import 'screens/home.dart';
-//import 'screens/profile.dart';
 import './screens/cart_tester.dart';
 import 'screens/help.dart';
 import 'package:bmnav/bmnav.dart' as bmnav;
@@ -47,26 +47,28 @@ class AppState extends State<App> {
       );
     }
 
-    return SafeArea(child:Scaffold(
-      body: PageStorage(
-        child: currentScreen,
-        bucket: bucket,
+    return SafeArea(
+      child: Scaffold(
+        body: PageStorage(
+          child: currentScreen,
+          bucket: bucket,
+        ),
+        bottomNavigationBar: bmnav.BottomNav(
+          onTap: (index) {
+            setState(() {
+              currentTab = index;
+              currentScreen = screens[index];
+            });
+          },
+          items: [
+            bmnav.BottomNavItem(Icons.home, label: 'Home'),
+            bmnav.BottomNavItem(Icons.location_on, label: 'Location'),
+            bmnav.BottomNavItem(Icons.person, label: 'profile'),
+          ],
+          iconStyle: bmnav.IconStyle(onSelectSize: 30.0),
+        ),
       ),
-      bottomNavigationBar: bmnav.BottomNav(
-        onTap: (index) {
-          setState(() {
-            currentTab = index;
-            currentScreen = screens[index];
-          });
-        },
-        items: [
-          bmnav.BottomNavItem(Icons.home, label: 'Home'),
-          bmnav.BottomNavItem(Icons.location_on, label: 'Location'),
-          bmnav.BottomNavItem(Icons.person, label: 'profile'),
-        ],
-        iconStyle: bmnav.IconStyle(onSelectSize: 30.0),
-      ),
-    ),);
+    );
   }
 
   void getUser() async {
@@ -75,7 +77,7 @@ class AppState extends State<App> {
     screens = [
       HomeScreen(),
       HelpScreen(),
-         ProfileScreen(),
+      ProfileScreen(),
       // Tester(
       //   user: user,
       // )

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shopping_app/auth/auth_page.dart';
+import 'package:shopping_app/src/screens/MyOrders/myorders.dart';
 
 import '../app.dart';
 
@@ -14,7 +15,7 @@ class ProfileScreen extends StatefulWidget {
 class ProfileScreenState extends State<ProfileScreen> {
   FirebaseUser user;
   String phone = " Login To Continue ";
-  String picUrl="";
+  String picUrl = "";
   bool _lOut = false;
   ProfileScreenState() {
     getUser();
@@ -36,7 +37,7 @@ class ProfileScreenState extends State<ProfileScreen> {
       body: Stack(
         children: <Widget>[
           ClipPath(
-            child: Container(color: Colors.black.withOpacity(0.8)),
+            child: Container(color: Colors.teal),
             clipper: getClipper(),
           ),
           Positioned(
@@ -47,24 +48,28 @@ class ProfileScreenState extends State<ProfileScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
+                    SizedBox(
+                      height: 5.0,
+                    ),
                     Container(
-                        width: 150.0,
-                        height: 150.0,
-                        decoration: BoxDecoration(
-                            color: Colors.red,
-                            image: DecorationImage(
-                                image: NetworkImage(
-                                    '$picUrl'),
-                                fit: BoxFit.cover),
-                            borderRadius: BorderRadius.all(Radius.circular(75.0)),
-                            boxShadow: [
-                              BoxShadow(blurRadius: 7.0, color: Colors.black)
-                            ])),
-                    SizedBox(height: 90.0),
+                      width: 150.0,
+                      height: 150.0,
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        image: DecorationImage(
+                            image: NetworkImage('$picUrl'),
+                            fit: BoxFit.contain),
+                        borderRadius: BorderRadius.all(Radius.circular(75.0)),
+                        boxShadow: [
+                          BoxShadow(blurRadius: 7.0, color: Colors.black)
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 75.0),
                     Text(
                       phone.toString(),
                       style: TextStyle(
-                          fontSize: 30.0,
+                          fontSize: 25.0,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Montserrat'),
                     ),
@@ -83,13 +88,18 @@ class ProfileScreenState extends State<ProfileScreen> {
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
                         shadowColor: Colors.greenAccent,
-                        color: Colors.green,
+                        color: Colors.indigo,
                         elevation: 7.0,
                         child: GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MyOrders()));
+                          },
                           child: Center(
                             child: Text(
-                              'Orders',
+                              'My Orders',
                               style: TextStyle(
                                   color: Colors.white,
                                   fontFamily: 'Montserrat'),
@@ -105,7 +115,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
                         shadowColor: Colors.redAccent,
-                        color: Colors.red,
+                        color: Colors.deepOrange,
                         elevation: 7.0,
                         child: GestureDetector(
                           onTap: () {
