@@ -124,8 +124,9 @@ class CartState extends State<Cart> {
   }
 
   Widget yesAddress() {
+    var fontSize = 16.0;
     String currentAddress = modify(Profile.profileToString(address));
-    double containerHeight = (currentAddress.split("\n").length + 5) * 25.0;
+    double containerHeight = (currentAddress.split("\n").length + 5) * fontSize * (0.3 + MediaQuery.textScaleFactorOf(context));
     return Container(
       height: containerHeight,
       padding: EdgeInsets.only(left: 10, right: 10, top: 10),
@@ -186,6 +187,7 @@ class CartState extends State<Cart> {
                     child: Text(
                       modify(Profile.profileToString(address)),
                       softWrap: true,
+                      style: TextStyle(fontSize: fontSize),
                     ),
                     alignment: Alignment.topLeft,
                   ),
