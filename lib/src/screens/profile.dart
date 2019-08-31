@@ -15,7 +15,8 @@ class ProfileScreen extends StatefulWidget {
 class ProfileScreenState extends State<ProfileScreen> {
   FirebaseUser user;
   String phone = " Login To Continue ";
-  String picUrl = "";
+  String picUrl;
+  bool _dataLoaded = false;
   bool _lOut = false;
   ProfileScreenState() {
     getUser();
@@ -23,22 +24,22 @@ class ProfileScreenState extends State<ProfileScreen> {
 
   Future getUser() async {
     user = await FirebaseAuth.instance.currentUser();
-    print(user);
     if (user != null) {
-      phone = user.displayName.toString();
-      picUrl = user.photoUrl.toString();
-      print(phone);
-      setState(() {});
+      phone = user.phoneNumber;
+      // picUrl = user.photoUrl.toString();
+      setState(() {
+        _dataLoaded =  true;
+      });
     }
   }
 
   Widget build(BuildContext context) {
-    return new Scaffold(
-      body: Stack(
+    return Scaffold(
+      body: _dataLoaded ? Stack(
         children: <Widget>[
           ClipPath(
             child: Container(color: Colors.teal),
-            clipper: getClipper(),
+            clipper: GetClipper(),
           ),
           Positioned(
             width: 350.0,
@@ -57,8 +58,8 @@ class ProfileScreenState extends State<ProfileScreen> {
                       decoration: BoxDecoration(
                         color: Colors.red,
                         image: DecorationImage(
-                            image: NetworkImage('$picUrl'),
-                            fit: BoxFit.contain),
+                             image: AssetImage('assets/images/default.png'),//(picUrl == null || picUrl.length == 0) ? AssetImage('assets/images/default.png') : NetworkImage(picUrl),
+                            fit: BoxFit.fill),
                         borderRadius: BorderRadius.all(Radius.circular(75.0)),
                         boxShadow: [
                           BoxShadow(blurRadius: 7.0, color: Colors.black)
@@ -92,10 +93,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                         elevation: 7.0,
                         child: GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MyOrders()));
+                            Navigator.pushNamed(context, '/profile/myOrders');
                           },
                           child: Center(
                             child: Text(
@@ -145,23 +143,20 @@ class ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ],
-      ),
+      ) : Center(child: CircularProgressIndicator()),
     );
   }
 
   void logOut() async {
     await FirebaseAuth.instance.signOut();
-    await Future.delayed(const Duration(seconds: 4));
-    Navigator.of(context).pop();
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => AuthPage()));
+    Navigator.pushReplacementNamed(context, '/');
   }
 }
 
-class getClipper extends CustomClipper<Path> {
+class GetClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-    var path = new Path();
+    var path = Path();
 
     path.lineTo(0.0, size.height / 2.2);
     path.lineTo(size.width + 125, 0.0);
