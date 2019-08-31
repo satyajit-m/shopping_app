@@ -106,7 +106,8 @@ class OtpPageState extends State<OtpPage> {
     }
   }
 
-  Future<void> createUserDb(currentUser) async {
+  Future<void> createUserDb(FirebaseUser currentUser) async {
+    print("DEBUG : " + currentUser.phoneNumber);
     if (currentUser != null) {
       Map<String, dynamic> transactionMap = {};
       DocumentReference dbUserRef =
@@ -133,7 +134,8 @@ class OtpPageState extends State<OtpPage> {
             IconButton(
               icon: Icon(Icons.check),
               onPressed: () {
-                Navigator.pushReplacementNamed(context, "/home");
+                Navigator.popUntil(context, ModalRoute.withName('/'));
+                Navigator.pushReplacementNamed(context, '/home');
               },
             )
           ],

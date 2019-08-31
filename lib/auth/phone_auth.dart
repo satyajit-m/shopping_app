@@ -117,7 +117,6 @@ class _PhoneAuthState extends State<PhoneAuth> {
                       child: new RaisedButton(
                         onPressed: () {
                           if (_formKey.currentState.validate()) {
-                            print("haha");
                             Navigator.push(
                               context,
                               MaterialPageRoute(

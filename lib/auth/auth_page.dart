@@ -129,10 +129,7 @@ class AuthPageState extends State<AuthPage> {
                           borderRadius: BorderRadius.circular(30.0),
                         ),
                         onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => PhoneAuth()),
-                          );
+                          Navigator.pushNamed(context, '/phoneAuth');
                         },
                       ),
                     ),
