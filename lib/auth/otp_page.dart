@@ -13,7 +13,7 @@ class OtpPage extends StatefulWidget {
 class OtpPageState extends State<OtpPage> {
   String verificationId;
   FirebaseUser user;
-  String _phoneCode = '91';
+  final String _phoneCode = '91';
 
   TextEditingController controller1 = TextEditingController();
   TextEditingController controller2 = TextEditingController();
@@ -62,7 +62,7 @@ class OtpPageState extends State<OtpPage> {
                 : <Widget>[
                     FlatButton(
                       onPressed: () {
-                        Navigator.popUntil(context, ModalRoute.withName('/'));
+                        Navigator.pushReplacementNamed(context, "/");
                       },
                       child: Text("Ok"),
                     )
@@ -133,7 +133,6 @@ class OtpPageState extends State<OtpPage> {
             IconButton(
               icon: Icon(Icons.check),
               onPressed: () {
-                Navigator.popUntil(context, ModalRoute.withName("/"));
                 Navigator.pushReplacementNamed(context, "/home");
               },
             )
