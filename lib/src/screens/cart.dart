@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:shopping_app/src/screens/payment_gateway.dart';
+import './payment/payment_gateway.dart';
 
 import '../models/sub_service_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
