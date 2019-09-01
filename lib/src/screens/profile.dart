@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:shopping_app/auth/auth_page.dart';
 import 'package:shopping_app/src/screens/MyOrders/myorders.dart';
 
-import '../app.dart';
 
 class ProfileScreen extends StatefulWidget {
   // FirebaseUser user;
@@ -25,7 +24,7 @@ class ProfileScreenState extends State<ProfileScreen> {
     user = await FirebaseAuth.instance.currentUser();
     print(user);
     if (user != null) {
-      phone = user.displayName.toString();
+      phone = user.phoneNumber.toString();
       picUrl = user.photoUrl.toString();
       print(phone);
       setState(() {});
@@ -55,15 +54,16 @@ class ProfileScreenState extends State<ProfileScreen> {
                       width: 150.0,
                       height: 150.0,
                       decoration: BoxDecoration(
-                        color: Colors.red,
-                        image: DecorationImage(
-                            image: NetworkImage('$picUrl'),
-                            fit: BoxFit.contain),
+                        color: Colors.lightBlue,
+                        
                         borderRadius: BorderRadius.all(Radius.circular(75.0)),
                         boxShadow: [
                           BoxShadow(blurRadius: 7.0, color: Colors.black)
                         ],
+                      
                       ),
+                      child: Image.asset(
+                        'assets/images/logo.png'),
                     ),
                     SizedBox(height: 75.0),
                     Text(
