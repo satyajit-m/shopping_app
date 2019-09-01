@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:shopping_app/src/screens/payment_gateway.dart';
+import './payment/payment_gateway.dart';
 
 import '../models/sub_service_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,7 +23,6 @@ class Cart extends StatefulWidget {
 }
 
 class CartState extends State<Cart> {
-
   Profile address;
   bool addressFetched = false;
   bool addressPresent = false;
@@ -43,6 +42,46 @@ class CartState extends State<Cart> {
   }
 
   Widget cartScreen(BuildContext context) {
+    return Scaffold(
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              expandedHeight: 200.0,
+              floating: true,
+              snap: true,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: Text(
+                  widget.service.name,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16.0,
+                  ),
+                ),
+                background: Image.network(
+                  "https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ];
+        },
+        body: ListView(
+          children: <Widget>[
+            ListTile(
+              title: Text("It is recommended to book this service 1 day in advance."),
+              enabled: true,
+            ),
+            addressFetched
+                ? (addressPresent ? yesAddress() : noAddress())
+                : loadingAddress(),
+          ],
+        ),
+      ),
+    );
+
     return SafeArea(
       child: ListView(
         shrinkWrap: true,
@@ -113,20 +152,17 @@ class CartState extends State<Cart> {
               ],
             ),
           ),
-          SizedBox(
-            height: 200,
-          ),
-          addressFetched
-              ? (addressPresent ? yesAddress() : noAddress())
-              : loadingAddress(),
         ],
       ),
     );
   }
 
   Widget yesAddress() {
+    var fontSize = 16.0;
     String currentAddress = modify(Profile.profileToString(address));
-    double containerHeight = (currentAddress.split("\n").length + 5) * 25.0;
+    double containerHeight = (currentAddress.split("\n").length + 5) *
+        fontSize *
+        (0.3 + MediaQuery.textScaleFactorOf(context));
     return Container(
       height: containerHeight,
       padding: EdgeInsets.only(left: 10, right: 10, top: 10),
@@ -187,6 +223,7 @@ class CartState extends State<Cart> {
                     child: Text(
                       modify(Profile.profileToString(address)),
                       softWrap: true,
+                      style: TextStyle(fontSize: fontSize),
                     ),
                     alignment: Alignment.topLeft,
                   ),
@@ -345,11 +382,11 @@ class CartState extends State<Cart> {
                               );
                             } else {
                               Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PaymentGateway()
-                                )
-                              );
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PaymentGateway(
+                                        price: widget.service.price.toDouble()),
+                                  ));
                             }
                           },
                           elevation: 1.5,
@@ -371,93 +408,5 @@ class CartState extends State<Cart> {
         ),
       ),
     );
-  }
-
-  paymentInvoke() async {
-    String response = await FlutterUpi.initiateTransaction(
-      app: FlutterUpiApps.PayTM,
-      pa: "9437462217@paytm",
-      pn: "Receiver Name",
-      mc: "YourMerchantId",       // optional
-      tr: "UniqueTransactionId",
-      tn: "This is a transaction Note",
-      am: "8.00",
-      cu: "INR",
-      url: "https://www.google.com",
-    );
-
-    print(response);
-    // FlutterUpiResponse flutterUpiResponse = FlutterUpiResponse(response);
-    // print(flutterUpiResponse.txnId); // prints transaction id
-    // print(flutterUpiResponse.txnRef); //prints transaction ref
-    // print(flutterUpiResponse.Status); //prints transaction status
-    // print(flutterUpiResponse.ApprovalRefNo); //prints approval reference number
-    // print(flutterUpiResponse.responseCode); //prints the response code
-  }
-}
-
-class FlutterUpiApps {
-  static const String PayTM = "net.one97.paytm";
-  static const String GooglePay = "com.google.android.apps.nbu.paisa.user";
-  static const String BHIMUPI = "in.org.npci.upiapp";
-  static const String PhonePe = "com.phonepe.app";
-  static const String MiPay = "com.mipay.wallet.in";
-  static const String AmazonPay = "in.amazon.mShop.android.shopping";
-  static const String TrueCallerUPI = "com.truecaller";
-  static const String MyAirtelUPI = "com.myairtelapp";
-}
-
-class FlutterUpiResponse {
-  String txnId;
-  String responseCode;
-  String ApprovalRefNo;
-  String Status;
-  String txnRef;
-
-  FlutterUpiResponse(String responseString) {
-    List<String> _parts = responseString.split('&');
-
-    for (int i = 0; i < _parts.length; ++i) {
-      String key = _parts[i].split('=')[0];
-      String value = _parts[i].split('=')[1];
-      if (key == "txnId") {
-        txnId = value;
-      } else if (key == "responseCode") {
-        responseCode = value;
-      } else if (key == "ApprovalRefNo") {
-        ApprovalRefNo = value;
-      } else if (key.toLowerCase() == "status") {
-        Status = value;
-      } else if (key == "txnRef") {
-        txnRef = value;
-      }
-    }
-  }
-}
-
-class FlutterUpi {
-  static const MethodChannel _channel = const MethodChannel('flutter_upi');
-  static Future<String> initiateTransaction(
-      {@required String app,
-      @required String pa,
-      @required String pn,
-      String mc,
-      @required String tr,
-      @required String tn,
-      @required String am,
-      @required String cu,
-      @required String url}) async {
-    final String response = await _channel.invokeMethod('initiateTransaction', {
-      "app": app,
-      'pa': pa,
-      'pn': pn,
-      'mc': mc,
-      'tr': tr,
-      'tn': tn,
-      'am': am,
-      'cu': cu,
-      'url': url
-    });
-    return response;
   }
 }

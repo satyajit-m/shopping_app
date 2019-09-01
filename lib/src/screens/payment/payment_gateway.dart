@@ -77,69 +77,76 @@ class PaymentGateway extends StatefulWidget {
 }
 
 class PaymentGatewayState extends State<PaymentGateway> {
+
+  final String _fixrUPI = "7540915155@paytm";
+
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: true,
-          title: Text("Payment"),
-        ),
-        body: ListView(
-          children: <Widget>[
-            ListTile(
-              title: Text("Google Pay"),
-              onTap: () async {
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        title: Text("Payment"),
+      ),
+      body: ListView(
+        children: <Widget>[
+          ListTile(
+            title: Text("Google Pay"),
+            onTap: () async {
+              String response = await UPI.initiateTransaction(
+                app: UPIApps.GooglePay,
+                pa: _fixrUPI,
+                pn: "Fixer Global",
+                tr: "1",
+                tn: "This is a transaction Note",
+                am: "1",
+                // mc: "YourMerchantId", // optional
+                cu: "INR",
+                url: "https://www.google.com",
+              );
+
+              print(response);
+            },
+          ),
+          ListTile(
+            title: Text("Amazon Pay"),
+            onTap: () async {
+              String response = await UPI.initiateTransaction(
+                app: UPIApps.AmazonPay,
+                pa: _fixrUPI,
+                pn: "Fixer Global",
+                tr: "2",
+                tn: "This is a transaction Note",
+                am: "1",
+                // mc: "YourMerchantId", // optional
+                cu: "INR",
+                url: "https://www.google.com",
+              );
+
+              print(response);
+            },
+          ),
+          ListTile(
+            title: Text("PhonePe"),
+            onTap: () async {
+              try {
                 String response = await UPI.initiateTransaction(
-                  app: UPIApps.GooglePay,
-                  pa: "mysterion@ybl",
-                  pn: "Debadutta Padhial",
-                  tr: "1",
+                  app: UPIApps.PhonePe,
+                  pa: _fixrUPI,
+                  pn: "Fixer Global",
+                  tr: "3",
                   tn: "This is a transaction Note",
                   am: "1",
                   // mc: "YourMerchantId", // optional
                   cu: "INR",
                   url: "https://www.google.com",
                 );
-
                 print(response);
-              },
-            ),
-            ListTile(
-              title: Text("Amazon Pay"),
-              onTap: () async {
-                String response = await UPI.initiateTransaction(
-                  app: UPIApps.AmazonPay,
-                  pa: "lunu1997@okhdfcbank",
-                  pn: "Debadutta Padhial",
-                  tr: "2",
-                  tn: "This is a transaction Note",
-                  am: "1",
-                  // mc: "YourMerchantId", // optional
-                  cu: "INR",
-                  url: "https://www.google.com",
-                );
-
-                print(response);
-              },
-            ),
-            ListTile(
-              title: Text("BHIM UPI"),
-              onTap: () async {
-                String response = await UPI.initiateTransaction(
-                  app: UPIApps.BHIMUPI,
-                  pa: "lunu1997-1@okhdfcbank",
-                  pn: "Debadutta Padhial",
-                  tr: "2",
-                  tn: "This is a transaction Note",
-                  am: "1",
-                  // mc: "YourMerchantId", // optional
-                  cu: "INR",
-                  url: "https://www.google.com",
-                );
-
-                print(response);
-              },
-            ),
-          ],
-        ));
+              } catch (e) {
+                print("UPI ERR : " + e.toString());
+              }
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
