@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import './phone_auth.dart';
 import '../src/models/profile_model.dart';
-import '../src/widgets/cube_grid.dart';
 import '../size_config.dart';
 import 'google_auth.dart';
 
@@ -70,10 +69,7 @@ class AuthPageState extends State<AuthPage> {
       return SafeArea(
         child: Scaffold(
           body: Center(
-            child: CubeGrid(
-              color: LogoColor,
-              size: MediaQuery.of(context).size.width * 0.90,
-            ),
+            child: CircularProgressIndicator(),
           ),
         ),
       );

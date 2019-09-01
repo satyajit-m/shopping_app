@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../widgets/cube_grid.dart';
 
 class HelpScreen extends StatefulWidget {
   // HelpScreen({ Key key }) : super(key: key);

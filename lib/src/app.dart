@@ -8,12 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:shopping_app/src/screens/MyOrders/myorders.dart';
 
 import 'screens/home.dart';
-import './screens/cart_tester.dart';
 import 'screens/help.dart';
 import 'package:bmnav/bmnav.dart' as bmnav;
 
 import 'screens/profile.dart';
-import 'widgets/cube_grid.dart';
 
 class App extends StatefulWidget {
   AppState createState() {
@@ -38,10 +36,7 @@ class AppState extends State<App> {
         child: Scaffold(
           extendBody: true,
           body: Center(
-            child: CubeGrid(
-              color: Colors.orange,
-              size: MediaQuery.of(context).size.width * 0.90,
-            ),
+            child: CircularProgressIndicator(),
           ),
         ),
       );
@@ -75,7 +70,7 @@ class AppState extends State<App> {
     print("tryin to get Current User");
     user = await FirebaseAuth.instance.currentUser();
     screens = [
-      MyOrders(),
+      HomeScreen(),
       HelpScreen(),
       ProfileScreen(),
       // Tester(
