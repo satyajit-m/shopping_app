@@ -55,18 +55,19 @@ class OtpPageState extends State<OtpPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-            title: Text(title),
-            content: Text(content),
-            actions: recoverable
-                ? []
-                : <Widget>[
-                    FlatButton(
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(context, "/");
-                      },
-                      child: Text("Ok"),
-                    )
-                  ]);
+          title: Text(title),
+          content: Text(content),
+          actions: recoverable
+              ? []
+              : <Widget>[
+                  FlatButton(
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, "/");
+                    },
+                    child: Text("Ok"),
+                  )
+                ],
+        );
       },
     );
   }

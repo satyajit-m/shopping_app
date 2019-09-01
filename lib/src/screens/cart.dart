@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter/cupertino.dart';
 
 import './payment/payment_gateway.dart';
 
 import '../models/sub_service_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
-import '../widgets/cube_grid.dart';
 import '../models/profile_model.dart';
 import './order.dart';
 
@@ -27,7 +28,30 @@ class CartState extends State<Cart> {
   bool addressFetched = false;
   bool addressPresent = false;
 
+  var serviceDate;
+
   var _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  Future<DateTime> datePicker(BuildContext ctxt) async {
+    DateTime returnValue;
+    DateTime currentTime = DateTime.now();
+    await showModalBottomSheet(
+      context: ctxt,
+      builder: (ctxt) {
+        return CupertinoDatePicker(
+          mode: CupertinoDatePickerMode.dateAndTime,
+          use24hFormat: false,
+          initialDateTime: currentTime,
+          maximumDate: currentTime.add(Duration(days: 7)),
+          minimumDate: currentTime,
+          onDateTimeChanged: (value) {
+            returnValue = value;
+          },
+        );
+      },
+    );
+    return returnValue;
+  }
 
   void getAddress() async {
     final DocumentSnapshot result =
@@ -47,9 +71,10 @@ class CartState extends State<Cart> {
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
+              elevation: 10,
+              forceElevated: true,
               expandedHeight: 200.0,
               floating: true,
-              snap: true,
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
                 centerTitle: true,
@@ -69,90 +94,38 @@ class CartState extends State<Cart> {
           ];
         },
         body: ListView(
+          padding: EdgeInsets.only(left: 10, right: 10, top: 20),
           children: <Widget>[
-            ListTile(
-              title: Text("It is recommended to book this service 1 day in advance."),
-              enabled: true,
+            Card(
+              child: ListTile(
+                title: Text(
+                  "It is recommended to book this service atleast 1 day in advance.",
+                ),
+                enabled: true,
+              ),
+            ),
+            Card(
+              child: ListTile(
+                leading: serviceDate == null
+                    ? Icon(
+                        Icons.warning,
+                        color: Colors.red,
+                      )
+                    : null,
+                title: Text(
+                    serviceDate == null ? "Pick a service date" : serviceDate),
+                onTap: () async {
+                  serviceDate = (await datePicker(context)).toIso8601String();
+                  print(serviceDate);
+                  setState(() {});
+                },
+              ),
             ),
             addressFetched
                 ? (addressPresent ? yesAddress() : noAddress())
                 : loadingAddress(),
           ],
         ),
-      ),
-    );
-
-    return SafeArea(
-      child: ListView(
-        shrinkWrap: true,
-        children: <Widget>[
-          Container(
-            height: 250,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Stack(
-                  children: [
-                    Stack(
-                      children: <Widget>[
-                        Container(
-                          height: 250,
-                          width: double.infinity,
-                        ),
-                        Container(
-                          height: 250.0,
-                          width: double.infinity,
-                          color: Colors.orange[700],
-                        ),
-                        Positioned(
-                          bottom: 60.0,
-                          right: 100.0,
-                          child: Container(
-                            height: 400,
-                            width: 400.0,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(200.0),
-                              color: Colors.orange[500],
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 110.0,
-                          left: 150.0,
-                          child: Container(
-                              height: 300.0,
-                              width: 300.0,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(150.0),
-                                  color: Colors.orange.withOpacity(0.5))),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 15.0),
-                          child: IconButton(
-                            alignment: Alignment.topLeft,
-                            icon: Icon(Icons.arrow_back),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ),
-                        Positioned(
-                          top: 75.0,
-                          left: 15.0,
-                          child: Text(
-                            widget.service.name,
-                            style: TextStyle(
-                                fontSize: 30.0, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -165,7 +138,7 @@ class CartState extends State<Cart> {
         (0.3 + MediaQuery.textScaleFactorOf(context));
     return Container(
       height: containerHeight,
-      padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+      padding: EdgeInsets.only(top: 10),
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -239,7 +212,7 @@ class CartState extends State<Cart> {
   Widget noAddress() {
     return Container(
       height: 64,
-      padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+      padding: EdgeInsets.only(top: 10),
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -304,14 +277,12 @@ class CartState extends State<Cart> {
     return Card(
       elevation: 2,
       child: Container(
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.only(top: 10, bottom: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Center(
-              child: CubeGrid(
-                color: Colors.green,
-              ),
+              child: CircularProgressIndicator(),
             )
           ],
         ),
@@ -363,7 +334,9 @@ class CartState extends State<Cart> {
                               Text(
                                 "Final Pricing will be based on inspection",
                                 style: TextStyle(
-                                    fontWeight: FontWeight.w300, fontSize: 10),
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 10,
+                                ),
                               ),
                             ],
                           ),
