@@ -75,7 +75,7 @@ class AppState extends State<App> {
     print("tryin to get Current User");
     user = await FirebaseAuth.instance.currentUser();
     screens = [
-      HomeScreen(),
+      MyOrders(),
       HelpScreen(),
       ProfileScreen(),
       // Tester(
