@@ -6,6 +6,8 @@ class MyOrders extends StatefulWidget {
 }
 
 class _MyOrdersState extends State<MyOrders> {
+  double h, w;
+
   List<Map> nm = [
     {
       'oid': '12',
@@ -24,55 +26,126 @@ class _MyOrdersState extends State<MyOrders> {
       'sts': 'Failed'
     }
   ];
-  List<String> name = ["SM1", "SM2"];
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Container(
+    h = MediaQuery.of(context).size.height;
+    w = MediaQuery.of(context).size.width;
+    return Scaffold(
+      body: SafeArea(
+        child: Container(
           child: Column(
             children: <Widget>[
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.04,
+                height: h * 0.04,
               ),
               Container(
                 alignment: Alignment(-1.0, -1.0),
-                padding: EdgeInsets.only(left: 15.0),
-                child: Text(
-                  "My Orders",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30.0,
-                  ),
+                padding: EdgeInsets.only(left: 10.0),
+                child: Row(
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Icon(
+                        Icons.chevron_left,
+                        color: Colors.blue,
+                        size: h * 0.054,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                    Text(
+                      "My Orders",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30.0,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.04,
+                height: h * 0.04,
               ),
-              Container(
-                alignment: Alignment(-1.0, -1.0),
-                padding: EdgeInsets.only(left: 15.0),
-                child: Container(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.greenAccent,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15.0),
-                      ),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          top: 3.0, bottom: 3.0, left: 10.0, right: 10.0),
-                      child: const Text(
-                        'All Orders',
-                        style: TextStyle(fontSize: 20.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  SizedBox(),
+                  Container(
+                    //alignment: Alignment(-1.0, -1.0),
+                    child: Container(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              top: 3.0, bottom: 3.0, left: 7.0, right: 7.0),
+                          child: const Text(
+                            'All Orders',
+                            style:
+                                TextStyle(fontSize: 20.0, color: Colors.white),
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                  Container(
+                    //alignment: Alignment(-1.0, -1.0),
+                    padding: EdgeInsets.only(left: 15.0),
+                    child: Container(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              top: 3.0, bottom: 3.0, left: 7.0, right: 7.0),
+                          child: const Text(
+                            'Success',
+                            style:
+                                TextStyle(fontSize: 20.0, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    //alignment: Alignment(-1.0, -1.0),
+                    padding: EdgeInsets.only(left: 15.0),
+                    child: Container(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              top: 3.0, bottom: 3.0, left: 7.0, right: 7.0),
+                          child: const Text(
+                            'Failed',
+                            style:
+                                TextStyle(fontSize: 20.0, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(),
+                ],
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.04,
+                height: h * 0.04,
               ),
               Container(
                 margin: EdgeInsets.only(right: 10.0, left: 10.0),
@@ -127,7 +200,8 @@ class _MyOrdersState extends State<MyOrders> {
                           ),
                         ),
                         decoration: BoxDecoration(
-                          border: new Border.all(color: Colors.grey),
+                          color: Color(0xffDBF2FE),
+                          border: new Border.all(color: Colors.grey[300]),
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
                       ),
