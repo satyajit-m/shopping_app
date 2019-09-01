@@ -97,6 +97,7 @@ class CartState extends State<Cart> {
           padding: EdgeInsets.only(left: 10, right: 10, top: 20),
           children: <Widget>[
             Card(
+              elevation: 2,
               child: ListTile(
                 title: Text(
                   "It is recommended to book this service atleast 1 day in advance.",
@@ -105,6 +106,7 @@ class CartState extends State<Cart> {
               ),
             ),
             Card(
+              elevation: 10,
               child: InkWell(
                 child: ListTile(
                   leading: serviceDate == null
@@ -357,6 +359,18 @@ class CartState extends State<Cart> {
                                   content: Text("Please add your Address"),
                                 ),
                               );
+                            } else if (serviceDate == null) {
+                              _scaffoldKey.currentState.showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    "Please choose time and date for the service.",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
                             } else {
                               Navigator.push(
                                 context,
@@ -370,7 +384,7 @@ class CartState extends State<Cart> {
                             }
                           },
                           elevation: 1.5,
-                          color: Colors.red,
+                          color: Colors.orange,
                           child: Center(
                             child: Text(
                               'Pay Now',
