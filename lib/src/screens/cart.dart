@@ -22,7 +22,6 @@ class Cart extends StatefulWidget {
 }
 
 class CartState extends State<Cart> {
-
   Profile address;
   bool addressFetched = false;
   bool addressPresent = false;
@@ -42,6 +41,46 @@ class CartState extends State<Cart> {
   }
 
   Widget cartScreen(BuildContext context) {
+    return Scaffold(
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              expandedHeight: 200.0,
+              floating: true,
+              snap: true,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: Text(
+                  widget.service.name,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16.0,
+                  ),
+                ),
+                background: Image.network(
+                  "https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ];
+        },
+        body: ListView(
+          children: <Widget>[
+            ListTile(
+              title: Text("It is recommended to book this service 1 day in advance."),
+              enabled: true,
+            ),
+            addressFetched
+                ? (addressPresent ? yesAddress() : noAddress())
+                : loadingAddress(),
+          ],
+        ),
+      ),
+    );
+
     return SafeArea(
       child: ListView(
         shrinkWrap: true,
@@ -112,12 +151,6 @@ class CartState extends State<Cart> {
               ],
             ),
           ),
-          SizedBox(
-            height: 200,
-          ),
-          addressFetched
-              ? (addressPresent ? yesAddress() : noAddress())
-              : loadingAddress(),
         ],
       ),
     );
@@ -126,7 +159,9 @@ class CartState extends State<Cart> {
   Widget yesAddress() {
     var fontSize = 16.0;
     String currentAddress = modify(Profile.profileToString(address));
-    double containerHeight = (currentAddress.split("\n").length + 5) * fontSize * (0.3 + MediaQuery.textScaleFactorOf(context));
+    double containerHeight = (currentAddress.split("\n").length + 5) *
+        fontSize *
+        (0.3 + MediaQuery.textScaleFactorOf(context));
     return Container(
       height: containerHeight,
       padding: EdgeInsets.only(left: 10, right: 10, top: 10),
@@ -346,11 +381,11 @@ class CartState extends State<Cart> {
                               );
                             } else {
                               Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PaymentGateway()
-                                )
-                              );
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PaymentGateway(
+                                        price: widget.service.price.toDouble()),
+                                  ));
                             }
                           },
                           elevation: 1.5,
