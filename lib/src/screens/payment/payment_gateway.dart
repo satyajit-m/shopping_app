@@ -5,7 +5,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import './confirmation.dart';
 
-const delay = 0;
+const delay = 5;
 
 class UPIApps {
   static const String PayTM = "net.one97.paytm";
