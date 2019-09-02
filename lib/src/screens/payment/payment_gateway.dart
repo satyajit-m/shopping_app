@@ -143,7 +143,7 @@ class PaymentGatewayState extends State<PaymentGateway> {
   }
 
   final String _fixrUPI = "mysterion@ybl";
-  Map<String, dynamic> _tDetails = {};
+  Map<String, dynamic> _tDetails = {"responseStatus" : "none", "responseMsg" : ""};
   String _tid;
 
   Widget build(BuildContext context) {
@@ -219,15 +219,17 @@ class PaymentGatewayState extends State<PaymentGateway> {
                       }
 
                       if (status) {
-                        Navigator.of(context).pushReplacement(
+                        Navigator.of(context).popUntil(ModalRoute.withName("/home"));
+                        Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => Confirmation(
-                              data: null,
+                              tid: _tid,
+                              user: user,
                             ),
                           ),
                         );
                       } else {
-                        Navigator.pop(context);
+                        Navigator.of(context, rootNavigator: true).pop();
                       }
                     },
                   ),
