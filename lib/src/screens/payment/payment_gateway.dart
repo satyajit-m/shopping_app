@@ -1,5 +1,13 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:shopping_app/src/utils/beautiful_date.dart';
+import '../../models/sub_service_model.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/random_string.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
@@ -74,18 +82,38 @@ class UPI {
 }
 
 class PaymentGateway extends StatefulWidget {
-  final double price;
-  PaymentGateway({Key key, @required this.price});
+  final SubServiceModel service;
+  final DateTime serviceDate;
+
+  PaymentGateway({Key key, @required this.service, @required this.serviceDate});
 
   State<PaymentGateway> createState() {
-    return PaymentGatewayState(price);
+    return PaymentGatewayState();
   }
 }
 
 class PaymentGatewayState extends State<PaymentGateway> {
-  final double price;
+  FirebaseUser user;
 
-  PaymentGatewayState(this.price);
+  bool _debug_payment = true;
+
+  void initState() {
+    fetchUser();
+    super.initState();
+  }
+
+  fetchUser() async {
+    user = await FirebaseAuth.instance.currentUser();
+    assert(user != null);
+  }
+
+  PaymentGatewayState() {
+    Random provider = Random.secure();
+    _tid = randomAlpha(
+      32,
+      provider: CoreProvider.from(provider),
+    );
+  }
 
   Future<bool> interruptMessage(
       String title, String msg, bool recoverable, BuildContext context) {
@@ -115,7 +143,8 @@ class PaymentGatewayState extends State<PaymentGateway> {
   }
 
   final String _fixrUPI = "mysterion@ybl";
-  var _transactionDetails = "";
+  Map<String, dynamic> _tDetails = {"responseStatus" : "none", "responseMsg" : ""};
+  String _tid;
 
   Widget build(BuildContext context) {
     return SafeArea(
@@ -136,7 +165,7 @@ class PaymentGatewayState extends State<PaymentGateway> {
                 forceElevated: true,
                 flexibleSpace: FlexibleSpaceBar(
                   title: Text(
-                    "Paying ₹" + widget.price.toString(),
+                    "Paying ₹" + widget.service.price.toString(),
                     style: TextStyle(color: Colors.black54),
                   ),
                   background: Image.asset("assets/images/upi.png"),
@@ -153,46 +182,66 @@ class PaymentGatewayState extends State<PaymentGateway> {
                   child: ListTile(
                     title: Text("Google Pay"),
                     onTap: () async {
-                      // String response = await UPI.initiateTransaction(
-                      //   app: UPIApps.GooglePay,
-                      //   pa: _fixrUPI,
-                      //   pn: "Fixer Global",
-                      //   tr: "1",
-                      //   tn: "This is a transaction Note",
-                      //   am: "1",
-                      //   // mc: "YourMerchantId", // optional
-                      //   cu: "INR",
-                      //   url: "https://www.google.com",
-                      // );
                       makePageWait("Waiting for payment", context);
+
                       bool status = await makePayment();
+
+                      _tDetails["orderdate"] = DateTime.now().toString();
+                      _tDetails["bookingdateandtime"] =
+                          widget.serviceDate.toString();
+
                       if (status) {
-                        bool _datapushed =
-                            await _pushCriticalData(_transactionDetails);
-                        if (!_datapushed) {
-                          Navigator.of(context, rootNavigator: true).pop();
-                          await interruptMessage(
-                            "Sorry",
-                            "Something went wrong, if money was deducted from your account, we will refund it within 24 hours.",
-                            false,
-                            context,
-                          );
-                        } else {
-                          Navigator.of(context, rootNavigator: true).pop();
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) => Confirmation(
-                                data: null,
-                              ),
-                            ),
-                          );
-                        }
+                        _tDetails["status"] = "success";
+                        _tDetails["paymentdetails"] =
+                            "HelloThisIsHDFCBank,ThisUserPaidYouMoneyAndYouHaveNothingToWorryAbout";
                       } else {
-                        String msg = "Something went wrong";
-                        interruptMessage("Unsuccessful", msg, true, context);
+                        _tDetails["status"] = "failure";
+                        _tDetails["paymentdetails"] =
+                            "HelloThisIsHDFCBank,ThisMuthaFuckkaTriedToGlitchYourApp,ButWeDidn'tLetHim";
+
+                        await interruptMessage("Unsuccessful",
+                            "Something went wrong", true, context);
+                      }
+
+                      bool _datapushed = await _pushCriticalData();
+
+                      Navigator.of(context, rootNavigator: true)
+                          .pop(); //for makePageWait
+
+
+                      if (!_datapushed) {
+                        await interruptMessage(
+                          "Sorry",
+                          "Something went wrong, if money was deducted from your account, we will refund it within 24 hours.",
+                          false,
+                          context,
+                        );
+                      }
+
+                      if (status) {
+                        Navigator.of(context).popUntil(ModalRoute.withName("/home"));
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => Confirmation(
+                              tid: _tid,
+                              user: user,
+                            ),
+                          ),
+                        );
+                      } else {
+                        Navigator.of(context, rootNavigator: true).pop();
                       }
                     },
                   ),
+                ),
+                RaisedButton(
+                  child: Text("PAYMENT WILL BE : " + (_debug_payment
+                      ? "SUCCESS"
+                      : "FAIL")),
+                      onPressed: () {
+                        _debug_payment = !_debug_payment;
+                        setState(() {});
+                      },
                 ),
               ],
             ),
@@ -207,7 +256,19 @@ class PaymentGatewayState extends State<PaymentGateway> {
     await Future.delayed(
       Duration(seconds: delay),
     );
-    return true;
+    // String response = await UPI.initiateTransaction(
+    //   app: UPIApps.GooglePay,
+    //   pa: _fixrUPI,
+    //   pn: "Fixer Global",
+    //   tr: "1",
+    //   tn: "This is a transaction Note",
+    //   am: "1",
+    //   // mc: "YourMerchantId", // optional
+    //   cu: "INR",
+    //   url: "https://www.google.com",
+    // );
+    //add this is payments. Probably generate this in constructor
+    return _debug_payment;
   }
 
   //requires the page to explicitly pop this from Navigator
@@ -230,10 +291,26 @@ class PaymentGatewayState extends State<PaymentGateway> {
     );
   }
 
-  //TODO: Implement this
-  Future<bool> _pushCriticalData(transactionDetails) async {
-    await Future.delayed(
-      Duration(seconds: 0),
+  Future<bool> _pushCriticalData() async {
+    // await Future.delayed(
+    //   Duration(seconds: delay),
+    // );
+
+    DocumentReference newOrderRef = Firestore.instance
+        .collection("users")
+        .document(user.uid)
+        .collection("orders")
+        .document(_tid);
+    await Firestore.instance.runTransaction(
+      (transaction) async {
+        DocumentSnapshot snapshot = await transaction.get(newOrderRef);
+        if (!snapshot.exists) {
+          await transaction.set(newOrderRef, _tDetails);
+        } else {
+          throw Exception(
+              "Order ID Already present. Use a better random string generator");
+        }
+      },
     );
     return true;
   }

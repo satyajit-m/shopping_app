@@ -1,13 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Confirmation extends StatefulWidget {
   //TODO: make this something fixed
-  final dynamic data;
-  Confirmation({Key key, @required this.data});
+  final String tid;
+  final FirebaseUser user;
+  Confirmation({Key key, @required this.tid, @required this.user});
   State<Confirmation> createState() => ConfirmationState();
 }
 
 class ConfirmationState extends State<Confirmation> {
+  // 0 -> loading
+  // 1 -> approved
+  // 2 -> disapproved
+  int ico = 0;
+
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
@@ -16,9 +24,8 @@ class ConfirmationState extends State<Confirmation> {
             return <Widget>[
               SliverAppBar(
                 automaticallyImplyLeading: true,
-                floating: true,
-                snap: true,
                 pinned: true,
+                floating: true,
                 elevation: 10,
                 forceElevated: true,
                 flexibleSpace: FlexibleSpaceBar(
@@ -29,7 +36,6 @@ class ConfirmationState extends State<Confirmation> {
               ),
             ];
           },
-          //TODO: Add StreamBuilder
           body: Container(
             color: Colors.teal[100],
             child: ListView(
@@ -42,18 +48,58 @@ class ConfirmationState extends State<Confirmation> {
                 SizedBox(
                   height: 50,
                 ),
-                Card(
-                  child: Container(
-                    padding: EdgeInsets.only(
-                        top: 30, bottom: 30, left: 20, right: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        CircularProgressIndicator(),
-                        Text("Waiting for service confirmation"),
-                      ],
-                    ),
-                  ),
+                StreamBuilder(
+                  stream: Firestore.instance
+                      .collection("users")
+                      .document(widget.user.uid)
+                      .collection("orders")
+                      .document(widget.tid)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    String text = "Waiting for service confirmation";
+
+                    if (!snapshot.hasData) {
+                      text = "loading...";
+                    } else {
+                      Map<String, dynamic> data = snapshot.data.data;
+                      assert(snapshot.data.exists == true);
+                      if (data["responseStatus"] != "none") {
+                        if (data["responseStatus"] == "yes") {
+                          ico = 1;
+                        } else {
+                          ico = 2;
+                        }
+                        text = data["responseMsg"];
+                      }
+                    }
+
+                    return Card(
+                      semanticContainer: false,
+                      elevation: 10,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          top: 10,
+                          bottom: 10,
+                          left: 5,
+                          right: 5,
+                        ),
+                        child: ListTile(
+                          leading: (ico == 0
+                              ? CircularProgressIndicator()
+                              : (ico == 1
+                                  ? Icon(
+                                      Icons.check_circle,
+                                      color: Colors.green,
+                                    )
+                                  : Icon(
+                                      Icons.cancel,
+                                      color: Colors.red,
+                                    ))),
+                          title: Text(text),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

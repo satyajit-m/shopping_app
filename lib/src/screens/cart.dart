@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter/cupertino.dart';
+
+import '../utils/beautiful_date.dart';
 
 import './payment/payment_gateway.dart';
 
 import '../models/sub_service_model.dart';
 
 import '../models/profile_model.dart';
-import './order.dart';
 
 class Cart extends StatefulWidget {
   final SubServiceModel service;
@@ -28,20 +27,21 @@ class CartState extends State<Cart> {
   bool addressFetched = false;
   bool addressPresent = false;
 
-  var serviceDate;
+  DateTime serviceDate;
 
   var _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  Future<DateTime> datePicker(BuildContext ctxt) async {
+  Future<DateTime> datePicker(BuildContext ctxt, DateTime initTime) async {
     DateTime returnValue;
     DateTime currentTime = DateTime.now();
+    if (initTime == null) initTime = DateTime.now().add(Duration(hours: 1));
     await showModalBottomSheet(
       context: ctxt,
       builder: (ctxt) {
         return CupertinoDatePicker(
           mode: CupertinoDatePickerMode.dateAndTime,
           use24hFormat: false,
-          initialDateTime: currentTime,
+          initialDateTime: initTime,
           maximumDate: currentTime.add(Duration(days: 7)),
           minimumDate: currentTime,
           onDateTimeChanged: (value) {
@@ -97,6 +97,7 @@ class CartState extends State<Cart> {
           padding: EdgeInsets.only(left: 10, right: 10, top: 20),
           children: <Widget>[
             Card(
+              elevation: 2,
               child: ListTile(
                 title: Text(
                   "It is recommended to book this service atleast 1 day in advance.",
@@ -105,18 +106,23 @@ class CartState extends State<Cart> {
               ),
             ),
             Card(
-              child: ListTile(
-                leading: serviceDate == null
-                    ? Icon(
-                        Icons.warning,
-                        color: Colors.red,
-                      )
-                    : null,
-                title: Text(
-                    serviceDate == null ? "Pick a service date" : serviceDate),
+              elevation: 10,
+              child: InkWell(
+                child: ListTile(
+                  leading: serviceDate == null
+                      ? Icon(
+                          Icons.warning,
+                          color: Colors.red,
+                        )
+                      : null,
+                  title: Text(
+                    serviceDate == null
+                        ? "Pick a service date"
+                        : beautifulDate(serviceDate),
+                  ),
+                ),
                 onTap: () async {
-                  serviceDate = (await datePicker(context)).toIso8601String();
-                  print(serviceDate);
+                  serviceDate = await datePicker(context, serviceDate);
                   setState(() {});
                 },
               ),
@@ -353,17 +359,32 @@ class CartState extends State<Cart> {
                                   content: Text("Please add your Address"),
                                 ),
                               );
+                            } else if (serviceDate == null) {
+                              _scaffoldKey.currentState.showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    "Please choose time and date for the service.",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
                             } else {
                               Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PaymentGateway(
-                                        price: widget.service.price.toDouble()),
-                                  ));
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PaymentGateway(
+                                    service: widget.service,
+                                    serviceDate: serviceDate,
+                                  ),
+                                ),
+                              );
                             }
                           },
                           elevation: 1.5,
-                          color: Colors.red,
+                          color: Colors.orange,
                           child: Center(
                             child: Text(
                               'Pay Now',
