@@ -39,46 +39,71 @@ class ServicesCatState extends State<ServicesCat> {
                 child: CircularProgressIndicator(),
               )
             : ListView.builder(
+                itemCount: subs.length,
                 itemBuilder: (context, position) {
-                  return Card(
-                    elevation: 5.0,
+                  return Container(
+                    margin: const EdgeInsets.all(1),
+                    padding: const EdgeInsets.all(1),
                     child: InkWell(
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => Cart(
-                                service: SubServiceModel(
-                                    subs[position], subsPrice[position], subs),
-                                user: user,
-                              ),
+                              service: SubServiceModel(
+                                  subs[position], subsPrice[position], subs),
+                              user: user,
+                            ),
                           ),
                         );
                       },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Container(
-                            padding: EdgeInsets.fromLTRB(20.0, 0, 0, 0),
-                            child: Image.network(subsImg[position]),
-                            height: 100,
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(20.0),
-                            child: Text(
-                              subs[position],
-                              style: TextStyle(fontSize: 18.0),
-                            ),
-                          ),
-                        ],
+                      child: ListTile(
+                        //leading: FlutterLogo(size: 72.0),
+                        title: Container(
+                          child: Text('${subs[position]}'),
+                        ),
+                        subtitle: Container(child: Divider(),),
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: Colors.blue,
+                          size: 40.0,
+                        ),
                       ),
+                      
                     ),
                   );
                 },
-                itemCount: subs.length,
               ),
       ),
     );
   }
+
+  //      return Card(
+  //        elevation: 5.0,
+
+  //         child: Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //           children: <Widget>[
+  //             Container(
+  //               padding: EdgeInsets.fromLTRB(20.0, 0, 0, 0),
+  //               child: Image.network(subsImg[position]),
+  //               height: 100,
+  //             ),
+  //             Container(
+  //               padding: EdgeInsets.all(20.0),
+  //               child: Text(
+  //                 subs[position],
+  //                 style: TextStyle(fontSize: 18.0),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     );
+  //   },
+  //   itemCount: subs.length,
+  // ),
+  // ),
+  //);
 
   void getsubs(String something) async {
     user = await FirebaseAuth.instance.currentUser();
