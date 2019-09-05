@@ -119,7 +119,7 @@ class PaymentGatewayState extends State<PaymentGateway> {
 
   PaymentGatewayState() {
     Random provider = Random.secure();
-    _tid = randomAlpha(
+    _tid = randomAlphaNumeric(
       32,
       provider: CoreProvider.from(provider),
     );
