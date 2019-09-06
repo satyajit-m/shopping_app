@@ -13,7 +13,9 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import './confirmation.dart';
 
-const delay = 5;
+const _debugPrice = true;
+const _fixrUrl = "https://fixr.netlify.com/";
+const _payeeName = "Fixr Global";
 
 class UPIApps {
   static const String PayTM = "net.one97.paytm";
@@ -51,6 +53,16 @@ class UPIResponse {
         txnRef = value;
       }
     }
+  }
+
+  static toMap(UPIResponse res) {
+    Map<String, String> returnData = {};
+    returnData["txnId"] = res.txnId ?? "";
+    returnData["responseCode"] = res.responseCode ?? "";
+    returnData["approvalRefNo"] = res.approvalRefNo ?? "";
+    returnData["status"] = res.status ?? "";
+    returnData["txnRef"] = res.txnRef ?? "";
+    return returnData;
   }
 }
 
@@ -95,8 +107,6 @@ class PaymentGateway extends StatefulWidget {
 class PaymentGatewayState extends State<PaymentGateway> {
   FirebaseUser user;
 
-  bool _debug_payment = true;
-
   void initState() {
     fetchUser();
     super.initState();
@@ -109,7 +119,7 @@ class PaymentGatewayState extends State<PaymentGateway> {
 
   PaymentGatewayState() {
     Random provider = Random.secure();
-    _tid = randomAlpha(
+    _tid = randomAlphaNumeric(
       32,
       provider: CoreProvider.from(provider),
     );
@@ -142,8 +152,11 @@ class PaymentGatewayState extends State<PaymentGateway> {
     );
   }
 
-  final String _fixrUPI = "mysterion@ybl";
-  Map<String, dynamic> _tDetails = {"responseStatus" : "none", "responseMsg" : ""};
+  final String _fixrUPI = "7540915155@paytm";
+  Map<String, dynamic> _tDetails = {
+    "responseStatus": "none",
+    "responseMsg": ""
+  };
   String _tid;
 
   Widget build(BuildContext context) {
@@ -175,100 +188,29 @@ class PaymentGatewayState extends State<PaymentGateway> {
           },
           body: Container(
             color: Colors.teal[100],
-            child: ListView(
-              padding: EdgeInsets.only(left: 10, right: 10, top: 10),
-              children: <Widget>[
-                Card(
-                  child: ListTile(
-                    title: Text("Google Pay"),
-                    onTap: () async {
-                      makePageWait("Waiting for payment", context);
-
-                      bool status = await makePayment();
-
-                      _tDetails["orderdate"] = DateTime.now().toString();
-                      _tDetails["bookingdateandtime"] =
-                          widget.serviceDate.toString();
-
-                      if (status) {
-                        _tDetails["status"] = "success";
-                        _tDetails["paymentdetails"] =
-                            "HelloThisIsHDFCBank,ThisUserPaidYouMoneyAndYouHaveNothingToWorryAbout";
-                      } else {
-                        _tDetails["status"] = "failure";
-                        _tDetails["paymentdetails"] =
-                            "HelloThisIsHDFCBank,ThisMuthaFuckkaTriedToGlitchYourApp,ButWeDidn'tLetHim";
-
-                        await interruptMessage("Unsuccessful",
-                            "Something went wrong", true, context);
-                      }
-
-                      bool _datapushed = await _pushCriticalData();
-
-                      Navigator.of(context, rootNavigator: true)
-                          .pop(); //for makePageWait
-
-
-                      if (!_datapushed) {
-                        await interruptMessage(
-                          "Sorry",
-                          "Something went wrong, if money was deducted from your account, we will refund it within 24 hours.",
-                          false,
-                          context,
-                        );
-                      }
-
-                      if (status) {
-                        Navigator.of(context).popUntil(ModalRoute.withName("/home"));
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => Confirmation(
-                              tid: _tid,
-                              user: user,
-                            ),
-                          ),
-                        );
-                      } else {
-                        Navigator.of(context, rootNavigator: true).pop();
-                      }
-                    },
-                  ),
-                ),
-                RaisedButton(
-                  child: Text("PAYMENT WILL BE : " + (_debug_payment
-                      ? "SUCCESS"
-                      : "FAIL")),
-                      onPressed: () {
-                        _debug_payment = !_debug_payment;
-                        setState(() {});
-                      },
-                ),
-              ],
-            ),
+            child: upiAppsList(context),
           ),
         ),
       ),
     );
   }
 
-  //TODO: Implement this
-  Future<bool> makePayment() async {
-    await Future.delayed(
-      Duration(seconds: delay),
+  Future<Map<String, String>> makePayment(String servicePackage) async {
+    String response = await UPI.initiateTransaction(
+      app: servicePackage,
+      pa: _fixrUPI,
+      pn: _payeeName,
+      tr: _tid,
+      tn: "Payment of ${widget.service.name} service at ₹${widget.service.price}",
+      am: (_debugPrice ? "1" : widget.service.price),
+      // mc: "YourMerchantId", // optional
+      cu: "INR",
+      url: _fixrUrl,
     );
-    // String response = await UPI.initiateTransaction(
-    //   app: UPIApps.GooglePay,
-    //   pa: _fixrUPI,
-    //   pn: "Fixer Global",
-    //   tr: "1",
-    //   tn: "This is a transaction Note",
-    //   am: "1",
-    //   // mc: "YourMerchantId", // optional
-    //   cu: "INR",
-    //   url: "https://www.google.com",
-    // );
-    //add this is payments. Probably generate this in constructor
-    return _debug_payment;
+    print("UPI String Response : $response");
+    return UPIResponse.toMap(
+      UPIResponse(response),
+    );
   }
 
   //requires the page to explicitly pop this from Navigator
@@ -292,10 +234,6 @@ class PaymentGatewayState extends State<PaymentGateway> {
   }
 
   Future<bool> _pushCriticalData() async {
-    // await Future.delayed(
-    //   Duration(seconds: delay),
-    // );
-
     DocumentReference newOrderRef = Firestore.instance
         .collection("users")
         .document(user.uid)
@@ -313,5 +251,84 @@ class PaymentGatewayState extends State<PaymentGateway> {
       },
     );
     return true;
+  }
+
+  upiAppsList(BuildContext context) {
+    const appPackageList = [
+      UPIApps.GooglePay,
+      UPIApps.BHIMUPI,
+      UPIApps.AmazonPay,
+    ];
+
+    const appNameList = [
+      "Google Pay",
+      "BHIM UPI",
+      "Amazon Pay",
+    ];
+
+
+    return ListView.builder(
+      itemCount: appNameList.length,
+      padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+      itemBuilder: (context, index) {
+        return Card(
+          child: ListTile(
+            title: Text(appNameList[index]),
+            onTap: () async {
+              makePageWait("Waiting for payment", context);
+
+              Map<String, String> paymentData =
+                  await makePayment(appPackageList[index]);
+
+              bool status = paymentData["status"].toLowerCase() == "success"
+                  ? true
+                  : false;
+
+              _tDetails["orderdate"] = DateTime.now().toString();
+
+              _tDetails["bookingdateandtime"] = widget.serviceDate.toString();
+
+              _tDetails["paymentdetails"] = paymentData;
+
+              if (status) {
+                _tDetails["status"] = "success";
+              } else {
+                _tDetails["status"] = "failure";
+                await interruptMessage(
+                    "Unsuccessful", "Something went wrong, if money was deducted from your account, we will refund it within 24 hours.", true, context);
+              }
+
+              bool _datapushed = await _pushCriticalData();
+
+              Navigator.of(context, rootNavigator: true)
+                  .pop(); //for makePageWait
+
+              if (!_datapushed) {
+                await interruptMessage(
+                  "Sorry",
+                  "Something went wrong, if money was deducted from your account, we will refund it within 24 hours.",
+                  false,
+                  context,
+                );
+              }
+
+              if (status) {
+                Navigator.of(context).popUntil(ModalRoute.withName("/home"));
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => Confirmation(
+                      tid: _tid,
+                      user: user,
+                    ),
+                  ),
+                );
+              } else {
+                Navigator.of(context, rootNavigator: true).pop();
+              }
+            },
+          ),
+        );
+      },
+    );
   }
 }
