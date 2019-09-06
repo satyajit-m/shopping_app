@@ -27,6 +27,10 @@ class CartState extends State<Cart> {
   bool addressFetched = false;
   bool addressPresent = false;
 
+  initState() {
+    super.initState();
+  }
+
   DateTime serviceDate;
 
   var _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -66,72 +70,76 @@ class CartState extends State<Cart> {
   }
 
   Widget cartScreen(BuildContext context) {
+    SizedBox theSpaceBetweenCards =
+        SizedBox(height: MediaQuery.of(context).size.height * 0.01);
+
     return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverAppBar(
-              elevation: 10,
-              forceElevated: true,
-              expandedHeight: 200.0,
-              floating: true,
-              pinned: true,
-              flexibleSpace: FlexibleSpaceBar(
-                centerTitle: true,
-                title: Text(
-                  widget.service.name,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16.0,
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            elevation: 10,
+            forceElevated: true,
+            expandedHeight: 200.0,
+            floating: true,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              title: Text(
+                widget.service.name,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.0,
+                ),
+              ),
+              background: Image.network(
+                "https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate(
+              <Widget>[
+                theSpaceBetweenCards,
+                Card(
+                  elevation: 10,
+                  child: ListTile(
+                    title: Text(
+                      "It is recommended to book this service atleast 1 day in advance.",
+                    ),
+                    enabled: true,
                   ),
                 ),
-                background: Image.network(
-                  "https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ];
-        },
-        body: ListView(
-          padding: EdgeInsets.only(left: 10, right: 10, top: 20),
-          children: <Widget>[
-            Card(
-              elevation: 2,
-              child: ListTile(
-                title: Text(
-                  "It is recommended to book this service atleast 1 day in advance.",
-                ),
-                enabled: true,
-              ),
-            ),
-            Card(
-              elevation: 10,
-              child: InkWell(
-                child: ListTile(
-                  leading: serviceDate == null
-                      ? Icon(
-                          Icons.warning,
-                          color: Colors.red,
-                        )
-                      : null,
-                  title: Text(
-                    serviceDate == null
-                        ? "Pick a service date"
-                        : beautifulDate(serviceDate),
+                Card(
+                  elevation: 10,
+                  child: InkWell(
+                    child: ListTile(
+                      leading: serviceDate == null
+                          ? Icon(
+                              Icons.warning,
+                              color: Colors.red,
+                            )
+                          : null,
+                      title: Text(
+                        serviceDate == null
+                            ? "Pick a service date"
+                            : beautifulDate(serviceDate),
+                      ),
+                    ),
+                    onTap: () async {
+                      serviceDate = await datePicker(context, serviceDate);
+                      setState(() {});
+                    },
                   ),
                 ),
-                onTap: () async {
-                  serviceDate = await datePicker(context, serviceDate);
-                  setState(() {});
-                },
-              ),
+                theSpaceBetweenCards,
+                addressFetched
+                    ? (addressPresent ? yesAddress() : noAddress())
+                    : loadingAddress(),
+              ],
             ),
-            addressFetched
-                ? (addressPresent ? yesAddress() : noAddress())
-                : loadingAddress(),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -139,19 +147,14 @@ class CartState extends State<Cart> {
   Widget yesAddress() {
     var fontSize = 16.0;
     String currentAddress = modify(Profile.profileToString(address));
-    double containerHeight = (currentAddress.split("\n").length + 5) *
-        fontSize *
-        (0.3 + MediaQuery.textScaleFactorOf(context));
     return Container(
-      height: containerHeight,
-      padding: EdgeInsets.only(top: 10),
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
         elevation: 10,
         child: Container(
-          child: Column(
+          child: Wrap(
             children: <Widget>[
               Container(
                 decoration: BoxDecoration(
@@ -161,51 +164,53 @@ class CartState extends State<Cart> {
                     topRight: Radius.circular(10.0),
                   ),
                 ),
+                padding: EdgeInsets.only(top: 10, bottom: 10),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    Expanded(
-                      child: Align(
-                        child: Text(
-                          "Address",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        alignment: Alignment.centerLeft,
+                    Text(
+                      "Address",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    Expanded(
-                      child: Align(
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context)
-                                .pushNamed('/profile/form')
-                                .then((onValue) => setState(() {
-                                      addressFetched = false;
-                                    }));
-                          },
-                          child: Icon(Icons.mode_edit),
-                        ),
-                        alignment: Alignment.centerRight,
-                      ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed('/profile/form')
+                            .then((onValue) => setState(() {
+                                  addressFetched = false;
+                                }));
+                      },
+                      child: Icon(Icons.mode_edit),
                     ),
                   ],
                 ),
-                padding:
-                    EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+                // padding:
+                //     EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
               ),
-              Expanded(
-                child: Container(
-                  padding: EdgeInsets.only(left: 10, right: 10, top: 10),
-                  child: Align(
-                    child: Text(
-                      modify(Profile.profileToString(address)),
-                      softWrap: true,
-                      style: TextStyle(fontSize: fontSize),
-                    ),
-                    alignment: Alignment.topLeft,
+              Container(
+                padding: EdgeInsets.all(10),
+                child: Align(
+                  child: Text(
+                    modify(Profile.profileToString(address)),
+                    softWrap: true,
+                    style: TextStyle(fontSize: fontSize),
                   ),
+                  alignment: Alignment.topLeft,
                 ),
               ),
             ],
@@ -226,7 +231,7 @@ class CartState extends State<Cart> {
         color: Colors.green,
         elevation: 10,
         child: Container(
-          child: Column(
+          child: Wrap(
             children: <Widget>[
               Container(
                 child: Row(
