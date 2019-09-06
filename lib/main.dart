@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => App(),
         '/phoneAuth': (context) => PhoneAuth(),
         '/profile/form': (context) => ProfileForm(),
-        '/profile/myOrders': (context) => MyOrders(),
+        //'/profile/myOrders': (context) => MyOrders(FirebaseUser user),
       },
     );
   }
