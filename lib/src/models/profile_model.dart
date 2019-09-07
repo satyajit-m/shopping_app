@@ -32,7 +32,7 @@ class Profile {
     return profile;
   }
 
-  static Profile mapToProfile(Map<String, dynamic> map) {
+  static Profile mapToProfile(Map<dynamic, dynamic> map) {
     Profile profile = Profile(
         map["name"],
         map["phone"],
@@ -42,6 +42,10 @@ class Profile {
         map["landmark"],
         map["altPhone"]);
     return profile;
+  }
+
+  static String mapToString(Map<dynamic, dynamic> mp) {
+    return profileToString(mapToProfile(mp)) ;
   }
 
   static String profileToString(Profile profile) {
@@ -75,4 +79,6 @@ class Profile {
             [profile.phone, profile.altPhone].join(", "))
         .trim();
   }
+
+  
 }
