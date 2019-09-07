@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shopping_app/src/utils/beautiful_date.dart';
+import 'package:device_apps/device_apps.dart';
 import '../../models/sub_service_model.dart';
 import 'package:flutter/material.dart';
 
@@ -96,11 +97,16 @@ class UPI {
 
 class PaymentGateway extends StatefulWidget {
   final String notes;
-  final Profile address; 
+  final Profile address;
   final SubServiceModel service;
   final DateTime serviceDate;
 
-  PaymentGateway({Key key, @required this.service, @required this.serviceDate, @required this.address, @required this.notes});
+  PaymentGateway(
+      {Key key,
+      @required this.service,
+      @required this.serviceDate,
+      @required this.address,
+      @required this.notes});
 
   State<PaymentGateway> createState() {
     return PaymentGatewayState();
@@ -123,9 +129,10 @@ class PaymentGatewayState extends State<PaymentGateway> {
   PaymentGatewayState() {
     Random provider = Random.secure();
     _tid = randomAlpha(
-      3,
-      provider: CoreProvider.from(provider),
-    ) + DateTime.now().millisecondsSinceEpoch.toString();
+          3,
+          provider: CoreProvider.from(provider),
+        ) +
+        DateTime.now().millisecondsSinceEpoch.toString();
   }
 
   Future<bool> interruptMessage(
@@ -243,7 +250,8 @@ class PaymentGatewayState extends State<PaymentGateway> {
         .document(user.uid)
         .collection("orders")
         .document(_tid);
-    DocumentReference adminTransaction = Firestore.instance.collection("transactions").document(_tid);
+    DocumentReference adminTransaction =
+        Firestore.instance.collection("transactions").document(_tid);
 
     await Firestore.instance.runTransaction(
       (transaction) async {
@@ -254,15 +262,20 @@ class PaymentGatewayState extends State<PaymentGateway> {
           throw Exception(
               "Order ID Already present. Use a better random string generator");
         }
-        snapshot = await transaction.get(adminTransaction);
+      },
+    );
+
+    await Firestore.instance.runTransaction(
+      (transaction) async {
+        DocumentSnapshot snapshot = await transaction.get(adminTransaction);
         if (!snapshot.exists) {
           await transaction.set(adminTransaction, _tDetails);
         } else {
-          throw Exception(
-              "Order ID Already present. Use a better random string generator");
+          throw Exception("Order ID Already present. Use a better order ID");
         }
       },
     );
+    
     return true;
   }
 
@@ -278,7 +291,6 @@ class PaymentGatewayState extends State<PaymentGateway> {
       "BHIM UPI",
       "Amazon Pay",
     ];
-
 
     return ListView.builder(
       itemCount: appNameList.length,
@@ -300,8 +312,9 @@ class PaymentGatewayState extends State<PaymentGateway> {
               _tDetails["transactionDate"] = DateTime.now().toString();
 
               _tDetails["notes"] = widget.notes;
-              
-              _tDetails["serviceAddress"] = Profile.profileToMap(widget.address);
+
+              _tDetails["serviceAddress"] =
+                  Profile.profileToMap(widget.address);
 
               _tDetails["serviceDetails"] = widget.service.toMap();
 
@@ -311,7 +324,10 @@ class PaymentGatewayState extends State<PaymentGateway> {
 
               if (!status) {
                 await interruptMessage(
-                    "Unsuccessful", "Something went wrong, if money was deducted from your account, we will refund it within 24 hours.", true, context);
+                    "Unsuccessful",
+                    "Something went wrong, if money was deducted from your account, we will refund it within 24 hours.",
+                    true,
+                    context);
               }
 
               bool _datapushed = await _pushCriticalData();
