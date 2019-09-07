@@ -115,6 +115,7 @@ class PaymentGateway extends StatefulWidget {
 
 class PaymentGatewayState extends State<PaymentGateway> {
   FirebaseUser user;
+  var _pgKey = GlobalKey<ScaffoldState>();
 
   void initState() {
     fetchUser();
@@ -172,34 +173,38 @@ class PaymentGatewayState extends State<PaymentGateway> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              SliverAppBar(
-                iconTheme: IconThemeData(
-                  color: Colors.black,
-                ),
-                backgroundColor: Colors.white,
-                expandedHeight: MediaQuery.of(context).size.height / 2,
-                floating: true,
-                snap: true,
-                pinned: true,
-                elevation: 10,
-                forceElevated: true,
-                flexibleSpace: FlexibleSpaceBar(
-                  title: Text(
-                    "Paying ₹" + widget.service.price.toString(),
-                    style: TextStyle(color: Colors.black54),
-                  ),
-                  background: Image.asset("assets/images/upi.png"),
-                ),
+        backgroundColor: Colors.teal,
+        key: _pgKey,
+        body: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+              iconTheme: IconThemeData(
+                color: Colors.black,
               ),
-            ];
-          },
-          body: Container(
-            color: Colors.teal[100],
-            child: upiAppsList(context),
-          ),
+              backgroundColor: Colors.white,
+              expandedHeight: MediaQuery.of(context).size.height / 2.5,
+              floating: true,
+              snap: true,
+              pinned: true,
+              elevation: 10,
+              forceElevated: true,
+              flexibleSpace: FlexibleSpaceBar(
+                title: Text(
+                  "Paying ₹" + widget.service.price.toString(),
+                  style: TextStyle(color: Colors.black54),
+                ),
+                background: Image.asset("assets/images/upi.png"),
+              ),
+            ),
+            SliverFixedExtentList(
+              itemExtent: MediaQuery.of(context).size.height * 0.15,
+              delegate: upiAppsList(context),
+            ),
+          ],
+          // body: Container(
+          //   color: Colors.teal[100],
+          //   child: upiAppsList(context),
+          // ),
         ),
       ),
     );
@@ -275,11 +280,13 @@ class PaymentGatewayState extends State<PaymentGateway> {
         }
       },
     );
-    
+
     return true;
   }
 
-  upiAppsList(BuildContext context) {
+  SliverChildBuilderDelegate upiAppsList(BuildContext context) {
+    const listLength = 3;
+
     const appPackageList = [
       UPIApps.GooglePay,
       UPIApps.BHIMUPI,
@@ -292,75 +299,105 @@ class PaymentGatewayState extends State<PaymentGateway> {
       "Amazon Pay",
     ];
 
-    return ListView.builder(
-      itemCount: appNameList.length,
-      padding: EdgeInsets.only(left: 10, right: 10, top: 10),
-      itemBuilder: (context, index) {
-        return Card(
-          child: ListTile(
-            title: Text(appNameList[index]),
-            onTap: () async {
-              makePageWait("Waiting for payment", context);
+    return SliverChildBuilderDelegate(
+      (context, index) {
+        return Container(
+          padding: const EdgeInsets.all(5),
+          child: Card(
+            elevation: 10,
+            child: Container(
+              decoration: BoxDecoration(color: Colors.teal[100]),
+              padding: const EdgeInsets.all(8.0),
+              child: ListTile(
+                title: Text(appNameList[index]),
+                onTap: () async {
+                  bool isInstalled =
+                      await DeviceApps.isAppInstalled(appPackageList[index]);
 
-              Map<String, String> paymentData =
-                  await makePayment(appPackageList[index]);
+                  if (!isInstalled) {
+                    _pgKey.currentState.removeCurrentSnackBar();
+                    _pgKey.currentState.showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "${appNameList[index]} is not installed on your device.",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
 
-              bool status = paymentData["status"].toLowerCase() == "success"
-                  ? true
-                  : false;
+                  makePageWait("Waiting for payment", context);
 
-              _tDetails["transactionDate"] = DateTime.now().toString();
+                  Map<String, String> paymentData =
+                      await makePayment(appPackageList[index]);
 
-              _tDetails["notes"] = widget.notes;
+                  print(paymentData["status"]);
 
-              _tDetails["serviceAddress"] =
-                  Profile.profileToMap(widget.address);
+                  bool status = paymentData["status"].toLowerCase() == "success"
+                      ? true
+                      : false;
 
-              _tDetails["serviceDetails"] = widget.service.toMap();
+                  _tDetails["transactionDate"] = DateTime.now().toString();
 
-              _tDetails["serviceDateandTime"] = widget.serviceDate.toString();
+                  _tDetails["notes"] = widget.notes;
 
-              _tDetails["paymentDetails"] = paymentData;
+                  _tDetails["serviceAddress"] =
+                      Profile.profileToMap(widget.address);
 
-              if (!status) {
-                await interruptMessage(
-                    "Unsuccessful",
-                    "Something went wrong, if money was deducted from your account, we will refund it within 24 hours.",
-                    true,
-                    context);
-              }
+                  _tDetails["serviceDetails"] = widget.service.toMap();
 
-              bool _datapushed = await _pushCriticalData();
+                  _tDetails["serviceDateandTime"] =
+                      widget.serviceDate.toString();
 
-              Navigator.of(context, rootNavigator: true)
-                  .pop(); //for makePageWait
+                  _tDetails["paymentDetails"] = paymentData;
 
-              if (!_datapushed) {
-                await interruptMessage(
-                  "Sorry",
-                  "Something went wrong, if money was deducted from your account, we will refund it within 24 hours.",
-                  false,
-                  context,
-                );
-              }
+                  if (!status) {
+                    await interruptMessage(
+                        "Unsuccessful",
+                        "Something went wrong, if money was deducted from your account, we will refund it within 24 hours.",
+                        true,
+                        context);
+                  }
 
-              if (status) {
-                Navigator.of(context).popUntil(ModalRoute.withName("/home"));
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => Confirmation(
-                      tid: _tid,
-                      user: user,
-                    ),
-                  ),
-                );
-              } else {
-                Navigator.of(context, rootNavigator: true).pop();
-              }
-            },
+                  bool _datapushed = await _pushCriticalData();
+
+                  Navigator.of(context, rootNavigator: true)
+                      .pop(); //for makePageWait
+
+                  if (!_datapushed) {
+                    await interruptMessage(
+                      "Sorry",
+                      "Something went wrong, if money was deducted from your account, we will refund it within 24 hours.",
+                      false,
+                      context,
+                    );
+                  }
+
+                  if (status) {
+                    Navigator.of(context)
+                        .popUntil(ModalRoute.withName("/home"));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => Confirmation(
+                          tid: _tid,
+                          user: user,
+                        ),
+                      ),
+                    );
+                  } else {
+                    Navigator.of(context, rootNavigator: true).pop();
+                  }
+                },
+              ),
+            ),
           ),
         );
       },
+      childCount: listLength,
     );
   }
 }
