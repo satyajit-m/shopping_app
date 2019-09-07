@@ -28,29 +28,59 @@ class CartState extends State<Cart> {
   bool addressPresent = false;
 
   initState() {
+    notesController = TextEditingController();
     super.initState();
+  }
+
+  void dispose() {
+    notesController.dispose();
+    super.dispose();
   }
 
   DateTime serviceDate;
 
   var _scaffoldKey = GlobalKey<ScaffoldState>();
+  final Duration bookTimeDelay = Duration(hours: 1);
+  final String bookTimeDelayMsg =
+      "Please choose time and date atleast 1 hour from now.";
+
+  TextEditingController notesController;
 
   Future<DateTime> datePicker(BuildContext ctxt, DateTime initTime) async {
-    DateTime returnValue;
+    DateTime returnValue = serviceDate;
+
     DateTime currentTime = DateTime.now();
-    if (initTime == null) initTime = DateTime.now().add(Duration(hours: 1));
+
+    if (initTime == null) {
+      initTime = currentTime.add(bookTimeDelay);
+    }
+
     await showModalBottomSheet(
       context: ctxt,
       builder: (ctxt) {
-        return CupertinoDatePicker(
-          mode: CupertinoDatePickerMode.dateAndTime,
-          use24hFormat: false,
-          initialDateTime: initTime,
-          maximumDate: currentTime.add(Duration(days: 7)),
-          minimumDate: currentTime,
-          onDateTimeChanged: (value) {
-            returnValue = value;
-          },
+        return Container(
+          height: MediaQuery.of(context).size.height / 3,
+          child: CupertinoTheme(
+            data: CupertinoThemeData(
+              textTheme: CupertinoTextThemeData(
+                dateTimePickerTextStyle: TextStyle(
+                  fontFamily: 'roboto',
+                  fontSize: 18,
+                ),
+              ),
+            ),
+            child: CupertinoDatePicker(
+              mode: CupertinoDatePickerMode.dateAndTime,
+              use24hFormat: false,
+              initialDateTime: initTime,
+              maximumDate: currentTime.add(Duration(days: 7)),
+              minimumDate: currentTime,
+              onDateTimeChanged: (value) {
+                print(returnValue.toString());
+                returnValue = value;
+              },
+            ),
+          ),
         );
       },
     );
@@ -100,46 +130,121 @@ class CartState extends State<Cart> {
           SliverList(
             delegate: SliverChildListDelegate(
               <Widget>[
-                theSpaceBetweenCards,
-                Card(
-                  elevation: 10,
-                  child: ListTile(
-                    title: Text(
-                      "It is recommended to book this service atleast 1 day in advance.",
-                    ),
-                    enabled: true,
-                  ),
-                ),
-                Card(
-                  elevation: 10,
-                  child: InkWell(
-                    child: ListTile(
-                      leading: serviceDate == null
-                          ? Icon(
-                              Icons.warning,
-                              color: Colors.red,
-                            )
-                          : null,
-                      title: Text(
-                        serviceDate == null
-                            ? "Pick a service date"
-                            : beautifulDate(serviceDate),
-                      ),
-                    ),
-                    onTap: () async {
-                      serviceDate = await datePicker(context, serviceDate);
-                      setState(() {});
-                    },
-                  ),
-                ),
-                theSpaceBetweenCards,
+                theSpaceBetweenCards, //
+                serviceMessage(),
+                theSpaceBetweenCards, //
                 addressFetched
                     ? (addressPresent ? yesAddress() : noAddress())
                     : loadingAddress(),
+                theSpaceBetweenCards, //
+                datePickerWidget(context),
+                theSpaceBetweenCards, //
+                addNotes(),
+                theSpaceBetweenCards, //
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Container datePickerWidget(BuildContext context) {
+    double cWidth = MediaQuery.of(context).size.width * 0.80;
+    return Container(
+      width: cWidth,
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        elevation: 10,
+        child: Container(
+          child: Wrap(
+            children: <Widget>[
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10),
+                    bottomLeft: Radius.circular(serviceDate == null ? 10 : 0),
+                    bottomRight: Radius.circular(serviceDate == null ? 10 : 0),
+                  ),
+                ),
+                padding: EdgeInsets.only(top: 10, bottom: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Text(
+                      "Service Date",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        DateTime pickedDate =
+                            await datePicker(context, serviceDate);
+                        if (pickedDate.difference(DateTime.now()).isNegative) {
+                          _scaffoldKey.currentState.showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                bookTimeDelayMsg,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else {
+                          setState(() {
+                            serviceDate = pickedDate;
+                          });
+                        }
+                      },
+                      child: Icon(serviceDate == null ? Icons.add : Icons.edit),
+                    ),
+                  ],
+                ),
+              ),
+              serviceDate != null
+                  ? Container(
+                      padding: EdgeInsets.all(10),
+                      child: Text(
+                        beautifulDate(serviceDate),
+                        softWrap: true,
+                      ),
+                    )
+                  : SizedBox(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Card serviceMessage() {
+    return Card(
+      elevation: 10,
+      child: ListTile(
+        title: Text(
+          "It is recommended to book this service atleast 1 day in advance.",
+        ),
+        enabled: true,
       ),
     );
   }
@@ -173,6 +278,7 @@ class CartState extends State<Cart> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
+                        color: Colors.white,
                       ),
                     ),
                     SizedBox(
@@ -222,53 +328,54 @@ class CartState extends State<Cart> {
 
   Widget noAddress() {
     return Container(
-      height: 64,
-      padding: EdgeInsets.only(top: 10),
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
-        color: Colors.green,
         elevation: 10,
         child: Container(
           child: Wrap(
             children: <Widget>[
               Container(
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                padding: EdgeInsets.only(top: 10, bottom: 10),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    Expanded(
-                      child: Align(
-                        child: Text(
-                          "Address",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        alignment: Alignment.centerLeft,
-                      ),
+                    Text(
+                      "Address",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white),
                     ),
-                    Expanded(
-                      child: Align(
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context)
-                                .pushNamed('/profile/form')
-                                .then(
-                                  (onValue) => setState(() {
-                                    addressFetched = false;
-                                  }),
-                                );
-                          },
-                          child: Icon(Icons.add),
-                        ),
-                        alignment: Alignment.centerRight,
-                      ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).pushNamed('/profile/form').then(
+                              (onValue) => setState(() {
+                                addressFetched = false;
+                              }),
+                            );
+                      },
+                      child: Icon(Icons.add),
                     ),
                   ],
                 ),
-                padding:
-                    EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
               ),
             ],
           ),
@@ -376,13 +483,30 @@ class CartState extends State<Cart> {
                                   backgroundColor: Colors.red,
                                 ),
                               );
+                            } else if (serviceDate
+                                .difference(DateTime.now())
+                                .isNegative) {
+                              _scaffoldKey.currentState.showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    bookTimeDelayMsg,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
                             } else {
+                              String notes = notesController.value.text;
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => PaymentGateway(
                                     service: widget.service,
                                     serviceDate: serviceDate,
+                                    address: address,
+                                    notes: notes,
                                   ),
                                 ),
                               );
@@ -402,6 +526,60 @@ class CartState extends State<Cart> {
                   ),
                 ),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget addNotes() {
+    return Container(
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        elevation: 10,
+        child: Container(
+          child: Wrap(
+            children: <Widget>[
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10.0),
+                    topRight: Radius.circular(10.0),
+                  ),
+                ),
+                padding: EdgeInsets.only(top: 10, bottom: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(
+                      width: 15,
+                    ),
+                    Text(
+                      "Addtional Notes",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: TextField(
+                  controller: notesController,
+                  decoration: InputDecoration(
+                    hintText: "To help us serve you better",
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
         ),

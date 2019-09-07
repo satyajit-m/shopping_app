@@ -8,6 +8,7 @@ import '../../models/sub_service_model.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/random_string.dart';
+import '../../models/profile_model.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
@@ -94,10 +95,12 @@ class UPI {
 }
 
 class PaymentGateway extends StatefulWidget {
+  final String notes;
+  final Profile address; 
   final SubServiceModel service;
   final DateTime serviceDate;
 
-  PaymentGateway({Key key, @required this.service, @required this.serviceDate});
+  PaymentGateway({Key key, @required this.service, @required this.serviceDate, @required this.address, @required this.notes});
 
   State<PaymentGateway> createState() {
     return PaymentGatewayState();
@@ -119,10 +122,10 @@ class PaymentGatewayState extends State<PaymentGateway> {
 
   PaymentGatewayState() {
     Random provider = Random.secure();
-    _tid = randomAlphaNumeric(
-      32,
+    _tid = randomAlpha(
+      3,
       provider: CoreProvider.from(provider),
-    );
+    ) + DateTime.now().millisecondsSinceEpoch.toString();
   }
 
   Future<bool> interruptMessage(
@@ -196,12 +199,13 @@ class PaymentGatewayState extends State<PaymentGateway> {
   }
 
   Future<Map<String, String>> makePayment(String servicePackage) async {
+    print(_tid);
     String response = await UPI.initiateTransaction(
       app: servicePackage,
       pa: _fixrUPI,
       pn: _payeeName,
       tr: _tid,
-      tn: "Payment of ${widget.service.name} service at ₹${widget.service.price}",
+      tn: "$_tid",
       am: (_debugPrice ? "1" : widget.service.price),
       // mc: "YourMerchantId", // optional
       cu: "INR",
@@ -239,11 +243,20 @@ class PaymentGatewayState extends State<PaymentGateway> {
         .document(user.uid)
         .collection("orders")
         .document(_tid);
+    DocumentReference adminTransaction = Firestore.instance.collection("transactions").document(_tid);
+
     await Firestore.instance.runTransaction(
       (transaction) async {
         DocumentSnapshot snapshot = await transaction.get(newOrderRef);
         if (!snapshot.exists) {
           await transaction.set(newOrderRef, _tDetails);
+        } else {
+          throw Exception(
+              "Order ID Already present. Use a better random string generator");
+        }
+        snapshot = await transaction.get(adminTransaction);
+        if (!snapshot.exists) {
+          await transaction.set(adminTransaction, _tDetails);
         } else {
           throw Exception(
               "Order ID Already present. Use a better random string generator");
@@ -284,16 +297,19 @@ class PaymentGatewayState extends State<PaymentGateway> {
                   ? true
                   : false;
 
-              _tDetails["orderdate"] = DateTime.now().toString();
+              _tDetails["transactionDate"] = DateTime.now().toString();
 
-              _tDetails["bookingdateandtime"] = widget.serviceDate.toString();
+              _tDetails["notes"] = widget.notes;
+              
+              _tDetails["serviceAddress"] = Profile.profileToMap(widget.address);
 
-              _tDetails["paymentdetails"] = paymentData;
+              _tDetails["serviceDetails"] = widget.service.toMap();
 
-              if (status) {
-                _tDetails["status"] = "success";
-              } else {
-                _tDetails["status"] = "failure";
+              _tDetails["serviceDateandTime"] = widget.serviceDate.toString();
+
+              _tDetails["paymentDetails"] = paymentData;
+
+              if (!status) {
                 await interruptMessage(
                     "Unsuccessful", "Something went wrong, if money was deducted from your account, we will refund it within 24 hours.", true, context);
               }

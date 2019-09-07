@@ -41,7 +41,7 @@ class OtpPageState extends State<OtpPage> {
         .then((currentUser) async {
       currentUser = await FirebaseAuth.instance.currentUser();
       if (currentUser != null) {
-        successMatch("Automatically verified", currentUser);
+        successMatch("Automatically verified", currentUser, context);
       } else {
         badNews("Thats odd",
             "Couldn't contact our servers. Please try again later.", false);
@@ -122,7 +122,7 @@ class OtpPageState extends State<OtpPage> {
     }
   }
 
-  void successMatch(String msg, FirebaseUser currentUser) async {
+  void successMatch(String msg, FirebaseUser currentUser, BuildContext context) async {
     await createUserDb(currentUser);
     showDialog(
       barrierDismissible: false,
@@ -135,10 +135,10 @@ class OtpPageState extends State<OtpPage> {
             IconButton(
               icon: Icon(Icons.check),
               onPressed: () {
-                Navigator.of(context).popUntil(
-                  ModalRoute.withName('/'),
-                );
-                Navigator.pushReplacementNamed(context, '/home');
+                Navigator.of(context, rootNavigator: true).pop();
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                Navigator.pushReplacementNamed(context ,'/home');
               },
             )
           ],
@@ -186,7 +186,7 @@ class OtpPageState extends State<OtpPage> {
           .then((currentUser) async {
         currentUser = await FirebaseAuth.instance.currentUser();
         if (currentUser != null) {
-          successMatch("OTP successfully verified", currentUser);
+          successMatch("OTP successfully verified", currentUser, context);
         } else {
           badNews(
               "Sorry :(", "Couldn't we verify you. Please try again.", false);
