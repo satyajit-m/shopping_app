@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class MyOrders extends StatefulWidget {
+  final FirebaseUser user;
+  MyOrders(this.user);
   @override
   _MyOrdersState createState() => _MyOrdersState();
 }
@@ -149,68 +153,102 @@ class _MyOrdersState extends State<MyOrders> {
               ),
               Container(
                 margin: EdgeInsets.only(right: 10.0, left: 10.0),
-                child: new ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: 2,
-                  itemBuilder: (BuildContext ctxt, int index) {
-                    return new Container(
-                      margin: const EdgeInsets.all(1),
-                      padding: const EdgeInsets.all(1),
-                      child: Container(
-                        margin: EdgeInsets.only(bottom: 15.0),
-                        padding: EdgeInsets.all(5.0),
-                        child: ListTile(
-                          //leading: FlutterLogo(size: 72.0),
-                          title: Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(
-                                  nm[index]['st'],
-                                  style: TextStyle(fontSize: 23.0),
-                                ),
-                                Text('Id: ${nm[index]['oid']}'),
-                              ],
-                            ),
-                          ),
-                          subtitle: Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text('${nm[index]['dt']} | ${nm[index]['tm']}'),
-                                nm[index]['sts'] == 'Failed'
-                                    ? Icon(
-                                        Icons.cancel,
-                                        color: Colors.red,
-                                        size: 30.0,
-                                      )
-                                    : Icon(
-                                        Icons.done_outline,
-                                        color: Colors.green,
-                                        size: 30.0,
-                                      )
-                              ],
-                            ),
-                          ),
-                          trailing: Icon(
-                            Icons.chevron_right,
-                            color: Colors.blue,
-                            size: 40.0,
-                          ),
-                        ),
-                        decoration: BoxDecoration(
-                          color: Color(0xffDBF2FE),
-                          border: new Border.all(color: Colors.grey[300]),
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                child: new OrderList(widget.user),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class OrderList extends StatelessWidget {
+  final FirebaseUser user;String usid;
+  OrderList(this.user){
+    usid=this.user.uid;
+    print(usid);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return StreamBuilder(
+      stream: Firestore.instance
+          .collection('users')
+          .document('$usid')
+          .collection('orders')
+          .snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: Container(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else {
+          return ListView.builder(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: snapshot.data.documents.length,
+            itemBuilder: (context, index) =>
+                _buildListItems(context, snapshot.data.documents[index]),
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildListItems(BuildContext context, DocumentSnapshot document) {
+    return Container(
+      margin: const EdgeInsets.all(1),
+      padding: const EdgeInsets.all(1),
+      child: Container(
+        margin: EdgeInsets.only(bottom: 15.0),
+        padding: EdgeInsets.all(5.0),
+        child: ListTile(
+          //leading: FlutterLogo(size: 72.0),
+          title: Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  document['oname'],
+                  style: TextStyle(fontSize: 23.0),
+                ),
+                Text('Id: ${document.documentID}'),
+              ],
+            ),
+          ),
+          subtitle: Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text('${document['date']} | ${document['time']}'),
+                document['status'] == 'failed'
+                    ? Icon(
+                        Icons.cancel,
+                        color: Colors.red,
+                        size: 30.0,
+                      )
+                    : Icon(
+                        Icons.done_outline,
+                        color: Colors.green,
+                        size: 30.0,
+                      )
+              ],
+            ),
+          ),
+          trailing: Icon(
+            Icons.chevron_right,
+            color: Colors.blue,
+            size: 40.0,
+          ),
+        ),
+        decoration: BoxDecoration(
+          color: Color(0xffDBF2FE),
+          border: new Border.all(color: Colors.grey[300]),
+          borderRadius: BorderRadius.all(Radius.circular(10.0)),
         ),
       ),
     );
