@@ -20,5 +20,8 @@ String beautifulDate(DateTime uglyObject) {
   else if (uglyObject.day == 3) d += "rd";
   else d += "th";
 
+  if (hh.length == 1) hh = '0' + hh;
+  if (mm.length == 1) mm = '0' + mm;
+
   return "$hh:$mm $twelve, $wd, $d $m, $y";
 }
