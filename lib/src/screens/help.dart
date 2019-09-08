@@ -11,24 +11,9 @@ class _HelpScreenState extends State<HelpScreen> {
   List<String> kWords = [];
   List<String> pin = [];
   _SearchAppBarDelegate _searchDelegate;
-  bool loaded = false;
-  //Initializing with sorted list of english words
-  _HelpScreenState() {
-    _fetchPlaces();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    //Initializing search delegate with sorted list of English words
-    _searchDelegate = _SearchAppBarDelegate(kWords);
-  }
 
   @override
   Widget build(BuildContext context) {
-    if (!loaded) {
-      return Center(child: CircularProgressIndicator());
-    }
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -47,32 +32,78 @@ class _HelpScreenState extends State<HelpScreen> {
       ),
       body: Scrollbar(
         //Displaying all English words in list in app's main page
-        child: ListView.builder(
-          itemCount: kWords.length,
-          itemBuilder: (context, idx) => Card(
-            child: ListTile(
-              leading: Icon(
-                Icons.location_city,
-                color: Colors.green,
+        child: StreamBuilder(
+          stream: Firestore.instance.collection('ServArea').snapshots(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (!snapshot.hasData) {
+              return Center(child: CircularProgressIndicator());
+            }
+            List<String> kWords = [];
+
+            for (int i = 0; i < snapshot.data.documents.length; i++) {
+              kWords.add(snapshot.data.documents[i].documentID.toString());
+              pin.add(snapshot.data.documents[i].data["pin"].toString());
+            }
+
+            _searchDelegate = _SearchAppBarDelegate(kWords);
+
+            return ListView.builder(
+              itemCount: kWords.length,
+              itemBuilder: (context, idx) => Card(
+                child: ListTile(
+                  leading: Icon(
+                    Icons.location_city,
+                    color: Colors.green,
+                  ),
+                  title: Text(kWords[idx]),
+                  trailing: Text(
+                    pin[idx],
+                    style: TextStyle(color: Colors.orangeAccent),
+                  ),
+                  onTap: () {
+                    Scaffold.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Click the Search action"),
+                        action: SnackBarAction(
+                          label: 'Search',
+                          onPressed: () {
+                            showSearchPage(context, _searchDelegate);
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
-              title: Text(kWords[idx]),
-              trailing: Text(
-                pin[idx],
-                style: TextStyle(color: Colors.orangeAccent),
-              ),
-              onTap: () {
-                Scaffold.of(context).showSnackBar(SnackBar(
-                    content: Text("Click the Search action"),
-                    action: SnackBarAction(
-                      label: 'Search',
-                      onPressed: () {
-                        showSearchPage(context, _searchDelegate);
-                      },
-                    )));
-              },
-            ),
-          ),
+            );
+          },
         ),
+        // child: ListView.builder(
+        //   itemCount: kWords.length,
+        //   itemBuilder: (context, idx) => Card(
+        //     child: ListTile(
+        //       leading: Icon(
+        //         Icons.location_city,
+        //         color: Colors.green,
+        //       ),
+        //       title: Text(kWords[idx]),
+        //       trailing: Text(
+        //         pin[idx],
+        //         style: TextStyle(color: Colors.orangeAccent),
+        //       ),
+        //       onTap: () {
+        //         Scaffold.of(context).showSnackBar(SnackBar(
+        //             content: Text("Click the Search action"),
+        //             action: SnackBarAction(
+        //               label: 'Search',
+        //               onPressed: () {
+        //                 showSearchPage(context, _searchDelegate);
+        //               },
+        //             )));
+        //       },
+        //     ),
+        //   ),
+        // ),
       ),
     );
   }
@@ -93,21 +124,6 @@ class _HelpScreenState extends State<HelpScreen> {
       );
     }
   }
-
-  void _fetchPlaces() async {
-    List<String> test = [];
-    QuerySnapshot result = await Firestore.instance.collection('ServArea').getDocuments();
-    List<DocumentSnapshot> documents = result.documents;
-    for (var i = 0; i < documents.length; i++) {
-      // _serviceList[i].serviceName = documents[i].documentID;
-      var doc = documents[i].documentID.toString();
-      kWords.add(doc);
-      pin.add(documents[i].data["pin"].toString());
-    }
-    setState(() {
-      loaded = true;
-    });
-  }
 }
 
 //Search delegate
@@ -115,7 +131,7 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
   final List<String> _words;
   final List<String> _history;
 
-  _SearchAppBarDelegate(List<String> words) 
+  _SearchAppBarDelegate(List<String> words)
       : _words = words,
         //pre-populated history of words
         _history = <String>[],
@@ -173,7 +189,8 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
   Widget buildSuggestions(BuildContext context) {
     final Iterable<String> suggestions = this.query.isEmpty
         ? _history
-        : _words.where((word) => word.toLowerCase().startsWith(query.toLowerCase()));
+        : _words.where(
+            (word) => word.toLowerCase().startsWith(query.toLowerCase()));
 
     return _WordSuggestionList(
       query: this.query,

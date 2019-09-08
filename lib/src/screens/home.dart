@@ -1,9 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shopping_app/src/screens/CustomShapeClipper.dart';
 import '../widgets/CategoryCard.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-import 'homecard/ServiceBloc.dart';
 import 'homecard/ServiceModel.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -16,20 +16,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  ServiceBloc _servicesBloc;
-
-  @override
   void dispose() {
-    _servicesBloc.dispose();
     super.dispose();
   }
-  // @override
-  // void dispose() {
-  //   _servicesBloc.dispose();
-  //   super.dispose();
-  // }
 
-  //
   CarouselSlider carouselSlider;
   int _current = 0;
   int servNo = 0;
@@ -39,12 +29,6 @@ class HomeScreenState extends State<HomeScreen> {
   ];
 
   List<Widget> services = [];
-
-  HomeScreenState() {
-    //implement firestore here.
-    //static list
-    _servicesBloc = ServiceBloc();
-  }
 
   List<T> map<T>(List list, Function handler) {
     List<T> result = [];
@@ -78,7 +62,7 @@ class HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     children: <Widget>[
                       SizedBox(
-                        height: MediaQuery.of(context).size.height*0.05,
+                        height: MediaQuery.of(context).size.height * 0.05,
                       ),
                       carouselSlider = CarouselSlider(
                         height: MediaQuery.of(context).size.height * 0.25,
@@ -143,54 +127,12 @@ class HomeScreenState extends State<HomeScreen> {
               ),
               Column(
                 children: <Widget>[
-                  StreamBuilder<List<Service>>(
-                    stream: _servicesBloc.employeeListStream,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<Service>> snapshot) {
-                      if (!snapshot.hasData)
-                        return Container(
-                          child: Column(
-                            children: <Widget>[
-                              SizedBox(height: 20.0),
-                              CircularProgressIndicator(),
-                              SizedBox(height: 5.0)
-                            ],
-                          ),
-                        );
-                      return new Container(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: snapshot.data.length,
-                          itemBuilder: (context, index) {
-                            if (index % 2 == 0) {
-                              return callCategoryCard(
-                                  snapshot.data[index].serviceName,
-                                  snapshot.data[index + 1].serviceName,
-                                  snapshot.data[index].serviceUrl,
-                                  snapshot.data[index + 1].serviceUrl);
-                            } else {
-                              return SizedBox();
-                            }
-                            // return Card(
-                            //   elevation: 4.0,
-                            //   child: Row(
-                            //     mainAxisAlignment:
-                            //         MainAxisAlignment.spaceAround,
-                            //     children: <Widget>[
-                            //       Container(
-                            //         padding: EdgeInsets.all(20.0),
-                            //         child: Text(
-                            //           "${snapshot.data[index].serviceName}",
-                            //           style: TextStyle(fontSize: 18.0),
-                            //         ),
-                            //       ),
-                            //     ],
-                            //   ),
-                            // );
-                          },
-                        ),
-                      );
+                  StreamBuilder(
+                    stream: Firestore.instance
+                        .collection('ServiceTypes')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      return serviceTypeCards(context, snapshot);
                     },
                   ),
                 ],
@@ -198,6 +140,45 @@ class HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  serviceTypeCards(
+      BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+    if (!snapshot.hasData)
+      return Container(
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 20.0),
+            CircularProgressIndicator(),
+            SizedBox(height: 5.0)
+          ],
+        ),
+      );
+
+    List<Service> data = List<Service>();
+
+    for (var i = 0; i < snapshot.data.documents.length; i++)
+      data.add(Service(snapshot.data.documents[i].documentID,
+          snapshot.data.documents[i].data['url']));
+
+    return Container(
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          if (index % 2 == 0) {
+            return callCategoryCard(
+                data[index].serviceName,
+                data[index + 1].serviceName,
+                data[index].serviceUrl,
+                data[index + 1].serviceUrl);
+          } else {
+            return SizedBox();
+          }
+        },
       ),
     );
   }
