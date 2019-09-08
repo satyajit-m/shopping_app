@@ -8,6 +8,8 @@ class ProfileScreen extends StatefulWidget {
   // FirebaseUser user;
   // ProfileScreen(this.user);
 
+  ProfileScreen({Key key}) : super(key : key);
+
   ProfileScreenState createState() => ProfileScreenState();
 }
 

@@ -7,8 +7,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'homecard/ServiceModel.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen() : super();
 
+  HomeScreen({Key key}) : super(key: key);
+  
   final String title = "Carousel Demo";
 
   @override

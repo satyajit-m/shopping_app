@@ -285,7 +285,7 @@ class PaymentGatewayState extends State<PaymentGateway> {
   }
 
   SliverChildBuilderDelegate upiAppsList(BuildContext context) {
-    const listLength = 3;
+    const int listLength = 3;
 
     const appPackageList = [
       UPIApps.GooglePay,
@@ -301,6 +301,76 @@ class PaymentGatewayState extends State<PaymentGateway> {
 
     return SliverChildBuilderDelegate(
       (context, index) {
+        // For COD
+        if (index == listLength - 1) {
+          return Container(
+            padding: const EdgeInsets.all(5),
+            child: Card(
+              elevation: 10,
+              child: Container(
+                decoration: BoxDecoration(color: Colors.teal[100]),
+                padding: const EdgeInsets.all(8.0),
+                child: ListTile(
+                  title: Text("Cash On Delivery"),
+                  onTap: () async {
+
+                    makePageWait("please wait..", context);
+
+                    _tDetails["paymentMode"] = "COD";
+
+                    Map<String, String> paymentData = {"status": "SUCCESS"};
+
+                    bool status = true;
+
+                    _tDetails["transactionDate"] = DateTime.now().toString();
+
+                    _tDetails["notes"] = widget.notes;
+
+                    _tDetails["serviceAddress"] =
+                        Profile.profileToMap(widget.address);
+
+                    _tDetails["serviceDetails"] = widget.service.toMap();
+
+                    _tDetails["serviceDateandTime"] =
+                        widget.serviceDate.toString();
+
+                    _tDetails["paymentDetails"] = paymentData;
+
+                    bool _datapushed = await _pushCriticalData();
+
+                    Navigator.of(context, rootNavigator: true)
+                        .pop(); //for makePageWait
+
+                    if (!_datapushed) {
+                      await interruptMessage(
+                        "Sorry",
+                        "We couldn't contact our servers.",
+                        false,
+                        context,
+                      );
+                    }
+
+                    if (status) {
+                      Navigator.of(context)
+                          .popUntil(ModalRoute.withName("/home"));
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => Confirmation(
+                            tid: _tid,
+                            user: user,
+                          ),
+                        ),
+                      );
+                    } else {
+                      Navigator.of(context, rootNavigator: true).pop();
+                    }
+                  },
+                ),
+              ),
+            ),
+          );
+        }
+
         return Container(
           padding: const EdgeInsets.all(5),
           child: Card(
@@ -331,6 +401,8 @@ class PaymentGatewayState extends State<PaymentGateway> {
                   }
 
                   makePageWait("Waiting for payment", context);
+                  
+                  _tDetails["paymentMode"] = "UPI";
 
                   Map<String, String> paymentData =
                       await makePayment(appPackageList[index]);
@@ -371,7 +443,7 @@ class PaymentGatewayState extends State<PaymentGateway> {
                   if (!_datapushed) {
                     await interruptMessage(
                       "Sorry",
-                      "Something went wrong, if money was deducted from your account, we will refund it within 24 hours.",
+                      "Couldn't reach our servers, if money was deducted from your account, please contact us.",
                       false,
                       context,
                     );

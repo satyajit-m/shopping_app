@@ -2,10 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import './phone_auth.dart';
-import '../src/models/profile_model.dart';
 import '../size_config.dart';
-import 'google_auth.dart';
 
 class AuthPage extends StatefulWidget {
   AuthPageState createState() {
@@ -14,7 +11,6 @@ class AuthPage extends StatefulWidget {
 }
 
 class AuthPageState extends State<AuthPage> {
-  /* GOOGLE SIGNIN START */
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   FirebaseUser user;
@@ -44,18 +40,6 @@ class AuthPageState extends State<AuthPage> {
     return newuser;
   }
 
-  Future<bool> _loginUser() async {
-    FirebaseUser api = await signInWithGoogle();
-    if (api != null) {
-      print(await createUserDb());
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  /* GOOGLE SIGNIN END */
-
   final PageColor = Colors.white;
   final LogoColor = Colors.green[600];
   final TextColor = Colors.green[600];
@@ -63,7 +47,6 @@ class AuthPageState extends State<AuthPage> {
   final IconColor = Colors.blue[200];
 
   Widget build(BuildContext context) {
-    // SchedulerBinding.instance.addPostFrameCallback((_) => getUser);
 
     if (!userLoaded) {
       return SafeArea(
@@ -129,39 +112,6 @@ class AuthPageState extends State<AuthPage> {
                         },
                       ),
                     ),
-                    /*
-                    Container(
-                      color: TextBoxColor,
-                      width: SizeConfig.blockSizeHorizontal * 60,
-                      child: RaisedButton.icon(
-                        textColor: PageColor,
-                        disabledColor: Colors.grey,
-                        icon: ImageIcon(
-                          AssetImage('assets/images/google_logo.png'),
-                          color: IconColor,
-                        ),
-                        label: Text(
-                          "Sign In With Google",
-                          style: TextStyle(
-                            color: TextColor,
-                          ),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        onPressed: () async {
-                          setState(() => _isLoading = true);
-
-                          bool b = await _loginUser();
-
-                          setState(() => _isLoading = false);
-
-                          if (b == true) {
-                            Navigator.pushReplacementNamed(context, '/home');
-                          }
-                        },
-                      ),
-                    ),*/
                     FlatButton(
                       textColor: TextColor,
                       child: Text("Skip"),

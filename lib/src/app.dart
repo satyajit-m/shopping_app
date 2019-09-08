@@ -5,11 +5,10 @@ https://stackoverflow.com/questions/45155104/displaying-notification-badge-on-bo
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shopping_app/src/screens/MyOrders/myorders.dart';
+import 'package:shopping_app/src/screens/help.dart';
 
 import 'screens/home.dart';
-import 'screens/help.dart';
-import 'package:bmnav/bmnav.dart' as bmnav;
+import 'screens/locations.dart';
 
 import 'screens/profile.dart';
 
@@ -21,64 +20,77 @@ class App extends StatefulWidget {
 
 class AppState extends State<App> {
   FirebaseUser user;
-  var dataLoaded = false;
-  AppState() {
+
+  void initState() {
     getUser();
+    super.initState();
   }
-  int currentTab = 0;
-  List<Widget> screens;
-  Widget currentScreen = HomeScreen();
-  final PageStorageBucket bucket = PageStorageBucket();
+
+  List<Widget> screens = [
+    HomeScreen(key: PageStorageKey("HomeScreen")),
+    Locations(key: PageStorageKey("Locations")),
+    HelpScreen(key: PageStorageKey("HelpScreen")),
+    ProfileScreen(key: PageStorageKey("ProfileScreen")),
+  ];
+
+  PageController pageController = PageController(
+    initialPage: 0,
+    keepPage: true,
+  );
+
+  int bottomNavBarIndex = 0;
+  int pageControllerIndex = 0;
+
+  void pageChanged(int index) {
+    setState(() {
+      bottomNavBarIndex = index;
+    });
+  }
+
+  void bottomTapped(int index) {
+    setState(() {
+      pageControllerIndex = index;
+      pageController.animateToPage(index,
+          duration: Duration(milliseconds: 200), curve: Curves.fastOutSlowIn);
+    });
+  }
 
   Widget build(BuildContext context) {
-    if (!dataLoaded) {
-      return SafeArea(
-        child: Scaffold(
-          extendBody: true,
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
-      );
-    }
-
     return SafeArea(
       child: Scaffold(
-        body: PageStorage(
-          child: currentScreen,
-          bucket: bucket,
+        body: PageView(
+          controller: pageController,
+          onPageChanged: (index) => pageChanged(index),
+          children: screens,
         ),
-        bottomNavigationBar: bmnav.BottomNav(
-          onTap: (index) {
-            setState(() {
-              currentTab = index;
-              currentScreen = screens[index];
-            });
-          },
+        bottomNavigationBar: BottomNavigationBar(
+          elevation: 10,
+          showUnselectedLabels: true,
+          selectedItemColor: Colors.blue,
+          unselectedItemColor: Colors.blue[300],
+          type: BottomNavigationBarType.fixed,
+          unselectedIconTheme: IconThemeData(
+            color: Colors.black54,
+            opacity: 1.0,
+          ),
+          selectedIconTheme: IconThemeData(
+            color: Colors.black,
+            opacity: 1.0,
+          ),
+          onTap: (index) => bottomTapped(index),
+          currentIndex: bottomNavBarIndex,
           items: [
-            bmnav.BottomNavItem(Icons.home, label: 'Home'),
-            bmnav.BottomNavItem(Icons.location_on, label: 'Location'),
-            bmnav.BottomNavItem(Icons.person, label: 'profile'),
+            BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
+            BottomNavigationBarItem(icon: Icon(Icons.location_on), title: Text('Locations')),
+            BottomNavigationBarItem(icon: Icon(Icons.help), title: Text('Help')),
+            BottomNavigationBarItem(icon: Icon(Icons.person), title: Text('Profile'))
           ],
-          iconStyle: bmnav.IconStyle(onSelectSize: 30.0),
         ),
       ),
     );
   }
 
   void getUser() async {
-    print("tryin to get Current User");
     user = await FirebaseAuth.instance.currentUser();
-    screens = [
-      HomeScreen(),
-      HelpScreen(),
-      ProfileScreen(),
-      // Tester(
-      //   user: user,
-      // )
-    ];
-    setState(() {
-      dataLoaded = true;
-    });
   }
 }
