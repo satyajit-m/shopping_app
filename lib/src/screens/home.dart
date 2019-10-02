@@ -7,9 +7,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'homecard/ServiceModel.dart';
 
 class HomeScreen extends StatefulWidget {
-
   HomeScreen({Key key}) : super(key: key);
-  
+
   final String title = "Carousel Demo";
 
   @override
@@ -21,13 +20,14 @@ class HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  HomeScreenState(){
+    getOffers();
+  }
+
   CarouselSlider carouselSlider;
   int _current = 0;
   int servNo = 0;
-  List imgList = [
-    "https://firebasestorage.googleapis.com/v0/b/fixr-3b596.appspot.com/o/images%2FHomeSpa%2F6593a723.jpeg?alt=media&token=4453a0d3-2d1e-42ec-80db-2d4200a556c9",
-    "https://firebasestorage.googleapis.com/v0/b/fixr-3b596.appspot.com/o/images%2FHomeSpa%2F6593a723.jpeg?alt=media&token=4453a0d3-2d1e-42ec-80db-2d4200a556c9"
-  ];
+  List imgList = [];
 
   List<Widget> services = [];
 
@@ -57,73 +57,82 @@ class HomeScreenState extends State<HomeScreen> {
                   height: MediaQuery.of(context).size.height * 0.43,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.deepOrange, Colors.orangeAccent],
+                      colors: [Colors.deepOrange[200], Colors.orange[200]],
                     ),
                   ),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.05,
-                      ),
-                      carouselSlider = CarouselSlider(
-                        height: MediaQuery.of(context).size.height * 0.25,
-                        initialPage: 0,
-                        enlargeCenterPage: true,
-                        autoPlay: true,
-                        reverse: false,
-                        enableInfiniteScroll: true,
-                        autoPlayInterval: Duration(seconds: 5),
-                        autoPlayAnimationDuration: Duration(milliseconds: 5000),
-                        pauseAutoPlayOnTouch: Duration(seconds: 10),
-                        scrollDirection: Axis.horizontal,
-                        onPageChanged: (index) {
-                          setState(() {
-                            _current = index;
-                          });
-                        },
-                        items: imgList.map((imgUrl) {
-                          return Builder(
-                            builder: (BuildContext context) {
-                              return Container(
-                                width: MediaQuery.of(context).size.width,
-                                margin: EdgeInsets.symmetric(horizontal: 10.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.white30,
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: new BorderRadius.circular(10.0),
-                                  child: Image.network(
-                                    imgUrl,
-                                    fit: BoxFit.fill,
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        }).toList(),
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: map<Widget>(imgList, (index, url) {
-                          return Container(
-                            width: 10.0,
-                            height: 10.0,
-                            margin: EdgeInsets.symmetric(
-                                vertical: 8.0, horizontal: 2.0),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: _current == index
-                                  ? Colors.redAccent
-                                  : Colors.green,
+                  child: imgList.length == 0
+                      ? Container(
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      : Column(
+                          children: <Widget>[
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.05,
                             ),
-                          );
-                        }),
-                      ),
-                    ],
-                  ),
+                            carouselSlider = CarouselSlider(
+                              height: MediaQuery.of(context).size.height * 0.25,
+                              initialPage: 0,
+                              enlargeCenterPage: true,
+                              autoPlay: true,
+                              reverse: false,
+                              enableInfiniteScroll: true,
+                              autoPlayInterval: Duration(seconds: 5),
+                              autoPlayAnimationDuration:
+                                  Duration(milliseconds: 5000),
+                              pauseAutoPlayOnTouch: Duration(seconds: 10),
+                              scrollDirection: Axis.horizontal,
+                              onPageChanged: (index) {
+                                setState(() {
+                                  _current = index;
+                                });
+                              },
+                              items: imgList.map((imgUrl) {
+                                return Builder(
+                                  builder: (BuildContext context) {
+                                    return Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: 10.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            new BorderRadius.circular(10.0),
+                                        child: Image.network(
+                                          imgUrl,
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: map<Widget>(imgList, (index, url) {
+                                return Container(
+                                  width: 10.0,
+                                  height: 10.0,
+                                  margin: EdgeInsets.symmetric(
+                                      vertical: 8.0, horizontal: 2.0),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: _current == index
+                                        ? Colors.redAccent
+                                        : Colors.green,
+                                  ),
+                                );
+                              }),
+                            ),
+                          ],
+                        ),
                 ),
               ),
               Column(
@@ -208,5 +217,18 @@ class HomeScreenState extends State<HomeScreen> {
         ),
       ],
     );
+  }
+
+  getOffers() async {
+    print(imgList.length);
+    final QuerySnapshot result =
+        await Firestore.instance.collection('offers').getDocuments();
+    List<DocumentSnapshot> documents = result.documents;
+    for (int i = 0; i < documents.length; i++) {
+      imgList.add(documents[i].data['url']);
+    }
+    setState(() {
+      print(imgList.length);
+    });
   }
 }

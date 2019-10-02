@@ -12,7 +12,7 @@ class CategoryCard extends StatelessWidget {
       margin: const EdgeInsets.all(1),
       padding: const EdgeInsets.all(1),
       child: Card(
-        
+        color: Colors.grey[200],
         child: InkWell(
           onTap: () {
             Navigator.push(

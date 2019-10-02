@@ -29,53 +29,73 @@ class ServicesCatState extends State<ServicesCat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Ok'),
-      ),
       body: Container(
-        padding: EdgeInsets.all(6.0),
         child: load == true
             ? Center(
                 child: CircularProgressIndicator(),
               )
-            : ListView.builder(
-                itemCount: subs.length,
-                itemBuilder: (context, position) {
-                  return Container(
-                    margin: const EdgeInsets.all(1),
-                    padding: const EdgeInsets.all(1),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => Cart(
-                              service: SubServiceModel(
-                                  subs[position], subsPrice[position], subsSid[position]),
-                              user: user,
+            : CustomScrollView(
+                slivers: <Widget>[
+                  const SliverAppBar(
+                    pinned: true,
+                    expandedHeight: 250.0,
+                    flexibleSpace: FlexibleSpaceBar(
+                      title: Text('Demo'),
+                    ),
+                  ),
+                  SliverList(
+                    // Use a delegate to build items as they're scrolled on screen.
+                    delegate: SliverChildBuilderDelegate(
+                      (context, position) {
+                        return Container(
+                          margin: const EdgeInsets.all(1),
+                          padding: const EdgeInsets.all(1),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => Cart(
+                                    service: SubServiceModel(subs[position],
+                                        subsPrice[position], subsSid[position]),
+                                    user: user,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: ListTile(
+                              //leading: FlutterLogo(size: 72.0),
+                              title: Container(
+                                child: Text('${subs[position]}'),
+                              ),
+                              subtitle: Container(
+                                child: Divider(),
+                              ),
+                              trailing: Icon(
+                                Icons.chevron_right,
+                                color: Colors.deepOrange,
+                                size: 40.0,
+                              ),
                             ),
                           ),
                         );
                       },
-                      child: ListTile(
-                        //leading: FlutterLogo(size: 72.0),
-                        title: Container(
-                          child: Text('${subs[position]}'),
-                        ),
-                        subtitle: Container(child: Divider(),),
-                        trailing: Icon(
-                          Icons.chevron_right,
-                          color: Colors.blue,
-                          size: 40.0,
-                        ),
-                      ),
-                      
+                      childCount: subs.length,
                     ),
-                  );
-                },
+                  )
+                ],
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
               ),
       ),
     );
   }
+
+  // ListView.builder(
+  //                         itemCount: subs.length,
+  //                         itemBuilder: (context, position) {
+  //return
+  //                         },
+  //                       ),
 
   //      return Card(
   //        elevation: 5.0,

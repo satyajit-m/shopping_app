@@ -38,7 +38,7 @@ class ProfileScreenState extends State<ProfileScreen> {
       body: Stack(
         children: <Widget>[
           ClipPath(
-            child: Container(color: Colors.teal),
+            child: Container(color: Colors.deepOrange),
             clipper: getClipper(),
           ),
           Positioned(
@@ -56,7 +56,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                       width: 150.0,
                       height: 150.0,
                       decoration: BoxDecoration(
-                        color: Colors.lightBlue,
+                        color: Colors.orange,
                         
                         borderRadius: BorderRadius.all(Radius.circular(75.0)),
                         boxShadow: [
@@ -89,7 +89,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                       width: 110.0,
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
-                        shadowColor: Colors.greenAccent,
+                        shadowColor: Colors.blueAccent,
                         color: Colors.indigo,
                         elevation: 7.0,
                         child: GestureDetector(

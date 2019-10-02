@@ -66,15 +66,15 @@ class AppState extends State<App> {
         bottomNavigationBar: BottomNavigationBar(
           elevation: 10,
           showUnselectedLabels: true,
-          selectedItemColor: Colors.blue,
-          unselectedItemColor: Colors.blue[300],
+          selectedItemColor: Colors.deepOrange,
+          unselectedItemColor: Colors.orangeAccent,
           type: BottomNavigationBarType.fixed,
           unselectedIconTheme: IconThemeData(
-            color: Colors.black54,
+            color: Colors.orange[300],
             opacity: 1.0,
           ),
           selectedIconTheme: IconThemeData(
-            color: Colors.black,
+            color: Colors.deepOrangeAccent,
             opacity: 1.0,
           ),
           onTap: (index) => bottomTapped(index),

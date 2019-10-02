@@ -11,7 +11,7 @@ class S2 extends StatefulWidget {
 class S2State extends State<S2> {
   String something;
 
-  S2State() {}
+  S2State();
 
   @override
   Widget build(BuildContext context) {
