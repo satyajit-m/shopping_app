@@ -3,19 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:shopping_app/auth/auth_page.dart';
 import 'package:shopping_app/src/screens/MyOrders/myorders.dart';
 
-
 class ProfileScreen extends StatefulWidget {
   // FirebaseUser user;
   // ProfileScreen(this.user);
 
-  ProfileScreen({Key key}) : super(key : key);
+  ProfileScreen({Key key}) : super(key: key);
 
   ProfileScreenState createState() => ProfileScreenState();
 }
 
 class ProfileScreenState extends State<ProfileScreen> {
   FirebaseUser user;
-  String phone = " Login To Continue ";
+  String phone = "";
   String picUrl = "";
   bool _lOut = false;
   ProfileScreenState() {
@@ -24,11 +23,9 @@ class ProfileScreenState extends State<ProfileScreen> {
 
   Future getUser() async {
     user = await FirebaseAuth.instance.currentUser();
-    print(user);
     if (user != null) {
       phone = user.phoneNumber.toString();
       picUrl = user.photoUrl.toString();
-      print(phone);
       setState(() {});
     }
   }
@@ -38,7 +35,7 @@ class ProfileScreenState extends State<ProfileScreen> {
       body: Stack(
         children: <Widget>[
           ClipPath(
-            child: Container(color: Colors.deepOrange),
+            child: Container(color: Colors.deepOrangeAccent),
             clipper: getClipper(),
           ),
           Positioned(
@@ -57,15 +54,12 @@ class ProfileScreenState extends State<ProfileScreen> {
                       height: 150.0,
                       decoration: BoxDecoration(
                         color: Colors.orange,
-                        
                         borderRadius: BorderRadius.all(Radius.circular(75.0)),
                         boxShadow: [
                           BoxShadow(blurRadius: 7.0, color: Colors.black)
                         ],
-                      
                       ),
-                      child: Image.asset(
-                        'assets/images/logo.png'),
+                      child: Image.asset('assets/images/logo.png'),
                     ),
                     SizedBox(height: 75.0),
                     Text(
@@ -84,63 +78,94 @@ class ProfileScreenState extends State<ProfileScreen> {
                     //       fontFamily: 'Montserrat'),
                     // ),
                     SizedBox(height: 8.0),
-                    Container(
-                      height: 40.0,
-                      width: 110.0,
-                      child: Material(
-                        borderRadius: BorderRadius.circular(20.0),
-                        shadowColor: Colors.blueAccent,
-                        color: Colors.indigo,
-                        elevation: 7.0,
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MyOrders(user)));
-                          },
-                          child: Center(
-                            child: Text(
-                              'My Orders',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: 'Montserrat'),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 25.0),
-                    Container(
-                      height: 40.0,
-                      width: 110.0,
-                      child: Material(
-                        borderRadius: BorderRadius.circular(20.0),
-                        shadowColor: Colors.redAccent,
-                        color: Colors.deepOrange,
-                        elevation: 7.0,
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _lOut = true;
-                            });
-                            logOut();
-                          },
-                          child: _lOut
-                              ? Center(
-                                  child: CircularProgressIndicator(),
-                                )
-                              : Center(
+                    phone == ""
+                        ? Container(
+                            margin: EdgeInsets.fromLTRB(12.0, 0.0, 6.0, 0.0),
+                            height: 40.0,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(context, '/phoneAuth');
+                              },
+                              child: Material(
+                                borderRadius: BorderRadius.circular(10.0),
+                                shadowColor: Colors.deepOrangeAccent,
+                                color: Colors.orange[400],
+                                elevation: 5.0,
+                                child: Center(
                                   child: Text(
-                                    'Log out',
+                                    'Login ',
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontFamily: 'Montserrat'),
                                   ),
                                 ),
-                        ),
-                      ),
-                    ),
+                              ),
+                            ),
+                          )
+                        : Column(
+                            children: <Widget>[
+                              Container(
+                                margin:
+                                    EdgeInsets.fromLTRB(12.0, 0.0, 6.0, 0.0),
+                                height: 40.0,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                MyOrders(user)));
+                                  },
+                                  child: Material(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    shadowColor: Colors.deepOrangeAccent,
+                                    color: Colors.orange[400],
+                                    elevation: 5.0,
+                                    child: Center(
+                                      child: Text(
+                                        'My Orders',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: 'Montserrat'),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 25.0),
+                              Container(
+                                margin:
+                                    EdgeInsets.fromLTRB(12.0, 0.0, 6.0, 0.0),
+                                height: 40.0,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _lOut = true;
+                                    });
+                                    logOut();
+                                  },
+                                  child: Material(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    shadowColor: Colors.redAccent,
+                                    color: Colors.deepOrangeAccent,
+                                    elevation: 5.0,
+                                    child: _lOut
+                                        ? Center(
+                                            child: CircularProgressIndicator(),
+                                          )
+                                        : Center(
+                                            child: Text(
+                                              'Log out',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontFamily: 'Montserrat'),
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                   ],
                 ),
               ),
