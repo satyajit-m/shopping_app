@@ -18,7 +18,7 @@ class _HelpScreenState extends State<HelpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(color: Colors.teal),
+        decoration: BoxDecoration(color: Colors.deepOrange[300]),
         child: Center(
           child: Padding(
             padding: const EdgeInsets.only(left: 10.0, right: 10.0),
@@ -30,12 +30,12 @@ class _HelpScreenState extends State<HelpScreen> {
                   elevation: 10,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.teal[300],
+                      color: Colors.deepOrange[100],
                     ),
                     child: InkWell(
                       child: Container(
-                        height: MediaQuery.of(context).size.height * 0.4,
-                        width: MediaQuery.of(context).size.width * 0.6,
+                        height: MediaQuery.of(context).size.height * 0.2,
+                        width: MediaQuery.of(context).size.width * 0.4,
                         child: Image.asset(
                           "assets/images/logo.png",
                           color: Colors.white,
@@ -62,7 +62,7 @@ class _HelpScreenState extends State<HelpScreen> {
                 ),
                 Container(
                   height: MediaQuery.of(context).size.height * 0.15,
-                  decoration: BoxDecoration(color: Colors.teal),
+                  decoration: BoxDecoration(color: Colors.deepOrange[400]),
                   child: Card(
                     elevation: 10,
                     child: Row(
