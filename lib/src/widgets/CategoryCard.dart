@@ -12,11 +12,13 @@ class CategoryCard extends StatelessWidget {
       padding: const EdgeInsets.all(1),
       child: Card(
         child: DecoratedBox(
+          
           decoration: BoxDecoration(
             gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Colors.deepOrange[100],Colors.grey[100]]),
+                colors: [Colors.grey[300],Colors.grey[100]]),
+                
           ),
           child: InkWell(
             onTap: () {
@@ -49,7 +51,7 @@ class CategoryCard extends StatelessWidget {
           ),
         ),
       ),
-      height: MediaQuery.of(context).size.height*0.21,
+      height: MediaQuery.of(context).size.height*0.15,
     );
   }
 }
