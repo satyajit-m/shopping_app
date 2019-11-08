@@ -7,9 +7,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'homecard/ServiceModel.dart';
 
 class HomeScreen extends StatefulWidget {
-
   HomeScreen({Key key}) : super(key: key);
-  
+
   final String title = "Carousel Demo";
 
   @override
@@ -21,13 +20,14 @@ class HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  HomeScreenState() {
+    getOffers();
+  }
+
   CarouselSlider carouselSlider;
   int _current = 0;
   int servNo = 0;
-  List imgList = [
-    "https://firebasestorage.googleapis.com/v0/b/fixr-3b596.appspot.com/o/images%2FHomeSpa%2F6593a723.jpeg?alt=media&token=4453a0d3-2d1e-42ec-80db-2d4200a556c9",
-    "https://firebasestorage.googleapis.com/v0/b/fixr-3b596.appspot.com/o/images%2FHomeSpa%2F6593a723.jpeg?alt=media&token=4453a0d3-2d1e-42ec-80db-2d4200a556c9"
-  ];
+  List imgList = [];
 
   List<Widget> services = [];
 
@@ -42,102 +42,110 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Shopping'),
-      ),
       body: Container(
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              ClipPath(
-                clipper: CustomShapeClipper(),
+              Container(
+                //clipper: CustomShapeClipper(),
                 child: Container(
-                  height: MediaQuery.of(context).size.height * 0.43,
+                  height: MediaQuery.of(context).size.height * 0.35,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.deepOrange, Colors.orangeAccent],
+                      colors: [Color(0xffF9A533 ), Color(0xffF77C08 )],
                     ),
                   ),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.05,
-                      ),
-                      carouselSlider = CarouselSlider(
-                        height: MediaQuery.of(context).size.height * 0.25,
-                        initialPage: 0,
-                        enlargeCenterPage: true,
-                        autoPlay: true,
-                        reverse: false,
-                        enableInfiniteScroll: true,
-                        autoPlayInterval: Duration(seconds: 5),
-                        autoPlayAnimationDuration: Duration(milliseconds: 5000),
-                        pauseAutoPlayOnTouch: Duration(seconds: 10),
-                        scrollDirection: Axis.horizontal,
-                        onPageChanged: (index) {
-                          setState(() {
-                            _current = index;
-                          });
-                        },
-                        items: imgList.map((imgUrl) {
-                          return Builder(
-                            builder: (BuildContext context) {
-                              return Container(
-                                width: MediaQuery.of(context).size.width,
-                                margin: EdgeInsets.symmetric(horizontal: 10.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.white30,
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: new BorderRadius.circular(10.0),
-                                  child: Image.network(
-                                    imgUrl,
-                                    fit: BoxFit.fill,
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        }).toList(),
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: map<Widget>(imgList, (index, url) {
-                          return Container(
-                            width: 10.0,
-                            height: 10.0,
-                            margin: EdgeInsets.symmetric(
-                                vertical: 8.0, horizontal: 2.0),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: _current == index
-                                  ? Colors.redAccent
-                                  : Colors.green,
+                  child: imgList.length == 0
+                      ? Container(
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      : Column(
+                          children: <Widget>[
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.05,
                             ),
-                          );
-                        }),
-                      ),
-                    ],
-                  ),
+                            carouselSlider = CarouselSlider(
+                              height: MediaQuery.of(context).size.height * 0.22,
+                              initialPage: 0,
+                              enlargeCenterPage: true,
+                              autoPlay: true,
+                              reverse: false,
+                              enableInfiniteScroll: true,
+                              autoPlayInterval: Duration(seconds: 5),
+                              autoPlayAnimationDuration:
+                                  Duration(milliseconds: 5000),
+                              pauseAutoPlayOnTouch: Duration(seconds: 10),
+                              scrollDirection: Axis.horizontal,
+                              onPageChanged: (index) {
+                                setState(() {
+                                  _current = index;
+                                });
+                              },
+                              items: imgList.map((imgUrl) {
+                                return Builder(
+                                  builder: (BuildContext context) {
+                                    return Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: 10.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            new BorderRadius.circular(5.0),
+                                        child: Image.network(
+                                          imgUrl,
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: map<Widget>(imgList, (index, url) {
+                                return Container(
+                                  width: 10.0,
+                                  height: 10.0,
+                                  margin: EdgeInsets.symmetric(
+                                      vertical: 8.0, horizontal: 2.0),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: _current == index
+                                        ? Colors.redAccent
+                                        : Colors.green,
+                                  ),
+                                );
+                              }),
+                            ),
+                          ],
+                        ),
                 ),
               ),
-              Column(
-                children: <Widget>[
-                  StreamBuilder(
-                    stream: Firestore.instance
-                        .collection('ServiceTypes')
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      return serviceTypeCards(context, snapshot);
-                    },
-                  ),
-                ],
-              ),
+              Container(
+                child: Column(
+                  children: <Widget>[
+                    StreamBuilder(
+                      stream: Firestore.instance
+                          .collection('ServiceTypes')
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        return serviceTypeCards(context, snapshot);
+                      },
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         ),
@@ -165,23 +173,40 @@ class HomeScreenState extends State<HomeScreen> {
           snapshot.data.documents[i].data['url']));
 
     return Container(
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          if (index % 2 == 0) {
-            return callCategoryCard(
-                data[index].serviceName,
-                data[index + 1].serviceName,
-                data[index].serviceUrl,
-                data[index + 1].serviceUrl);
-          } else {
-            return SizedBox();
-          }
-        },
-      ),
-    );
+        decoration: new BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xffF9A533 ), Color(0xffF77C08 )],
+          ),
+        ),
+        child: ClipRRect(
+          
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0),topRight: Radius.circular(20.0)),
+          child: Container(
+                    padding: EdgeInsets.fromLTRB(0,MediaQuery.of(context).size.height*0.02, 0, 0),
+
+            decoration: new BoxDecoration(
+              color: Colors.grey[200],
+            ),
+            child: ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: data.length,
+              itemBuilder: (context, index) {
+                if (index % 3 == 0 && data.length-index>2) {
+                  return callCategoryCard(
+                      data[index].serviceName,
+                      data[index + 1].serviceName,
+                      data[index+2].serviceName,
+                      data[index].serviceUrl,
+                      data[index + 1].serviceUrl,
+                      data[index+2].serviceUrl);
+                } else {
+                  return SizedBox();
+                }
+              },
+            ),
+          ),
+        ));
   }
 
   goToPrevious() {
@@ -194,8 +219,8 @@ class HomeScreenState extends State<HomeScreen> {
         duration: Duration(milliseconds: 300), curve: Curves.decelerate);
   }
 
-  Widget callCategoryCard(String serviceName1, String serviceName2,
-      String serviceUrl1, String serviceUrl2) {
+  Widget callCategoryCard(String serviceName1, String serviceName2,String serviceName3,
+      String serviceUrl1, String serviceUrl2,String serviceUrl3 ) {
     return Row(
       children: <Widget>[
         Expanded(
@@ -206,7 +231,24 @@ class HomeScreenState extends State<HomeScreen> {
           child: Column(
               children: <Widget>[CategoryCard(serviceName2, serviceUrl2)]),
         ),
+        Expanded(
+          child: Column(
+              children: <Widget>[CategoryCard(serviceName3, serviceUrl3)]),
+        ),
       ],
     );
+  }
+
+  getOffers() async {
+    print(imgList.length);
+    final QuerySnapshot result =
+        await Firestore.instance.collection('offers').getDocuments();
+    List<DocumentSnapshot> documents = result.documents;
+    for (int i = 0; i < documents.length; i++) {
+      imgList.add(documents[i].data['url']);
+    }
+    setState(() {
+      print(imgList.length);
+    });
   }
 }

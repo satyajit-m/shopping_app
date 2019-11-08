@@ -37,7 +37,7 @@ class _MyOrdersState extends State<MyOrders> {
                         },
                         child: Icon(
                           Icons.chevron_left,
-                          color: Colors.blue,
+                          color: Colors.deepOrange[300],
                           size: h * 0.054,
                         ),
                       ),
@@ -66,20 +66,20 @@ class _MyOrdersState extends State<MyOrders> {
                       child: Container(
                         child: DecoratedBox(
                           decoration: BoxDecoration(
-                            color: Colors.blue,
+                            color: Colors.deepOrange[300],
                             borderRadius: BorderRadius.all(
-                              Radius.circular(15.0),
+                              Radius.circular(12.0),
                             ),
                           ),
                           child: Padding(
                             padding: EdgeInsets.only(
-                                top: 3.0, bottom: 3.0, left: 7.0, right: 7.0),
+                                top: 3.0, bottom: 3.0, left: 8.0, right: 8.0),
                             child: const Text(
                               'All Orders',
                               style: TextStyle(
                                   fontSize: 20.0, color: Colors.white),
                             ),
-                          ), 
+                          ),
                         ),
                       ),
                     ),
@@ -185,8 +185,8 @@ class OrderList extends StatelessWidget {
   }
 
   Widget _buildListItems(BuildContext context, DocumentSnapshot document) {
-    String dt =
-        beautifulDateOnly(DateTime.parse('${document['transactionDate']}'));
+    // String dt =
+    //     beautifulDateOnly(DateTime.parse('${document['transactionDate']}'));
     return Container(
       margin: const EdgeInsets.all(1),
       padding: const EdgeInsets.all(1),
@@ -197,7 +197,8 @@ class OrderList extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => OrderDetails(document.data)),
+              MaterialPageRoute(
+                  builder: (context) => OrderDetails(document.data)),
             );
           },
           child: ListTile(
@@ -219,17 +220,23 @@ class OrderList extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text('${document['transactionDate']}'),
-                  document['paymentDetails']['status'] == 'FAILURE'
-                      ? Icon(
-                          Icons.cancel,
-                          color: Colors.red,
-                          size: 30.0,
-                        )
-                      : Icon(
-                          Icons.done_outline,
-                          color: Colors.green,
-                          size: 30.0,
-                        )
+                  Icon(
+                    Icons.chevron_right,
+                    color: Colors.deepOrange,
+                    size: 40.0,
+                  ),
+
+                  // document['paymentDetails']['status'] == 'FAILURE'
+                  //     ? Icon(
+                  //         Icons.cancel,
+                  //         color: Colors.red,
+                  //         size: 30.0,
+                  //       )
+                  //     : Icon(
+                  //         Icons.done_outline,
+                  //         color: Colors.green,
+                  //         size: 30.0,
+                  //       )
                 ],
               ),
             ),
@@ -241,7 +248,7 @@ class OrderList extends StatelessWidget {
           ),
         ),
         decoration: BoxDecoration(
-          color: Color(0xffDBF2FE),
+          color: Colors.orange[100],
           border: new Border.all(color: Colors.grey[300]),
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
         ),

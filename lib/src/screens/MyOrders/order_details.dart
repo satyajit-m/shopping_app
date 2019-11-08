@@ -21,7 +21,7 @@ class _OrderDetailsState extends State<OrderDetails> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.fromLTRB(w * 0.05, 0, w * 0.02, 0),
+            padding: EdgeInsets.fromLTRB(w * 0.025, 0, w * 0.025, 0),
             child: Column(
               children: <Widget>[
                 SizedBox(
@@ -37,7 +37,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                         },
                         child: Icon(
                           Icons.keyboard_arrow_left,
-                          color: Colors.blue,
+                          color: Colors.deepOrange[300],
                           size: h * 0.054,
                         ),
                       ),
@@ -76,7 +76,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                         children: <Widget>[
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.indigoAccent,
+                              gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Colors.deepOrange[400],
+                                    Colors.deepOrange[200]
+                                  ]),
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(10.0),
                                 topRight: Radius.circular(10.0),
@@ -92,7 +98,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 Text(
                                   "Order Details",
                                   style: TextStyle(
-                                    fontSize: 20,
+                                    fontSize: h*0.025,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white,
                                   ),
@@ -113,7 +119,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     children: <Widget>[
                                       Text(
                                         'Order Status :',
-                                        style: TextStyle(fontSize: h * 0.03),
+                                        style: TextStyle(fontSize: h * 0.025),
                                       ),
                                       Text(
                                         ' ${document['responseStatus']}',
@@ -176,7 +182,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                         children: <Widget>[
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.indigoAccent,
+                              gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Colors.deepOrange[400],
+                                    Colors.deepOrange[200]
+                                  ]),
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(10.0),
                                 topRight: Radius.circular(10.0),
@@ -192,7 +204,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 Text(
                                   "Payment Details",
                                   style: TextStyle(
-                                    fontSize: 20,
+                                    fontSize: h*0.025,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white,
                                   ),
@@ -213,7 +225,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     children: <Widget>[
                                       Text(
                                         'Amount Paid :',
-                                        style: TextStyle(fontSize: h * 0.03),
+                                        style: TextStyle(fontSize: h * 0.025),
                                       ),
                                       Text(
                                         'Rs. ${document['serviceDetails']['price']}',
@@ -229,7 +241,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     children: <Widget>[
                                       Text(
                                         'Order Id :',
-                                        style: TextStyle(fontSize: h * 0.03),
+                                        style: TextStyle(fontSize: h * 0.025),
                                       ),
                                       Text(
                                         '${document['paymentDetails']['txnRef']}',
@@ -245,7 +257,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     children: <Widget>[
                                       Text(
                                         'Status :',
-                                        style: TextStyle(fontSize: h * 0.03),
+                                        style: TextStyle(fontSize: h * 0.025),
                                       ),
                                       Text(
                                         '${document['paymentDetails']['status']}',
@@ -281,7 +293,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                         children: <Widget>[
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.indigoAccent,
+                              gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Colors.deepOrange[400],
+                                    Colors.deepOrange[200],
+                                  ]),
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(10.0),
                                 topRight: Radius.circular(10.0),
@@ -297,7 +315,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 Text(
                                   "Service Address",
                                   style: TextStyle(
-                                    fontSize: 20,
+                                    fontSize: h*0.025,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white,
                                   ),
@@ -312,7 +330,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                             child: Align(
                               child: Text(
                                 Profile.mapToString(document['serviceAddress']),
-                                style: TextStyle(fontSize: h * 0.03),
+                                style: TextStyle(fontSize: h * 0.0265),
                               ),
                               alignment: Alignment.topLeft,
                             ),

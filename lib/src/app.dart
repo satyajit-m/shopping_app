@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:shopping_app/src/screens/help.dart';
 
 import 'screens/home.dart';
-import 'screens/locations.dart';
 
 import 'screens/profile.dart';
 
@@ -28,7 +27,7 @@ class AppState extends State<App> {
 
   List<Widget> screens = [
     HomeScreen(key: PageStorageKey("HomeScreen")),
-    Locations(key: PageStorageKey("Locations")),
+    //Locations(key: PageStorageKey("Locations")),
     HelpScreen(key: PageStorageKey("HelpScreen")),
     ProfileScreen(key: PageStorageKey("ProfileScreen")),
   ];
@@ -66,22 +65,22 @@ class AppState extends State<App> {
         bottomNavigationBar: BottomNavigationBar(
           elevation: 10,
           showUnselectedLabels: true,
-          selectedItemColor: Colors.blue,
-          unselectedItemColor: Colors.blue[300],
+          selectedItemColor: Colors.deepOrange,
+          unselectedItemColor: Colors.orange[200],
           type: BottomNavigationBarType.fixed,
           unselectedIconTheme: IconThemeData(
-            color: Colors.black54,
+            color: Colors.orange[200],
             opacity: 1.0,
           ),
           selectedIconTheme: IconThemeData(
-            color: Colors.black,
+            color: Colors.deepOrange,
             opacity: 1.0,
           ),
           onTap: (index) => bottomTapped(index),
           currentIndex: bottomNavBarIndex,
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
-            BottomNavigationBarItem(icon: Icon(Icons.location_on), title: Text('Locations')),
+            //BottomNavigationBarItem(icon: Icon(Icons.location_on), title: Text('Locations')),
             BottomNavigationBarItem(icon: Icon(Icons.help), title: Text('Help')),
             BottomNavigationBarItem(icon: Icon(Icons.person), title: Text('Profile'))
           ],

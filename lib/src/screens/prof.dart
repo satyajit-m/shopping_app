@@ -8,8 +8,11 @@ class ProfileScreen extends StatefulWidget {
   // FirebaseUser user;
   // ProfileScreen(this.user);
 
+  ProfileScreen({Key key}) : super(key: key);
+
   ProfileScreenState createState() => ProfileScreenState();
 }
+
 
 class ProfileScreenState extends State<ProfileScreen> {
   FirebaseUser user;
@@ -51,9 +54,9 @@ class ProfileScreenState extends State<ProfileScreen> {
                   // Add one stop for each color. Stops should increase from 0 to 1
                   colors: [
                     // Colors are easy thanks to Flutter's Colors class.
-                    Colors.teal[400],
-                    Colors.teal[300],
-                    Colors.teal[200]
+                    Colors.deepOrange[400],
+                    Colors.deepOrange[300],
+                    Colors.deepOrange[200]
                   ],
                 ),
               ),
@@ -61,7 +64,7 @@ class ProfileScreenState extends State<ProfileScreen> {
           ),
           Expanded(
             child: Container(
-              color: Colors.teal[200],
+              color: Colors.deepOrange[200],
               child: new Container(
                   decoration: new BoxDecoration(
                     color: Colors.grey[100],
