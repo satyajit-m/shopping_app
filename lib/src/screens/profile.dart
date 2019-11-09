@@ -179,7 +179,7 @@ class ProfileScreenState extends State<ProfileScreen> {
   void logOut() async {
     await FirebaseAuth.instance.signOut();
     await Future.delayed(const Duration(seconds: 4));
-    Navigator.of(context).pop();
+    Navigator.of(context).pushReplacementNamed("/");
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => AuthPage()));
   }
