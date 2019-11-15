@@ -135,10 +135,7 @@ class OtpPageState extends State<OtpPage> {
             IconButton(
               icon: Icon(Icons.check),
               onPressed: () {
-                Navigator.popUntil(context, ModalRoute.withName("/"));
-                // Navigator.of(context, rootNavigator: true).pop();
-                // Navigator.of(context).pop();
-                // Navigator.of(context).pop();
+                Navigator.of(context).popUntil((route) => route.isFirst);
                 Navigator.pushReplacementNamed(context ,'/home');
               },
             )
