@@ -11,9 +11,12 @@ class CategoryCard extends StatelessWidget {
       margin: const EdgeInsets.all(1),
       padding: const EdgeInsets.all(1),
       child: Card(
+        color: Colors.grey[200],
+       
         child: DecoratedBox(
           
           decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
             gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,

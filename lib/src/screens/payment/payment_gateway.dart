@@ -191,7 +191,7 @@ class PaymentGatewayState extends State<PaymentGateway> {
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
                   "Paying ₹" + widget.service.price.toString(),
-                  style: TextStyle(color: Colors.black54),
+                  style: TextStyle(color: Colors.blue),
                 ),
                 background: Image.asset("assets/images/upi.png"),
               ),
@@ -285,18 +285,20 @@ class PaymentGatewayState extends State<PaymentGateway> {
   }
 
   SliverChildBuilderDelegate upiAppsList(BuildContext context) {
-    const int listLength = 3;
+    const int listLength = 5;
 
     const appPackageList = [
       UPIApps.GooglePay,
       UPIApps.BHIMUPI,
       UPIApps.AmazonPay,
+      UPIApps.PhonePe,
     ];
 
     const appNameList = [
       "Google Pay",
       "BHIM UPI",
       "Amazon Pay",
+      "Phone Pe"
     ];
 
     return SliverChildBuilderDelegate(
