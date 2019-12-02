@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../models/sub_service_model.dart';
-import '../../screens/cart.dart';
+import '../../screens/desc.dart';
 
 class ServicesCat extends StatefulWidget {
   final String something;
@@ -19,6 +19,8 @@ class ServicesCatState extends State<ServicesCat> {
   List<String> subsImg = [];
   List<int> subsPrice = [];
   List<int> subsSid = [];
+  List<String> subsProv = [];
+  List<String> subsDesc = [];
   bool load;
 
   ServicesCatState(this.something) {
@@ -54,9 +56,9 @@ class ServicesCatState extends State<ServicesCat> {
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => Cart(
+                                  builder: (context) => Desc(
                                     service: SubServiceModel(subs[position],
-                                        subsPrice[position], subsSid[position]),
+                                        subsPrice[position], subsSid[position], subsDesc[position], subsProv[position]),
                                     user: user,
                                   ),
                                 ),
@@ -139,6 +141,8 @@ class ServicesCatState extends State<ServicesCat> {
       subsImg.add(documents[i].data['url']);
       subsPrice.add(documents[i].data['price']);
       subsSid.add(documents[i].data['sid']);
+      subsDesc.add(documents[i].data['desc']);
+      subsProv.add(documents[i].data['prov']);
     }
     setState(() {
       load = false;
