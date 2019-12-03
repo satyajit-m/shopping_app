@@ -1,3 +1,4 @@
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../size_config.dart';
@@ -10,92 +11,180 @@ class HelpScreen extends StatefulWidget {
 
 class _HelpScreenState extends State<HelpScreen> {
   int _taps = 0;
+  double ht, wd;
 
   _HelpScreenState() {
     _taps = 0;
   }
 
   Widget build(BuildContext context) {
+    ht = MediaQuery.of(context).size.height;
+    wd = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(color: Colors.deepOrange[300]),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                Card(
-                  elevation: 10,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.deepOrange[100],
+        padding: EdgeInsets.all(ht * 0.05),
+        width: wd,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.deepOrange[100], Colors.deepOrange[50]],
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              child: Text(
+                'Just A Moment !',
+                style: TextStyle(
+                    fontSize: ht * 0.05,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange[500],
+                    fontFamily: "Roboto"),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.fromLTRB(0.0, ht * 0.03, 0.0, 0.0),
+              child: Text(
+                'Why waste time ?',
+                style: TextStyle(fontSize: ht * 0.034),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.fromLTRB(0.0, ht * 0.03, 0.0, 0.0),
+              child: Text(
+                "We're just a Click away",
+                style: TextStyle(
+                    fontSize: ht * 0.035, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.fromLTRB(0.0, ht * 0.03, 0.0, 0.0),
+              child: Text(
+                "Sit back & Relax",
+                style: TextStyle(fontSize: ht * 0.034),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.fromLTRB(0.0, ht * 0.05, 0.0, 0.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: new Container(
+                        height: ht * 0.1,
+                        decoration: new BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            image: new DecorationImage(
+                                fit: BoxFit.contain,
+                                image: new NetworkImage(
+                                    "https://firebasestorage.googleapis.com/v0/b/fixr-3b596.appspot.com/o/cliparts%2Fhouse_renovation%2Fpainter%2F2.png?alt=media&token=cb28e0b2-c77b-4c96-a919-29c1d34bec9d")))),
+                  ),
+                  Expanded(
+                    child: Container(
+                        height: ht * 0.1,
+                        decoration: new BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            image: new DecorationImage(
+                                fit: BoxFit.contain,
+                                image: new NetworkImage(
+                                    "https://firebasestorage.googleapis.com/v0/b/fixr-3b596.appspot.com/o/cliparts%2Fcleaning%2F3.png?alt=media&token=6855982d-d47c-4017-bcd9-5aa0a52df00a")))),
+                  ),
+                  Expanded(
+                    child: Container(
+                        height: ht * 0.1,
+                        decoration: new BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            image: new DecorationImage(
+                                fit: BoxFit.contain,
+                                image: new NetworkImage(
+                                    "https://firebasestorage.googleapis.com/v0/b/fixr-3b596.appspot.com/o/cliparts%2Fevent_management%2Fparty%26event%2F6.png?alt=media&token=2adbf0b0-b784-46d1-93ae-d1c05002fd25")))),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.fromLTRB(0.0, ht * 0.1, 0.0, 0.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      'Write To Us ',
+                      style: TextStyle(fontSize: ht * 0.04),
                     ),
-                    child: InkWell(
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * 0.2,
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        child: Image.asset(
-                          "assets/images/logo.png",
-                          color: Colors.white,
-                          fit: BoxFit.contain,
+                  ),
+                  Expanded(
+                    child: AvatarGlow(
+                      endRadius: ht * 0.06,
+                      startDelay: Duration(milliseconds: 1000),
+                      glowColor: Colors.deepOrange,
+                      duration: Duration(milliseconds: 2000),
+                      repeat: true,
+                      showTwoGlows: true,
+                      repeatPauseDuration:
+                          Duration(milliseconds: 100), //required
+                      child: Material(
+                        //required
+                        elevation: 8.0,
+                        shape: CircleBorder(),
+                        child: CircleAvatar(
+                          backgroundColor: Colors.grey[100],
+                          child: Icon(
+                            Icons.email,
+                            color: Colors.orange,
+                            size: ht * 0.05,
+                          ),
+                          radius: ht * 0.03,
                         ),
                       ),
-                      onTap: () {
-                        if (_taps < 10) {
-                          _taps += 1;
-                          return;
-                        }
-                        Navigator.of(context)
-                            .push(
-                          MaterialPageRoute(
-                            builder: (context) => MG(),
-                          ),
-                        )
-                            .then((val) {
-                          _taps = 0;
-                        });
-                      },
+                      curve: Curves.fastOutSlowIn,
                     ),
                   ),
-                ),
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.15,
-                  decoration: BoxDecoration(color: Colors.deepOrange[400]),
-                  child: Card(
-                    elevation: 10,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        Text(
-                          "Contact Us",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "1234567890",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        InkWell(
-                          onTap: () => _launchCaller("1234567890"),
-                          child: Container(
-                            padding: EdgeInsets.all(3),
-                            child: Icon(
-                              Icons.phone,
-                              color: Colors.blue,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+            Container(
+              margin: EdgeInsets.fromLTRB(0.0, ht * 0.01, 0.0, 0.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(flex: 1,
+                    child: AvatarGlow(
+                      endRadius: ht * 0.06,
+                      startDelay: Duration(milliseconds: 1000),
+                      glowColor: Colors.deepOrange,
+                      duration: Duration(milliseconds: 2000),
+                      repeat: true,
+                      showTwoGlows: true,
+                      repeatPauseDuration:
+                          Duration(milliseconds: 100), //required
+                      child: Material(
+                        //required
+                        elevation: 8.0,
+                        shape: CircleBorder(),
+                        child: CircleAvatar(
+                          backgroundColor: Colors.grey[100],
+                          child: Icon(
+                            Icons.phone,
+                            color: Colors.orange,
+                            size: ht * 0.05,
+                          ),
+                          radius: ht * 0.03,
+                        ),
+                      ),
+                      curve: Curves.fastOutSlowIn,
+                    ),
+                  ),
+                  Expanded(flex: 2,
+                    child: Text(
+                      'Call Us ',
+                      style: TextStyle(fontSize: ht * 0.04),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
