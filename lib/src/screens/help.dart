@@ -22,7 +22,7 @@ class _HelpScreenState extends State<HelpScreen> {
     wd = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.all(ht * 0.05),
+        padding: EdgeInsets.fromLTRB(ht * 0.05,ht * 0.05,ht * 0.05,0),
         width: wd,
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -130,12 +130,15 @@ class _HelpScreenState extends State<HelpScreen> {
                         shape: CircleBorder(),
                         child: CircleAvatar(
                           backgroundColor: Colors.grey[100],
-                          child: Icon(
-                            Icons.email,
+                          child: IconButton(
+                            icon: Icon(Icons.email),
                             color: Colors.orange,
-                            size: ht * 0.05,
+                            iconSize: ht * 0.04,
+                            onPressed: (){
+                              _launchEmail("fixrglobal@gmail.com");
+                            },
                           ),
-                          radius: ht * 0.03,
+                          radius: ht * 0.035,
                         ),
                       ),
                       curve: Curves.fastOutSlowIn,
@@ -150,7 +153,7 @@ class _HelpScreenState extends State<HelpScreen> {
                 children: <Widget>[
                   Expanded(flex: 1,
                     child: AvatarGlow(
-                      endRadius: ht * 0.06,
+                      endRadius: ht * 0.07,
                       startDelay: Duration(milliseconds: 1000),
                       glowColor: Colors.deepOrange,
                       duration: Duration(milliseconds: 2000),
@@ -164,12 +167,15 @@ class _HelpScreenState extends State<HelpScreen> {
                         shape: CircleBorder(),
                         child: CircleAvatar(
                           backgroundColor: Colors.grey[100],
-                          child: Icon(
-                            Icons.phone,
+                          child:  IconButton(
+                            icon: Icon(Icons.phone),
                             color: Colors.orange,
-                            size: ht * 0.05,
+                            iconSize: ht * 0.04,
+                            onPressed: (){
+                              _launchCaller("+917540915155");
+                            },
                           ),
-                          radius: ht * 0.03,
+                          radius: ht * 0.035,
                         ),
                       ),
                       curve: Curves.fastOutSlowIn,
@@ -193,6 +199,14 @@ class _HelpScreenState extends State<HelpScreen> {
   _launchCaller(String url) async {
     if (await canLaunch("tel:" + url)) {
       await launch("tel:" + url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  _launchEmail(String url) async {
+    if (await canLaunch("mailto:" + url + "?subject=&body="  )) {
+      await launch("mailto:" + url + "?subject=Assistance Required&body=");
     } else {
       throw 'Could not launch $url';
     }

@@ -5,6 +5,7 @@ https://stackoverflow.com/questions/45155104/displaying-notification-badge-on-bo
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shopping_app/src/screens/MyOrders/myorders.dart';
 import 'package:shopping_app/src/screens/help.dart';
 
 import 'screens/home.dart';
@@ -18,7 +19,7 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> {
-  FirebaseUser user;
+ static FirebaseUser user;
 
   void initState() {
     getUser();
@@ -29,6 +30,7 @@ class AppState extends State<App> {
     HomeScreen(key: PageStorageKey("HomeScreen")),
     //Locations(key: PageStorageKey("Locations")),
     HelpScreen(key: PageStorageKey("HelpScreen")),
+   // MyOrders(user),
     ProfileScreen(key: PageStorageKey("ProfileScreen")),
   ];
 
@@ -82,6 +84,8 @@ class AppState extends State<App> {
             BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
             //BottomNavigationBarItem(icon: Icon(Icons.location_on), title: Text('Locations')),
             BottomNavigationBarItem(icon: Icon(Icons.help), title: Text('Help')),
+           // BottomNavigationBarItem(icon: Icon(Icons.view_list), title: Text('My Orders')),
+
             BottomNavigationBarItem(icon: Icon(Icons.person), title: Text('Profile'))
           ],
         ),
