@@ -23,6 +23,7 @@ class Desc extends StatefulWidget {
 class DescState extends State<Desc> {
   Widget build(BuildContext context) {
     return Scaffold(
+    
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
@@ -36,12 +37,12 @@ class DescState extends State<Desc> {
               title: Text(
                 widget.service.name,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.blueAccent,
                   fontSize: 16.0,
                 ),
               ),
               background: Image.network(
-                "https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
+                widget.service.img,
                 fit: BoxFit.cover,
               ),
             ),
@@ -49,9 +50,10 @@ class DescState extends State<Desc> {
           SliverList(
             delegate: SliverChildListDelegate(
               <Widget>[
-                textCard(context, widget.service.desc),
                 textCard(context,
-                    '🌟 ' + widget.service.prov.split('.').join('\n\n🌟 ')),
+                    ' ✓	 ' + widget.service.desc.split('.').join('\n✓	  ')),
+                textCard(context,
+                    '✓  ' + widget.service.prov.split('.').join('\n\n✓  ')),
               ],
             ),
           ),
@@ -78,8 +80,9 @@ class DescState extends State<Desc> {
                 child: Container(
                   color: Colors.white,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
+                      Text('Price Starts from - ${widget.service.price}',style: TextStyle(backgroundColor: Colors.orangeAccent),),
                       bottomButton(context),
                     ],
                   ),
@@ -94,13 +97,14 @@ class DescState extends State<Desc> {
 
   Widget bottomButton(BuildContext context) {
     return RaisedButton(
-      child: Text("Checkout"),
+      child: Text("Proceed"),
       onPressed: () {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => Cart(
               service: widget.service,
               user: widget.user,
+              imgUrl: widget.service.img,
             ),
           ),
         );

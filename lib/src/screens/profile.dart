@@ -37,171 +37,185 @@ class ProfileScreenState extends State<ProfileScreen> {
     ht = MediaQuery.of(context).size.height;
     wd = MediaQuery.of(context).size.width;
     return new Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 5.0,
-            ),
-            Container(
-              width: 150.0,
-              height: 150.0,
-              decoration: BoxDecoration(
-                color: Colors.orange,
-                borderRadius: BorderRadius.all(Radius.circular(75.0)),
-                boxShadow: [BoxShadow(blurRadius: 7.0, color: Colors.black)],
+      body: Container(
+        height: ht,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: ht*0.1,
               ),
-              child: Image.asset('assets/images/logo.png'),
-            ),
-            SizedBox(height: 35.0),
-            SizedBox(height: 8.0),
-            phone == ""
-                ? Container(
-                    margin: EdgeInsets.fromLTRB(12.0, 0.0, 6.0, 0.0),
-                    height: 40.0,
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/phoneAuth');
-                      },
-                      child: Material(
-                        borderRadius: BorderRadius.circular(10.0),
-                        shadowColor: Colors.deepOrangeAccent,
-                        color: Colors.orange[400],
-                        elevation: 5.0,
-                        child: Center(
-                          child: Text(
-                            'Login ',
-                            style: TextStyle(
-                                color: Colors.white, fontFamily: 'Montserrat'),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                : Card(
-                    color: Colors.deepOrange[50],
-                    elevation: 10.0,
-                    child: Column(
+              // Container(
+              //   width: 150.0,
+              //   height: 150.0,
+              //   decoration: BoxDecoration(
+              //     color: Colors.orange,
+              //     borderRadius: BorderRadius.all(Radius.circular(75.0)),
+              //     boxShadow: [BoxShadow(blurRadius: 7.0, color: Colors.black)],
+              //   ),
+              //   child: Image.asset('assets/images/logo.png'),
+              // ),
+              // SizedBox(height: 35.0),
+              // SizedBox(height: 8.0),
+              phone == ""
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        ListTile(
-                          contentPadding:
-                              EdgeInsets.fromLTRB(0.0, 2.0, wd * 0.1, 0.0),
-                          leading: Icon(
-                            Icons.person,
-                            size: ht * 0.09,
-                            color: Colors.deepOrange[300],
-                          ),
-                          title: Text(
-                            'My Account',
-                            style: TextStyle(
-                                fontSize: ht * 0.03, color: Colors.orange[400]),
-                          ),
-                          subtitle: Column(
-                            children: <Widget>[
-                              SizedBox(
-                                height: 2.0,
-                              ),
-                              Divider(
-                                thickness: 2.0,
-                                color: Colors.orange[400],
-                              ),
-                              SizedBox(
-                                height: 2.0,
-                              ),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    new Text(
-                                      "$phone",
-                                      style: TextStyle(
-                                          fontSize: ht * 0.03,
-                                          color: Colors.orange[400]),
-                                    ),
-                                    Text('')
-                                  ]),
-                            ],
-                          ),
-                          isThreeLine: true,
-                        ),
-                        Divider(
-                          thickness: 1.0,
-                        ),
-                        ListView(
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          children:
-                              ListTile.divideTiles(context: context, tiles: [
-                            ListTile(
-                                leading: Icon(Icons.assignment,
-                                    color: Colors.deepOrange[300]),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              MyOrders(user)));
-                                },
-                                title: Text(
-                                  'My Orders',
+                        Container(
+                          margin: EdgeInsets.fromLTRB(12.0, 0.0, 6.0, 0.0),
+                          height: 40.0,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, '/phoneAuth');
+                            },
+                            child: Material(
+                              borderRadius: BorderRadius.circular(10.0),
+                              shadowColor: Colors.deepOrangeAccent,
+                              color: Colors.orange[400],
+                              elevation: 5.0,
+                              child: Center(
+                                child: Text(
+                                  'Login ',
                                   style: TextStyle(
-                                      fontSize: ht * 0.03,
-                                      color: Colors.orange[400]),
+                                      color: Colors.white,
+                                      fontFamily: 'Montserrat'),
                                 ),
-                                trailing: Icon(Icons.arrow_forward_ios,
-                                    color: Colors.deepOrange[300])),
-                            ListTile(
-                                leading: Icon(Icons.help,
-                                    color: Colors.deepOrange[300]),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => HelpScreen()));
-                                },
-                                title: Text(
-                                  'Help & Support',
-                                  style: TextStyle(
-                                      fontSize: ht * 0.03,
-                                      color: Colors.orange[400]),
-                                ),
-                                trailing: Icon(Icons.arrow_forward_ios,
-                                    color: Colors.deepOrange[300])),
-                            ListTile(
-                                leading: Icon(Icons.location_city,
-                                    color: Colors.deepOrange[300]),
-                                title: Text(
-                                  'My Address',
-                                  style: TextStyle(
-                                      fontSize: ht * 0.03,
-                                      color: Colors.orange[400]),
-                                ),
-                                trailing: Icon(Icons.arrow_forward_ios,
-                                    color: Colors.deepOrange[300])),
-                            ListTile(
-                              leading: Icon(Icons.exit_to_app,
-                                  color: Colors.deepOrange[300]),
-                              onTap: () {
-                                setState(() {
-                                  _lOut = true;
-                                });
-                                logOut();
-                              },
-                              title: Text(
-                                'Logout',
-                                style: TextStyle(
-                                    fontSize: ht * 0.03,
-                                    color: Colors.orange[400]),
                               ),
-                              trailing: Icon(Icons.arrow_forward_ios,
-                                  color: Colors.deepOrange[300]),
                             ),
-                          ]).toList(),
+                          ),
                         ),
                       ],
+                    )
+                  : Card(
+                      color: Colors.deepOrange[50],
+                      elevation: 10.0,
+                      child: Column(
+                        children: <Widget>[
+                          ListTile(
+                            contentPadding:
+                                EdgeInsets.fromLTRB(0.0, 2.0, wd * 0.1, 0.0),
+                            leading: Icon(
+                              Icons.person,
+                              size: ht * 0.09,
+                              color: Colors.deepOrange[300],
+                            ),
+                            title: Text(
+                              'My Account',
+                              style: TextStyle(
+                                  fontSize: ht * 0.03,
+                                  color: Colors.orange[400]),
+                            ),
+                            subtitle: Column(
+                              children: <Widget>[
+                                SizedBox(
+                                  height: 2.0,
+                                ),
+                                Divider(
+                                  thickness: 2.0,
+                                  color: Colors.orange[400],
+                                ),
+                                SizedBox(
+                                  height: 2.0,
+                                ),
+                                Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      new Text(
+                                        "$phone",
+                                        style: TextStyle(
+                                            fontSize: ht * 0.03,
+                                            color: Colors.orange[400]),
+                                      ),
+                                      Text('')
+                                    ]),
+                              ],
+                            ),
+                            isThreeLine: true,
+                          ),
+                          Divider(
+                            thickness: 1.0,
+                          ),
+                          ListView(
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            children:
+                                ListTile.divideTiles(context: context, tiles: [
+                              ListTile(
+                                  leading: Icon(Icons.assignment,
+                                      color: Colors.deepOrange[300]),
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                MyOrders(user)));
+                                  },
+                                  title: Text(
+                                    'My Orders',
+                                    style: TextStyle(
+                                        fontSize: ht * 0.03,
+                                        color: Colors.orange[400]),
+                                  ),
+                                  trailing: Icon(Icons.arrow_forward_ios,
+                                      color: Colors.deepOrange[300])),
+                              ListTile(
+                                  leading: Icon(Icons.help,
+                                      color: Colors.deepOrange[300]),
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                HelpScreen()));
+                                  },
+                                  title: Text(
+                                    'Help & Support',
+                                    style: TextStyle(
+                                        fontSize: ht * 0.03,
+                                        color: Colors.orange[400]),
+                                  ),
+                                  trailing: Icon(Icons.arrow_forward_ios,
+                                      color: Colors.deepOrange[300])),
+                              ListTile(
+                                  leading: Icon(Icons.location_city,
+                                      color: Colors.deepOrange[300]),
+                                  title: Text(
+                                    'My Address',
+                                    style: TextStyle(
+                                        fontSize: ht * 0.03,
+                                        color: Colors.orange[400]),
+                                  ),
+                                  trailing: Icon(Icons.arrow_forward_ios,
+                                      color: Colors.deepOrange[300])),
+                              ListTile(
+                                leading: Icon(Icons.exit_to_app,
+                                    color: Colors.deepOrange[300]),
+                                onTap: () {
+                                  setState(() {
+                                    _lOut = true;
+                                  });
+                                  logOut();
+                                },
+                                title: Text(
+                                  'Logout',
+                                  style: TextStyle(
+                                      fontSize: ht * 0.03,
+                                      color: Colors.orange[400]),
+                                ),
+                                trailing: Icon(Icons.arrow_forward_ios,
+                                    color: Colors.deepOrange[300]),
+                              ),
+                            ]).toList(),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-          ],
+                    
+            ],
+          ),
         ),
       ),
     );

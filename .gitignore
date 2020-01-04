@@ -79,3 +79,4 @@ android/app/google-services.json
 /android/app/google-services.json
 pubspec.lock
 ios/Flutter/flutter_export_environment.sh
+.flutter-plugins-dependencies

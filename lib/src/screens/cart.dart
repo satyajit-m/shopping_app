@@ -14,7 +14,8 @@ import '../models/profile_model.dart';
 class Cart extends StatefulWidget {
   final SubServiceModel service;
   final FirebaseUser user;
-  Cart({Key key, @required this.service, @required this.user})
+  final String imgUrl;
+  Cart({Key key, @required this.service, @required this.user, this.imgUrl})
       : super(key: key);
 
   CartState createState() {
@@ -104,6 +105,7 @@ class CartState extends State<Cart> {
         SizedBox(height: MediaQuery.of(context).size.height * 0.01);
 
     return Scaffold(
+     
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
@@ -114,6 +116,7 @@ class CartState extends State<Cart> {
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
+
               title: Text(
                 widget.service.name,
                 style: TextStyle(
@@ -122,7 +125,7 @@ class CartState extends State<Cart> {
                 ),
               ),
               background: Image.network(
-                "https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
+                widget.imgUrl,
                 fit: BoxFit.cover,
               ),
             ),
