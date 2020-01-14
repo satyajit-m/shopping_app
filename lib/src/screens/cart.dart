@@ -108,28 +108,7 @@ class CartState extends State<Cart> {
      
       body: CustomScrollView(
         slivers: <Widget>[
-          SliverAppBar(
-            elevation: 10,
-            forceElevated: true,
-            expandedHeight: 200.0,
-            floating: true,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-
-              title: Text(
-                widget.service.name,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.0,
-                ),
-              ),
-              background: Image.network(
-                widget.imgUrl,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
+          SliverAppBar(title: Text(widget.service.name),),
           SliverList(
             delegate: SliverChildListDelegate(
               <Widget>[

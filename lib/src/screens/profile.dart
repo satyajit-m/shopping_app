@@ -44,7 +44,7 @@ class ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             children: <Widget>[
               SizedBox(
-                height: ht*0.1,
+                height: ht * 0.01,
               ),
               // Container(
               //   width: 150.0,
@@ -93,51 +93,54 @@ class ProfileScreenState extends State<ProfileScreen> {
                       elevation: 10.0,
                       child: Column(
                         children: <Widget>[
-                          ListTile(
-                            contentPadding:
-                                EdgeInsets.fromLTRB(0.0, 2.0, wd * 0.1, 0.0),
-                            leading: Icon(
-                              Icons.person,
-                              size: ht * 0.09,
-                              color: Colors.deepOrange[300],
+                          Container(
+                            color: Colors.orange[600],
+                            child: new ListTile(
+                              contentPadding:
+                                  EdgeInsets.fromLTRB(0.0, 2.0, wd * 0.1, 5.0),
+                              leading: Icon(
+                                Icons.person,
+                                size: ht * 0.09,
+                                color: Colors.white60,
+                              ),
+                              title: Text(
+                                'My Account',
+                                style: TextStyle(
+                                    fontSize: ht * 0.03,
+                                    color: Colors.white),
+                              ),
+                              subtitle: Column(
+                                children: <Widget>[
+                                  SizedBox(
+                                    height: 2.0,
+                                  ),
+                                  Divider(
+                                    thickness: 2.0,
+                                    color: Colors.white54,
+                                  ),
+                                  SizedBox(
+                                    height: 2.0,
+                                  ),
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        new Text(
+                                          "$phone",
+                                          style: TextStyle(
+                                              fontSize: ht * 0.03,
+                                              color: Colors.white),
+                                        ),
+                                        Text('')
+                                      ]),
+                                ],
+                              ),
+                              isThreeLine: true,
                             ),
-                            title: Text(
-                              'My Account',
-                              style: TextStyle(
-                                  fontSize: ht * 0.03,
-                                  color: Colors.orange[400]),
-                            ),
-                            subtitle: Column(
-                              children: <Widget>[
-                                SizedBox(
-                                  height: 2.0,
-                                ),
-                                Divider(
-                                  thickness: 2.0,
-                                  color: Colors.orange[400],
-                                ),
-                                SizedBox(
-                                  height: 2.0,
-                                ),
-                                Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      new Text(
-                                        "$phone",
-                                        style: TextStyle(
-                                            fontSize: ht * 0.03,
-                                            color: Colors.orange[400]),
-                                      ),
-                                      Text('')
-                                    ]),
-                              ],
-                            ),
-                            isThreeLine: true,
                           ),
-                          Divider(
-                            thickness: 1.0,
-                          ),
+                          // Divider(
+                          //   thickness: 1.0,
+                          // ),
                           ListView(
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
@@ -145,7 +148,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 ListTile.divideTiles(context: context, tiles: [
                               ListTile(
                                   leading: Icon(Icons.assignment,
-                                      color: Colors.deepOrange[300]),
+                                      color: Colors.blue),
                                   onTap: () {
                                     Navigator.push(
                                         context,
@@ -162,8 +165,8 @@ class ProfileScreenState extends State<ProfileScreen> {
                                   trailing: Icon(Icons.arrow_forward_ios,
                                       color: Colors.deepOrange[300])),
                               ListTile(
-                                  leading: Icon(Icons.help,
-                                      color: Colors.deepOrange[300]),
+                                  leading:
+                                      Icon(Icons.help, color: Colors.green),
                                   onTap: () {
                                     Navigator.push(
                                         context,
@@ -181,7 +184,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                       color: Colors.deepOrange[300])),
                               ListTile(
                                   leading: Icon(Icons.location_city,
-                                      color: Colors.deepOrange[300]),
+                                      color: Colors.purple),
                                   title: Text(
                                     'My Address',
                                     style: TextStyle(
@@ -191,8 +194,8 @@ class ProfileScreenState extends State<ProfileScreen> {
                                   trailing: Icon(Icons.arrow_forward_ios,
                                       color: Colors.deepOrange[300])),
                               ListTile(
-                                leading: Icon(Icons.exit_to_app,
-                                    color: Colors.deepOrange[300]),
+                                leading:
+                                    Icon(Icons.exit_to_app, color: Colors.red),
                                 onTap: () {
                                   setState(() {
                                     _lOut = true;
@@ -213,7 +216,6 @@ class ProfileScreenState extends State<ProfileScreen> {
                         ],
                       ),
                     ),
-                    
             ],
           ),
         ),
