@@ -44,6 +44,7 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text('FIXR'),),
       body: Container(
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -129,8 +130,8 @@ class HomeScreenState extends State<HomeScreen> {
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: _current == index
-                                            ? Colors.redAccent
-                                            : Colors.green,
+                                            ? Colors.blue
+                                            : Colors.white,
                                       ),
                                     );
                                   }),

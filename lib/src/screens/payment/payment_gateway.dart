@@ -218,7 +218,7 @@ class PaymentGatewayState extends State<PaymentGateway> {
       pn: _payeeName,
       tr: _tid,
       tn: "$_tid",
-      am: (_debugPrice ? "1" : widget.service.price),
+      am: widget.service.price.toString(),
       // mc: "YourMerchantId", // optional
       cu: "INR",
       url: _fixrUrl,
@@ -294,12 +294,7 @@ class PaymentGatewayState extends State<PaymentGateway> {
       UPIApps.PhonePe,
     ];
 
-    const appNameList = [
-      "Google Pay",
-      "BHIM UPI",
-      "Amazon Pay",
-      "Phone Pe"
-    ];
+    const appNameList = ["Google Pay", "BHIM UPI", "Amazon Pay", "Phone Pe"];
 
     return SliverChildBuilderDelegate(
       (context, index) {
@@ -315,7 +310,6 @@ class PaymentGatewayState extends State<PaymentGateway> {
                 child: ListTile(
                   title: Text("Cash On Delivery"),
                   onTap: () async {
-
                     makePageWait("please wait..", context);
 
                     _tDetails["paymentMode"] = "COD";
@@ -403,7 +397,7 @@ class PaymentGatewayState extends State<PaymentGateway> {
                   }
 
                   makePageWait("Waiting for payment", context);
-                  
+
                   _tDetails["paymentMode"] = "UPI";
 
                   Map<String, String> paymentData =
@@ -452,18 +446,45 @@ class PaymentGatewayState extends State<PaymentGateway> {
                   }
 
                   if (status) {
-                    Navigator.of(context)
-                        .popUntil(ModalRoute.withName("/home"));
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => Confirmation(
-                          tid: _tid,
-                          user: user,
+                    showDialog(
+                      context: context,
+                      child: AlertDialog(
+                        content: Icon(
+                          Icons.check_circle_outline,
+                          color: Colors.green,
+                          size: 80,
                         ),
+                        title: Text('Order Successful'),
                       ),
                     );
+
+                    Future.delayed(const Duration(milliseconds: 2000), () {
+                      Navigator.of(context)
+                          .popUntil(ModalRoute.withName("/home"));
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => Confirmation(
+                            tid: _tid,
+                            user: user,
+                          ),
+                        ),
+                      );
+                    });
                   } else {
-                    Navigator.of(context, rootNavigator: true).pop();
+                    showDialog(
+                      context: context,
+                      child: AlertDialog(
+                        content: Icon(
+                          Icons.cancel,
+                          color: Colors.redAccent,
+                          size: 80,
+                        ),
+                        title: Text('Sorry Order Unsuccessful'),
+                      ),
+                    );
+                    Future.delayed(const Duration(milliseconds: 2000), () {
+                      Navigator.of(context, rootNavigator: true).pop();
+                    });
                   }
                 },
               ),

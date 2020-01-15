@@ -84,6 +84,7 @@ class AppState extends State<App> {
             BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
             //BottomNavigationBarItem(icon: Icon(Icons.location_on), title: Text('Locations')),
             BottomNavigationBarItem(icon: Icon(Icons.help), title: Text('Help')),
+            
            // BottomNavigationBarItem(icon: Icon(Icons.view_list), title: Text('My Orders')),
 
             BottomNavigationBarItem(icon: Icon(Icons.person), title: Text('Profile'))

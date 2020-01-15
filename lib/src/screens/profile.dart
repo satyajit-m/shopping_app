@@ -37,6 +37,9 @@ class ProfileScreenState extends State<ProfileScreen> {
     ht = MediaQuery.of(context).size.height;
     wd = MediaQuery.of(context).size.width;
     return new Scaffold(
+      appBar: AppBar(
+        title: Text('Profile'),
+      ),
       body: Container(
         height: ht,
         child: SingleChildScrollView(
@@ -46,23 +49,24 @@ class ProfileScreenState extends State<ProfileScreen> {
               SizedBox(
                 height: ht * 0.01,
               ),
-              // Container(
-              //   width: 150.0,
-              //   height: 150.0,
-              //   decoration: BoxDecoration(
-              //     color: Colors.orange,
-              //     borderRadius: BorderRadius.all(Radius.circular(75.0)),
-              //     boxShadow: [BoxShadow(blurRadius: 7.0, color: Colors.black)],
-              //   ),
-              //   child: Image.asset('assets/images/logo.png'),
-              // ),
-              // SizedBox(height: 35.0),
-              // SizedBox(height: 8.0),
+              Container(
+                width: wd * 0.27,
+                height: ht * 0.15,
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                  borderRadius: BorderRadius.all(Radius.circular(75.0)),
+                  boxShadow: [BoxShadow(blurRadius: 7.0, color: Colors.black)],
+                ),
+                child: Image.asset('assets/images/logo.png'),
+              ),
+              SizedBox(height: 35.0),
+              SizedBox(height: 8.0),
               phone == ""
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
+                        //SizedBox(height: ,),
                         Container(
                           margin: EdgeInsets.fromLTRB(12.0, 0.0, 6.0, 0.0),
                           height: 40.0,
@@ -106,8 +110,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                               title: Text(
                                 'My Account',
                                 style: TextStyle(
-                                    fontSize: ht * 0.03,
-                                    color: Colors.white),
+                                    fontSize: ht * 0.03, color: Colors.white),
                               ),
                               subtitle: Column(
                                 children: <Widget>[
