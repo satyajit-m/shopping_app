@@ -22,74 +22,106 @@ class ServicesCatState extends State<ServicesCat> {
   List<String> subsProv = [];
   List<String> subsDesc = [];
   bool load;
+  String head;
+  double ht, wt;
 
   ServicesCatState(this.something) {
+    head = this.something;
     load = true;
     getsubs(this.something);
   }
 
   @override
   Widget build(BuildContext context) {
+    ht = MediaQuery.of(context).size.height;
+    wt = MediaQuery.of(context).size.width;
     return Scaffold(
+      appBar: AppBar(
+        title: Text('$something'),
+      ),
       body: Container(
         child: load == true
             ? Center(
                 child: CircularProgressIndicator(),
               )
-            : CustomScrollView(
-                slivers: <Widget>[
-                  const SliverAppBar(
-                    pinned: true,
-                    expandedHeight: 250.0,
-                    flexibleSpace: FlexibleSpaceBar(
-                      title: Text('Demo'),
-                    ),
-                  ),
-                  SliverList(
-                    // Use a delegate to build items as they're scrolled on screen.
-                    delegate: SliverChildBuilderDelegate(
-                      (context, position) {
-                        return Container(
-                          margin: const EdgeInsets.all(1),
-                          padding: const EdgeInsets.all(1),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => Desc(
-                                    service: SubServiceModel(subs[position],
-                                        subsPrice[position], subsSid[position], subsDesc[position], subsProv[position]),
-                                    user: user,
-                                  ),
-                                ),
-                              );
-                            },
-                            child: ListTile(
-                              //leading: FlutterLogo(size: 72.0),
-                              title: Container(
-                                child: Text('${subs[position]}'),
-                              ),
-                              subtitle: Container(
-                                child: Divider(),
-                              ),
-                              trailing: Icon(
-                                Icons.chevron_right,
-                                color: Colors.deepOrange,
-                                size: 40.0,
-                              ),
+            : ListView.builder(
+                itemCount: subs.length,
+                itemBuilder: (context, position) {
+                  return Container(
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => Desc(
+                              service: SubServiceModel(
+                                  subs[position],
+                                  subsPrice[position],
+                                  subsSid[position],
+                                  subsDesc[position],
+                                  subsProv[position],
+                                  subsImg[position]),
+                              user: user,
                             ),
                           ),
                         );
                       },
-                      childCount: subs.length,
+                      child: Column(
+                        children: <Widget>[
+                          ListTile(
+                              title: Text(
+                                '${subs[position]}',
+                                style: TextStyle(
+                                    fontSize: ht * 0.03,
+                                    color: Colors.orange[400]),
+                              ),
+                              trailing: Icon(Icons.arrow_forward_ios,
+                                  color: Colors.deepOrange[300])),
+                          Divider()
+                        ],
+                      ),
                     ),
-                  )
-                ],
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-              ),
+                  );
+                }),
       ),
     );
+    // : CustomScrollView(
+    //     slivers: <Widget>[
+    //       SliverAppBar(
+    //         elevation: 10,
+    //         forceElevated: true,
+    //         expandedHeight: 200.0,
+    //         floating: true,
+    //         pinned: true,
+    //         flexibleSpace: FlexibleSpaceBar(
+    //           centerTitle: true,
+    //           title: Text(
+    //             something,
+    //             style: TextStyle(
+    //               color: Colors.white,
+    //               fontSize: 16.0,
+    //             ),
+    //           ),
+    //           background: Image.network(
+    //             "https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
+    //             fit: BoxFit.cover,
+    //           ),
+    //         ),
+    //       ),
+    //       SliverList(
+    //         // Use a delegate to build items as they're scrolled on screen.
+    //         delegate: SliverChildBuilderDelegate(
+    //           (context, position) {
+
+    //                   },
+    //                   childCount: subs.length,
+    //                 ),
+    //               )
+    //             ],
+    //             scrollDirection: Axis.vertical,
+    //             shrinkWrap: true,
+    //           ),
+    //   ),
+    // );
   }
 
   // ListView.builder(

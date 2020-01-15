@@ -11,6 +11,9 @@ class CategoryCard extends StatelessWidget {
       margin: const EdgeInsets.all(1),
       padding: const EdgeInsets.all(1),
       child: Card(
+        shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0), 
+        ),
         color: Colors.grey[200],
        
         child: DecoratedBox(
@@ -20,7 +23,7 @@ class CategoryCard extends StatelessWidget {
             gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Colors.grey[300],Colors.grey[100]]),
+                colors: [Colors.deepOrange[50],Colors.white]),
                 
           ),
           child: InkWell(

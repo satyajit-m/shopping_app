@@ -5,6 +5,7 @@ import 'package:shopping_app/src/screens/MyOrders/order_details.dart';
 import 'package:shopping_app/src/utils/beautiful_date.dart';
 
 class MyOrders extends StatefulWidget {
+
   final FirebaseUser user;
   MyOrders(this.user);
   @override
@@ -248,7 +249,7 @@ class OrderList extends StatelessWidget {
           ),
         ),
         decoration: BoxDecoration(
-          color: Colors.orange[100],
+          color: Colors.deepOrange[50],
           border: new Border.all(color: Colors.grey[300]),
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
         ),

@@ -26,32 +26,24 @@ class DescState extends State<Desc> {
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            elevation: 10,
-            forceElevated: true,
-            expandedHeight: 200.0,
-            floating: true,
+            title: Text(widget.service.name),
             pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              title: Text(
-                widget.service.name,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.0,
-                ),
-              ),
-              background: Image.network(
-                "https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
-                fit: BoxFit.cover,
-              ),
-            ),
           ),
           SliverList(
             delegate: SliverChildListDelegate(
               <Widget>[
-                textCard(context, widget.service.desc),
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: NetworkImage(widget.service.img),
+                        fit: BoxFit.cover),
+                  ),
+                ),
                 textCard(context,
-                    '🌟 ' + widget.service.prov.split('.').join('\n\n🌟 ')),
+                    ' ✓	 ' + widget.service.desc.split('.').join('\n✓	  ')),
+                textCard(context,
+                    '✓  ' + widget.service.prov.split('.').join('\n\n✓  ')),
               ],
             ),
           ),
@@ -78,8 +70,12 @@ class DescState extends State<Desc> {
                 child: Container(
                   color: Colors.white,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
+                      Text(
+                        'Price Starts from - ${widget.service.price}',
+                        style: TextStyle(backgroundColor: Colors.orangeAccent),
+                      ),
                       bottomButton(context),
                     ],
                   ),
@@ -94,13 +90,14 @@ class DescState extends State<Desc> {
 
   Widget bottomButton(BuildContext context) {
     return RaisedButton(
-      child: Text("Checkout"),
+      child: Text("Proceed"),
       onPressed: () {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => Cart(
               service: widget.service,
               user: widget.user,
+              imgUrl: widget.service.img,
             ),
           ),
         );
