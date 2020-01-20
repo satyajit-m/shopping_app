@@ -173,7 +173,6 @@ class PaymentGatewayState extends State<PaymentGateway> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.teal,
         key: _pgKey,
         body: CustomScrollView(
           slivers: <Widget>[
@@ -182,10 +181,8 @@ class PaymentGatewayState extends State<PaymentGateway> {
                 color: Colors.black,
               ),
               backgroundColor: Colors.white,
-              expandedHeight: MediaQuery.of(context).size.height / 2.5,
-              floating: true,
-              snap: true,
-              pinned: true,
+              floating: false,
+              pinned: false,
               elevation: 10,
               forceElevated: true,
               flexibleSpace: FlexibleSpaceBar(
@@ -193,7 +190,6 @@ class PaymentGatewayState extends State<PaymentGateway> {
                   "Paying ₹" + widget.service.price.toString(),
                   style: TextStyle(color: Colors.blue),
                 ),
-                background: Image.asset("assets/images/upi.png"),
               ),
             ),
             SliverFixedExtentList(
@@ -296,6 +292,8 @@ class PaymentGatewayState extends State<PaymentGateway> {
 
     const appNameList = ["Google Pay", "BHIM UPI", "Amazon Pay", "Phone Pe"];
 
+    const appLogoList = ["gpay.png", "bhim.png", "apay.png", "ppay.png"];
+
     return SliverChildBuilderDelegate(
       (context, index) {
         // For COD
@@ -305,9 +303,9 @@ class PaymentGatewayState extends State<PaymentGateway> {
             child: Card(
               elevation: 10,
               child: Container(
-                decoration: BoxDecoration(color: Colors.teal[100]),
                 padding: const EdgeInsets.all(8.0),
                 child: ListTile(
+                  leading: Image.asset("assets/images/cod.png"),
                   title: Text("Cash On Delivery"),
                   onTap: () async {
                     makePageWait("please wait..", context);
@@ -372,9 +370,9 @@ class PaymentGatewayState extends State<PaymentGateway> {
           child: Card(
             elevation: 10,
             child: Container(
-              decoration: BoxDecoration(color: Colors.teal[100]),
               padding: const EdgeInsets.all(8.0),
               child: ListTile(
+                leading: Image.asset("assets/images/" + appLogoList[index]),
                 title: Text(appNameList[index]),
                 onTap: () async {
                   bool isInstalled =

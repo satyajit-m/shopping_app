@@ -44,3 +44,8 @@ flutter:
     - assets/images/delete.png
     - assets/images/success.png
     - assets/images/upi.png
+    - assets/images/apay.png
+    - assets/images/bhim.png
+    - assets/images/gpay.png
+    - assets/images/ppay.png
+    - assets/images/cod.png
