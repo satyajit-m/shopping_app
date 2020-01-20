@@ -195,7 +195,11 @@ class ProfileScreenState extends State<ProfileScreen> {
                                         color: Colors.orange[400]),
                                   ),
                                   trailing: Icon(Icons.arrow_forward_ios,
-                                      color: Colors.deepOrange[300])),
+                                      color: Colors.deepOrange[300]),
+                                                            onTap: () {
+                        Navigator.of(context).pushNamed('/profile/form');
+                      },
+                                      ),
                               ListTile(
                                 leading:
                                     Icon(Icons.exit_to_app, color: Colors.red),
