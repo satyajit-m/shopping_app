@@ -110,19 +110,26 @@ class OtpPageState extends State<OtpPage> {
   Future<void> createUserDb(FirebaseUser currentUser) async {
     print("DEBUG : " + currentUser.phoneNumber);
     if (currentUser != null) {
-      Map<String, dynamic> transactionMap = {};
-      DocumentReference dbUserRef =
-          Firestore.instance.collection("users").document(currentUser.uid);
-      await Firestore.instance.runTransaction((transaction) async {
-        DocumentSnapshot snapshot = await transaction.get(dbUserRef);
-        if (!snapshot.exists) {
-          await transaction.set(dbUserRef, transactionMap);
-        }
-      });
+      final snapShot = await Firestore.instance
+          .collection('users')
+          .document(currentUser.uid)
+          .get();
+
+      if (snapShot == null || !snapShot.exists) {
+        // Document with id == docId doesn't exist.
+        final databaseReference = Firestore.instance;
+        await databaseReference
+            .collection('users')
+            .document(currentUser.uid)
+            .setData({
+          'phone': currentUser.phoneNumber,
+        });
+      }
     }
   }
 
-  void successMatch(String msg, FirebaseUser currentUser, BuildContext context) async {
+  void successMatch(
+      String msg, FirebaseUser currentUser, BuildContext context) async {
     await createUserDb(currentUser);
     showDialog(
       barrierDismissible: false,
@@ -136,7 +143,7 @@ class OtpPageState extends State<OtpPage> {
               icon: Icon(Icons.check),
               onPressed: () {
                 Navigator.of(context).popUntil((route) => route.isFirst);
-                Navigator.pushReplacementNamed(context ,'/home');
+                Navigator.pushReplacementNamed(context, '/home');
               },
             )
           ],

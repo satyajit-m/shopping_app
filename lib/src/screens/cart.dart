@@ -75,7 +75,7 @@ class CartState extends State<Cart> {
               use24hFormat: false,
               initialDateTime: initTime,
               maximumDate: currentTime.add(Duration(days: 7)),
-              minimumDate: currentTime,
+              minimumDate: currentTime.subtract(Duration(days: 1)),              
               onDateTimeChanged: (value) {
                 print(returnValue.toString());
                 returnValue = value;
@@ -92,7 +92,7 @@ class CartState extends State<Cart> {
     final DocumentSnapshot result =
         await Firestore.instance.document('users/' + widget.user.uid).get();
     setState(() {
-      if (result.data.isNotEmpty) {
+      if (result.data.keys.length>1) {
         address = Profile.mapToProfile(result.data);
         addressPresent = true;
       }

@@ -1,11 +1,11 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shopping_app/src/screens/MyOrders/order_details.dart';
-import 'package:shopping_app/src/utils/beautiful_date.dart';
 
 class MyOrders extends StatefulWidget {
-
   final FirebaseUser user;
   MyOrders(this.user);
   @override
@@ -164,6 +164,7 @@ class OrderList extends StatelessWidget {
           .collection('users')
           .document('$usid')
           .collection('orders')
+          .orderBy('transactionDate', descending: true)
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
@@ -173,13 +174,21 @@ class OrderList extends StatelessWidget {
             ),
           );
         } else {
-          return ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: snapshot.data.documents.length,
-            itemBuilder: (context, index) =>
-                _buildListItems(context, snapshot.data.documents[index]),
-          );
+          if (snapshot.data.documents.length > 0) {
+            return ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: snapshot.data.documents.length,
+              itemBuilder: (context, index) =>
+                  _buildListItems(context, snapshot.data.documents[index]),
+            );
+          } else {
+            return Container(
+                height: MediaQuery.of(context).size.height * 0.6,
+                child: Center(
+                  child: Text('No Orders !! Go to Home to place an Order '),
+                ));
+          }
         }
       },
     );
@@ -203,50 +212,56 @@ class OrderList extends StatelessWidget {
             );
           },
           child: ListTile(
-            //leading: FlutterLogo(size: 72.0),
-            title: Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    document['serviceDetails']['name'],
-                    style: TextStyle(fontSize: 25.0),
-                  ),
-                  //Text('Id: ${document.documentID}'),
-                ],
-              ),
-            ),
-            subtitle: Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text('${document['transactionDate']}'),
-                  Icon(
-                    Icons.chevron_right,
-                    color: Colors.deepOrange,
-                    size: 40.0,
-                  ),
+              //leading: FlutterLogo(size: 72.0),
+              title: Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    FittedBox(
+                      fit: BoxFit.contain,
+                      child: Text(
+                        document['serviceDetails']['name'],
+                      ),
+                    )
 
-                  // document['paymentDetails']['status'] == 'FAILURE'
-                  //     ? Icon(
-                  //         Icons.cancel,
-                  //         color: Colors.red,
-                  //         size: 30.0,
-                  //       )
-                  //     : Icon(
-                  //         Icons.done_outline,
-                  //         color: Colors.green,
-                  //         size: 30.0,
-                  //       )
-                ],
+                    //Text('Id: ${document.documentID}'),
+                  ],
+                ),
               ),
-            ),
-            // trailing: Icon(
-            //   Icons.chevron_right,
-            //   color: Colors.blue,
-            //   size: 40.0,
-            // ),
-          ),
+              subtitle: Container(
+                height: MediaQuery.of(context).size.height * 0.06,
+                child: FittedBox(
+                  fit: BoxFit.contain,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text('${document['transactionDate']}'),
+                      Icon(
+                        Icons.chevron_right,
+                        color: Colors.deepOrange,
+                      ),
+
+                      // document['paymentDetails']['status'] == 'FAILURE'
+                      //     ? Icon(
+                      //         Icons.cancel,
+                      //         color: Colors.red,
+                      //         size: 30.0,
+                      //       )
+                      //     : Icon(
+                      //         Icons.done_outline,
+                      //         color: Colors.green,
+                      //         size: 30.0,
+                      //       )
+                    ],
+                  ),
+                ),
+              )
+              // trailing: Icon(
+              //   Icons.chevron_right,
+              //   color: Colors.blue,
+              //   size: 40.0,
+              // ),
+              ),
         ),
         decoration: BoxDecoration(
           color: Colors.deepOrange[50],

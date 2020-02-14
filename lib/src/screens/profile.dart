@@ -41,6 +41,14 @@ class ProfileScreenState extends State<ProfileScreen> {
         title: Text('Profile'),
       ),
       body: Container(
+        decoration: new BoxDecoration(
+          image: new DecorationImage(
+            fit: BoxFit.cover,
+            colorFilter: new ColorFilter.mode(
+                Colors.blueGrey.withOpacity(0.25), BlendMode.dstATop),
+            image: AssetImage('assets/images/back.png'),
+          ),
+        ),
         height: ht,
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -50,16 +58,11 @@ class ProfileScreenState extends State<ProfileScreen> {
                 height: ht * 0.01,
               ),
               Container(
-                width: wd * 0.27,
-                height: ht * 0.15,
-                decoration: BoxDecoration(
-                  color: Colors.orange,
-                  borderRadius: BorderRadius.all(Radius.circular(75.0)),
-                  boxShadow: [BoxShadow(blurRadius: 7.0, color: Colors.black)],
-                ),
-                child: Image.asset('assets/images/logo.png'),
+                width: wd ,
+                height: ht * 0.2,
+                
+                child: Image.asset('assets/images/logo_in.png',height: ht*0.2,),
               ),
-              SizedBox(height: 35.0),
               SizedBox(height: 8.0),
               phone == ""
                   ? Column(
@@ -186,20 +189,21 @@ class ProfileScreenState extends State<ProfileScreen> {
                                   trailing: Icon(Icons.arrow_forward_ios,
                                       color: Colors.deepOrange[300])),
                               ListTile(
-                                  leading: Icon(Icons.location_city,
-                                      color: Colors.purple),
-                                  title: Text(
-                                    'My Address',
-                                    style: TextStyle(
-                                        fontSize: ht * 0.03,
-                                        color: Colors.orange[400]),
-                                  ),
-                                  trailing: Icon(Icons.arrow_forward_ios,
-                                      color: Colors.deepOrange[300]),
-                                                            onTap: () {
-                        Navigator.of(context).pushNamed('/profile/form');
-                      },
-                                      ),
+                                leading: Icon(Icons.location_city,
+                                    color: Colors.purple),
+                                title: Text(
+                                  'My Address',
+                                  style: TextStyle(
+                                      fontSize: ht * 0.03,
+                                      color: Colors.orange[400]),
+                                ),
+                                trailing: Icon(Icons.arrow_forward_ios,
+                                    color: Colors.deepOrange[300]),
+                                onTap: () {
+                                  Navigator.of(context)
+                                      .pushNamed('/profile/form');
+                                },
+                              ),
                               ListTile(
                                 leading:
                                     Icon(Icons.exit_to_app, color: Colors.red),

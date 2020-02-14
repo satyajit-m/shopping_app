@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shopping_app/src/screens/CustomShapeClipper.dart';
 import '../widgets/CategoryCard.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -16,8 +17,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  
-
   void dispose() {
     super.dispose();
   }
@@ -44,7 +43,13 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('FIXR'),),
+      appBar: AppBar(
+        title: Row(children: <Widget>[
+          Expanded(flex:2,child: Text('FixR',style: GoogleFonts.abrilFatface(fontSize: MediaQuery.of(context).size.height*0.04),),),
+          Expanded(flex: 1,child: Icon(Icons.location_on),),
+          Expanded(flex: 2,child: Text('Bhubaneswar'),),
+        ],
+     )),
       body: Container(
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -52,98 +57,102 @@ class HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-             
-                  Container(
-                    //clipper: CustomShapeClipper(),
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.35,
-                      decoration: BoxDecoration(
+              Container(
+                //clipper: CustomShapeClipper(),
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.27,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xffF9A533), Color(0xffF77C08)],
+                    ),
+                  ),
+                  child: imgList.length == 0
+                      ? Container(
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      : Column(
+                          children: <Widget>[
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.03,
+                            ),
+                            carouselSlider = CarouselSlider(
+                              height: MediaQuery.of(context).size.height * 0.19,
+                              initialPage: 0,
+                              enlargeCenterPage: true,
+                              autoPlay: true,
+                              reverse: false,
+                              enableInfiniteScroll: true,
+                              autoPlayInterval: Duration(seconds: 5),
+                              autoPlayAnimationDuration:
+                                  Duration(milliseconds: 5000),
+                              pauseAutoPlayOnTouch: Duration(seconds: 10),
+                              scrollDirection: Axis.horizontal,
+                              onPageChanged: (index) {
+                                setState(() {
+                                  _current = index;
+                                });
+                              },
+                              items: imgList.map((imgUrl) {
+                                return Builder(
+                                  builder: (BuildContext context) {
+                                    return Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: 10.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            new BorderRadius.circular(5.0),
+                                        child: Image.network(
+                                          imgUrl,
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: map<Widget>(imgList, (index, url) {
+                                return Container(
+                                  width: 10.0,
+                                  height: 10.0,
+                                  margin: EdgeInsets.symmetric(
+                                      vertical: 8.0, horizontal: 2.0),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: _current == index
+                                        ? Colors.blue
+                                        : Colors.white,
+                                  ),
+                                );
+                              }),
+                            ),
+                          ],
+                        ),
+                ),
+              ),
+              Container(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      width:MediaQuery.of(context).size.width ,
+                      decoration: new BoxDecoration(
                         gradient: LinearGradient(
                           colors: [Color(0xffF9A533), Color(0xffF77C08)],
                         ),
                       ),
-                      child: imgList.length == 0
-                          ? Container(
-                              child: Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            )
-                          : Column(
-                              children: <Widget>[
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.05,
-                                ),
-                                carouselSlider = CarouselSlider(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.22,
-                                  initialPage: 0,
-                                  enlargeCenterPage: true,
-                                  autoPlay: true,
-                                  reverse: false,
-                                  enableInfiniteScroll: true,
-                                  autoPlayInterval: Duration(seconds: 5),
-                                  autoPlayAnimationDuration:
-                                      Duration(milliseconds: 5000),
-                                  pauseAutoPlayOnTouch: Duration(seconds: 10),
-                                  scrollDirection: Axis.horizontal,
-                                  onPageChanged: (index) {
-                                    setState(() {
-                                      _current = index;
-                                    });
-                                  },
-                                  items: imgList.map((imgUrl) {
-                                    return Builder(
-                                      builder: (BuildContext context) {
-                                        return Container(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: 10.0),
-                                          decoration: BoxDecoration(
-                                            color: Colors.transparent,
-                                          ),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                new BorderRadius.circular(5.0),
-                                            child: Image.network(
-                                              imgUrl,
-                                              fit: BoxFit.fill,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  }).toList(),
-                                ),
-                                SizedBox(
-                                  height: 8,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: map<Widget>(imgList, (index, url) {
-                                    return Container(
-                                      width: 10.0,
-                                      height: 10.0,
-                                      margin: EdgeInsets.symmetric(
-                                          vertical: 8.0, horizontal: 2.0),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: _current == index
-                                            ? Colors.blue
-                                            : Colors.white,
-                                      ),
-                                    );
-                                  }),
-                                ),
-                              ],
-                            ),
+                      child: Text('Our Services',textAlign: TextAlign.center,style: TextStyle(color: Colors.white,fontSize: 20.0),),
                     ),
-                  ),
-                  
-              Container(
-                child: Column(
-                  children: <Widget>[
                     StreamBuilder(
                       stream: Firestore.instance
                           .collection('ServiceTypes')
@@ -182,7 +191,7 @@ class HomeScreenState extends State<HomeScreen> {
           snapshot.data.documents[i].data['url']));
 
     return Container(
-        height: MediaQuery.of(context).size.height * 0.5,
+        height: MediaQuery.of(context).size.height * 0.49,
         decoration: new BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xffF9A533), Color(0xffF77C08)],
@@ -198,7 +207,6 @@ class HomeScreenState extends State<HomeScreen> {
               color: Colors.grey[200],
             ),
             child: GridView.count(
-              
               primary: false,
               crossAxisCount: 3,
               children: List.generate(data.length, (index) {

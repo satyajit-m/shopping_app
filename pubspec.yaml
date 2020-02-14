@@ -22,11 +22,21 @@ dependencies:
   sensors: ^0.4.0+1
   url_launcher: ^5.1.2
   avatar_glow: 1.1.0
+  intl: 0.16.1
+  google_fonts: 0.3.8
+
+
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.7.4
+
+flutter_icons:
+  image_path: 'assets/images/logo.png'
+  android: true
+  ios: true
   
 
 
@@ -37,15 +47,4 @@ flutter:
   
 
   assets:
-    - assets/images/default.png
-    - assets/images/logo.png
-    - assets/images/google_logo.png
-    - assets/images/otp-icon.png
-    - assets/images/delete.png
-    - assets/images/success.png
-    - assets/images/upi.png
-    - assets/images/apay.png
-    - assets/images/bhim.png
-    - assets/images/gpay.png
-    - assets/images/ppay.png
-    - assets/images/cod.png
+    - assets/images/

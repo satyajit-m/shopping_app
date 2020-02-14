@@ -70,19 +70,17 @@ class AuthPageState extends State<AuthPage> {
       );
     }
     return SafeArea(
-      child: Container(
-        decoration: new BoxDecoration(
-          image: new DecorationImage(
-            fit: BoxFit.cover,
-            colorFilter: new ColorFilter.mode(
-                Colors.black.withOpacity(0.25), BlendMode.dstATop),
-            image: new ExactAssetImage('assets/images/back.png'),
+      child: Scaffold(
+        body: Container(
+          decoration: new BoxDecoration(
+            image: new DecorationImage(
+              fit: BoxFit.cover,
+              colorFilter: new ColorFilter.mode(
+                  Colors.blueGrey.withOpacity(0.25), BlendMode.dstATop),
+              image: new ExactAssetImage('assets/images/back.png'),
+            ),
           ),
-        ),
-        child: new BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),
           child: new Container(
-            decoration: new BoxDecoration(color: Colors.white.withOpacity(0.0)),
             child: Stack(
               children: <Widget>[
                 Scaffold(
@@ -98,9 +96,11 @@ class AuthPageState extends State<AuthPage> {
                             Container(
                               width: SizeConfig.blockSizeHorizontal * 70,
                               child: Image.asset(
-                                'assets/images/logo.png',
-                                color: LogoColor,
+                                'assets/images/logo_in.png',
                               ),
+                            ),
+                            SizedBox(
+                              height: 25.0,
                             ),
                             Container(
                               color: TextBoxColor,

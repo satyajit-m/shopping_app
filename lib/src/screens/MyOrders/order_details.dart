@@ -98,7 +98,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 Text(
                                   "Order Details",
                                   style: TextStyle(
-                                    fontSize: h*0.025,
+                                    fontSize: h * 0.025,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white,
                                   ),
@@ -204,7 +204,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 Text(
                                   "Payment Details",
                                   style: TextStyle(
-                                    fontSize: h*0.025,
+                                    fontSize: h * 0.025,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white,
                                   ),
@@ -224,9 +224,32 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
                                       Text(
-                                        'Amount Paid :',
+                                        'Payment Mode :',
                                         style: TextStyle(fontSize: h * 0.025),
                                       ),
+                                      Text(
+                                        '${document['paymentMode']}',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  Divider(),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      document['paymentMode'] == 'COD'
+                                          ? Text(
+                                              'Amount to Pay :',
+                                              style: TextStyle(
+                                                  fontSize: h * 0.025),
+                                            )
+                                          : Text(
+                                              'Amount Paid :',
+                                              style: TextStyle(
+                                                  fontSize: h * 0.025),
+                                            ),
                                       Text(
                                         'Rs. ${document['serviceDetails']['price']}',
                                         style: TextStyle(
@@ -315,7 +338,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                 Text(
                                   "Service Address",
                                   style: TextStyle(
-                                    fontSize: h*0.025,
+                                    fontSize: h * 0.025,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white,
                                   ),

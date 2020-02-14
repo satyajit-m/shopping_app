@@ -12,6 +12,7 @@ import '../models/profile_model.dart';
 class Desc extends StatefulWidget {
   final SubServiceModel service;
   final FirebaseUser user;
+  final String h1 = 'Package Description', h2 = 'Why Choose Us?';
   Desc({Key key, @required this.service, @required this.user})
       : super(key: key);
 
@@ -40,10 +41,49 @@ class DescState extends State<Desc> {
                         fit: BoxFit.cover),
                   ),
                 ),
-                textCard(context,
-                    ' ✓	 ' + widget.service.desc.split('.').join('\n✓	  ')),
-                textCard(context,
-                    '✓  ' + widget.service.prov.split('.').join('\n\n✓  ')),
+                textCard(
+                    context,
+                    '✓	 ' + widget.service.desc.split('.').join('\n✓	  '),
+                    widget.h1),
+                textCard(
+                    context,
+                    '✓  ' + widget.service.prov.split('.').join('\n\n✓  '),
+                    widget.h2),
+                Card(
+                    child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Image.asset('assets/images/why1.png'),
+                      //width: MediaQuery.of(context).size.width * 0.2),
+                    ),
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                    Expanded(
+                      child: Image.asset(
+                        'assets/images/why2.png',
+                      ),
+                      //width: MediaQuery.of(context).size.width * 0.2),
+                    ),
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                    Expanded(
+                      child: Image.asset('assets/images/why3.png'),
+                      //width: MediaQuery.of(context).size.width * 0.2),
+                    ),
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                    Expanded(
+                      child: Image.asset('assets/images/why4.png'),
+                      //width: MediaQuery.of(context).size.width * 0.2),
+                    ),
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                  ],
+                ))
               ],
             ),
           ),
@@ -74,7 +114,8 @@ class DescState extends State<Desc> {
                     children: <Widget>[
                       Text(
                         'Price Starts from - ${widget.service.price}',
-                        style: TextStyle(backgroundColor: Colors.orangeAccent),
+                      //width: ,
+                        style: TextStyle(backgroundColor: Colors.orange[200],fontSize: MediaQuery.of(context).size.height * 0.03 ),
                       ),
                       bottomButton(context),
                     ],
@@ -108,17 +149,29 @@ class DescState extends State<Desc> {
     );
   }
 
-  Widget textCard(BuildContext context, String txt) {
+  Widget textCard(BuildContext context, String txt, String head) {
     return Padding(
       padding: EdgeInsets.all(7),
       child: Card(
         margin: EdgeInsets.all(7.0),
         elevation: 10,
-        child: ListTile(
-          title: Text(
-            txt,
-          ),
-          enabled: true,
+        child: Column(
+          children: <Widget>[
+            Text(
+              head,
+              style: TextStyle(
+                  color: Colors.indigo,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0),
+            ),
+            Divider(),
+            ListTile(
+              title: Text(
+                txt,
+              ),
+              enabled: true,
+            ),
+          ],
         ),
       ),
     );

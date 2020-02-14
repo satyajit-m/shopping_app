@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:intl/intl.dart';
 import 'package:shopping_app/src/utils/beautiful_date.dart';
 import 'package:device_apps/device_apps.dart';
 import '../../models/sub_service_model.dart';
@@ -13,7 +14,6 @@ import '../../models/profile_model.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import './confirmation.dart';
 
 const _debugPrice = true;
 const _fixrUrl = "https://fixr.netlify.com/";
@@ -163,7 +163,7 @@ class PaymentGatewayState extends State<PaymentGateway> {
     );
   }
 
-  final String _fixrUPI = "7540915155@paytm";
+  final String _fixrUPI = "6370971229@upi";
   Map<String, dynamic> _tDetails = {
     "responseStatus": "none",
     "responseMsg": ""
@@ -299,196 +299,246 @@ class PaymentGatewayState extends State<PaymentGateway> {
         // For COD
         if (index == listLength - 1) {
           return Container(
-            padding: const EdgeInsets.all(5),
-            child: Card(
-              elevation: 10,
-              child: Container(
-                padding: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  leading: Image.asset("assets/images/cod.png"),
-                  title: Text("Cash On Delivery"),
-                  onTap: () async {
-                    makePageWait("please wait..", context);
-
-                    _tDetails["paymentMode"] = "COD";
-
-                    Map<String, String> paymentData = {"status": "SUCCESS"};
-
-                    bool status = true;
-
-                    _tDetails["transactionDate"] = DateTime.now().toString();
-
-                    _tDetails["notes"] = widget.notes;
-
-                    _tDetails["serviceAddress"] =
-                        Profile.profileToMap(widget.address);
-
-                    _tDetails["serviceDetails"] = widget.service.toMap();
-
-                    _tDetails["serviceDateandTime"] =
-                        widget.serviceDate.toString();
-
-                    _tDetails["paymentDetails"] = paymentData;
-
-                    bool _datapushed = await _pushCriticalData();
-
-                    Navigator.of(context, rootNavigator: true)
-                        .pop(); //for makePageWait
-
-                    if (!_datapushed) {
-                      await interruptMessage(
-                        "Sorry",
-                        "We couldn't contact our servers.",
-                        false,
-                        context,
-                      );
-                    }
-
-                    if (status) {
-                      Navigator.of(context)
-                          .popUntil(ModalRoute.withName("/home"));
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => Confirmation(
-                            tid: _tid,
-                            user: user,
-                          ),
-                        ),
-                      );
-                    } else {
-                      Navigator.of(context, rootNavigator: true).pop();
-                    }
-                  },
+              padding: const EdgeInsets.all(5),
+              child: Card(
+                elevation: 10,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5.0),
                 ),
-              ),
-            ),
-          );
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5.0),
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Colors.white12, Colors.deepOrange[100]]),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListTile(
+                      leading: Image.asset("assets/images/cod.png"),
+                      title: Text("Cash On Delivery"),
+                      onTap: () async {
+                        makePageWait("please wait..", context);
+
+                        _tDetails["paymentMode"] = "COD";
+
+                        Map<String, String> paymentData = {"status": "SUCCESS"};
+
+                        bool status = true;
+                        DateTime now = DateTime.now();
+
+                        _tDetails["transactionDate"] =
+                            DateFormat('dd-MM-yyyy – kk:mm:ss')
+                                .format(now)
+                                .toString();
+                        //_tDetails["transactionDate"] = now;
+
+                        _tDetails["notes"] = widget.notes;
+
+                        _tDetails["serviceAddress"] =
+                            Profile.profileToMap(widget.address);
+
+                        _tDetails["serviceDetails"] = widget.service.toMap();
+
+                        _tDetails["serviceDateandTime"] =
+                            DateFormat('dd-MM-yyyy – kk:mm:ss')
+                                .format(widget.serviceDate).toString();
+
+                        _tDetails["paymentDetails"] = paymentData;
+
+                        bool _datapushed = await _pushCriticalData();
+
+                        Navigator.of(context, rootNavigator: true)
+                            .pop(); //for makePageWait
+
+                        if (!_datapushed) {
+                          await interruptMessage(
+                            "Sorry",
+                            "We couldn't contact our servers.",
+                            false,
+                            context,
+                          );
+                        }
+
+                        if (status) {
+                          showDialog(
+                            context: context,
+                            child: AlertDialog(
+                              content: Icon(
+                                Icons.check_circle_outline,
+                                color: Colors.green,
+                                size: 80,
+                              ),
+                              title: Text('Order Successful'),
+                            ),
+                          );
+
+                          Future.delayed(const Duration(milliseconds: 2000),
+                              () {
+                            Navigator.of(context)
+                                .popUntil(ModalRoute.withName("/home"));
+                            
+                          });
+                        } else {
+                          showDialog(
+                            context: context,
+                            child: AlertDialog(
+                              content: Icon(
+                                Icons.cancel,
+                                color: Colors.redAccent,
+                                size: 80,
+                              ),
+                              title: Text('Sorry Order Unsuccessful'),
+                            ),
+                          );
+                          Future.delayed(const Duration(milliseconds: 2000),
+                              () {
+                            Navigator.of(context, rootNavigator: true).pop();
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ));
         }
 
         return Container(
-          padding: const EdgeInsets.all(5),
-          child: Card(
-            elevation: 10,
-            child: Container(
-              padding: const EdgeInsets.all(8.0),
-              child: ListTile(
-                leading: Image.asset("assets/images/" + appLogoList[index]),
-                title: Text(appNameList[index]),
-                onTap: () async {
-                  bool isInstalled =
-                      await DeviceApps.isAppInstalled(appPackageList[index]);
-
-                  if (!isInstalled) {
-                    _pgKey.currentState.removeCurrentSnackBar();
-                    _pgKey.currentState.showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "${appNameList[index]} is not installed on your device.",
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                    return;
-                  }
-
-                  makePageWait("Waiting for payment", context);
-
-                  _tDetails["paymentMode"] = "UPI";
-
-                  Map<String, String> paymentData =
-                      await makePayment(appPackageList[index]);
-
-                  print(paymentData["status"]);
-
-                  bool status = paymentData["status"].toLowerCase() == "success"
-                      ? true
-                      : false;
-
-                  _tDetails["transactionDate"] = DateTime.now().toString();
-
-                  _tDetails["notes"] = widget.notes;
-
-                  _tDetails["serviceAddress"] =
-                      Profile.profileToMap(widget.address);
-
-                  _tDetails["serviceDetails"] = widget.service.toMap();
-
-                  _tDetails["serviceDateandTime"] =
-                      widget.serviceDate.toString();
-
-                  _tDetails["paymentDetails"] = paymentData;
-
-                  if (!status) {
-                    await interruptMessage(
-                        "Unsuccessful",
-                        "Something went wrong, if money was deducted from your account, we will refund it within 24 hours.",
-                        true,
-                        context);
-                  }
-
-                  bool _datapushed = await _pushCriticalData();
-
-                  Navigator.of(context, rootNavigator: true)
-                      .pop(); //for makePageWait
-
-                  if (!_datapushed) {
-                    await interruptMessage(
-                      "Sorry",
-                      "Couldn't reach our servers, if money was deducted from your account, please contact us.",
-                      false,
-                      context,
-                    );
-                  }
-
-                  if (status) {
-                    showDialog(
-                      context: context,
-                      child: AlertDialog(
-                        content: Icon(
-                          Icons.check_circle_outline,
-                          color: Colors.green,
-                          size: 80,
-                        ),
-                        title: Text('Order Successful'),
-                      ),
-                    );
-
-                    Future.delayed(const Duration(milliseconds: 2000), () {
-                      Navigator.of(context)
-                          .popUntil(ModalRoute.withName("/home"));
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => Confirmation(
-                            tid: _tid,
-                            user: user,
-                          ),
-                        ),
-                      );
-                    });
-                  } else {
-                    showDialog(
-                      context: context,
-                      child: AlertDialog(
-                        content: Icon(
-                          Icons.cancel,
-                          color: Colors.redAccent,
-                          size: 80,
-                        ),
-                        title: Text('Sorry Order Unsuccessful'),
-                      ),
-                    );
-                    Future.delayed(const Duration(milliseconds: 2000), () {
-                      Navigator.of(context, rootNavigator: true).pop();
-                    });
-                  }
-                },
+            padding: const EdgeInsets.all(5),
+            child: Card(
+              elevation: 10,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5.0),
               ),
-            ),
-          ),
-        );
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5.0),
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Colors.white12, Colors.deepOrange[100]]),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    leading: Image.asset("assets/images/" + appLogoList[index]),
+                    title: Text(appNameList[index]),
+                    onTap: () async {
+                      bool isInstalled = await DeviceApps.isAppInstalled(
+                          appPackageList[index]);
+
+                      if (!isInstalled) {
+                        _pgKey.currentState.removeCurrentSnackBar();
+                        _pgKey.currentState.showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "${appNameList[index]} is not installed on your device.",
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
+
+                      makePageWait("Waiting for payment", context);
+
+                      _tDetails["paymentMode"] = "UPI";
+
+                      Map<String, String> paymentData =
+                          await makePayment(appPackageList[index]);
+
+                      print(paymentData["status"]);
+
+                      bool status =
+                          paymentData["status"].toLowerCase() == "success"
+                              ? true
+                              : false;
+
+                      DateTime now = DateTime.now();
+
+                      _tDetails["transactionDate"] =
+                          DateFormat('dd-MM-yyyy – kk:mm:ss')
+                              .format(now)
+                              .toString();
+                      //_tDetails["transactionDate"] = now;
+
+                      _tDetails["notes"] = widget.notes;
+
+                      _tDetails["serviceAddress"] =
+                          Profile.profileToMap(widget.address);
+
+                      _tDetails["serviceDetails"] = widget.service.toMap();
+
+                      _tDetails["serviceDateandTime"] =
+                          widget.serviceDate.toString();
+
+                      _tDetails["paymentDetails"] = paymentData;
+
+                      if (!status) {
+                        await interruptMessage(
+                            "Unsuccessful",
+                            "Something went wrong, if money was deducted from your account, we will refund it within 24 hours.",
+                            true,
+                            context);
+                      }
+
+                      bool _datapushed = await _pushCriticalData();
+
+                      Navigator.of(context, rootNavigator: true)
+                          .pop(); //for makePageWait
+
+                      if (!_datapushed) {
+                        await interruptMessage(
+                          "Sorry",
+                          "Couldn't reach our servers, if money was deducted from your account, please contact us.",
+                          false,
+                          context,
+                        );
+                      }
+
+                      if (status) {
+                        showDialog(
+                          context: context,
+                          child: AlertDialog(
+                            content: Icon(
+                              Icons.check_circle_outline,
+                              color: Colors.green,
+                              size: 80,
+                            ),
+                            title: Text('Order Successful'),
+                          ),
+                        );
+
+                        Future.delayed(const Duration(milliseconds: 2000), () {
+                          Navigator.of(context)
+                              .popUntil(ModalRoute.withName("/home"));
+                          
+                        });
+                      } else {
+                        showDialog(
+                          context: context,
+                          child: AlertDialog(
+                            content: Icon(
+                              Icons.cancel,
+                              color: Colors.redAccent,
+                              size: 80,
+                            ),
+                            title: Text('Sorry Order Unsuccessful'),
+                          ),
+                        );
+                        Future.delayed(const Duration(milliseconds: 2000), () {
+                          Navigator.of(context, rootNavigator: true).pop();
+                        });
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ));
       },
       childCount: listLength,
     );

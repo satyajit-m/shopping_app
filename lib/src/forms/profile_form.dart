@@ -222,7 +222,7 @@ class ProfileFormState extends State<ProfileForm> {
         ),
       ),
       validator: (value) {
-        if (value.length == 10) {
+        if (value.length == 13 && value.contains('+91')) {
           return null;
         }
         return "Should be a 10 digit phone number";
