@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shopping_app/src/models/sub_service_model.dart';
 import 'package:shopping_app/src/screens/CustomShapeClipper.dart';
 import '../widgets/CategoryCard.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
+import 'desc.dart';
 import 'homecard/ServiceModel.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,6 +21,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
+    var _scaffoldKey = GlobalKey<ScaffoldState>();
+
   void dispose() {
     super.dispose();
   }
@@ -24,11 +30,14 @@ class HomeScreenState extends State<HomeScreen> {
   HomeScreenState() {
     getOffers();
   }
+  FirebaseUser user;
 
   CarouselSlider carouselSlider;
   int _current = 0;
   int servNo = 0;
   List imgList = [];
+  List<String> cat = [];
+  List<String> subCat = [];
 
   List<Widget> services = [];
 
@@ -42,15 +51,40 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.deepOrange[700]
+    ));
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
-        title: Row(children: <Widget>[
-          Expanded(flex:2,child: Text('FixR',style: GoogleFonts.abrilFatface(fontSize: MediaQuery.of(context).size.height*0.04),),),
-          Expanded(flex: 1,child: Icon(Icons.location_on),),
-          Expanded(flex: 2,child: Text('Bhubaneswar'),),
+          title: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 2,
+            //child: Image.asset('assets/images/logo_in.png',height: 60,),
+
+            child: Text(
+              'F i x r',
+              style: GoogleFonts.abrilFatface(
+                  fontSize: MediaQuery.of(context).size.height * 0.04),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Icon(Icons.location_on),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text('Bhubaneswar'),
+          ),
         ],
-     )),
+      )),
       body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xffF9A533), Color(0xffF77C08)],
+          ),
+        ),
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Column(
@@ -107,9 +141,16 @@ class HomeScreenState extends State<HomeScreen> {
                                       child: ClipRRect(
                                         borderRadius:
                                             new BorderRadius.circular(5.0),
-                                        child: Image.network(
-                                          imgUrl,
-                                          fit: BoxFit.fill,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            // print(cat[_current]);
+                                            // getDocument(cat[_current],
+                                            //     subCat[_current]);
+                                          },
+                                          child: Image.network(
+                                            imgUrl,
+                                            fit: BoxFit.fill,
+                                          ),
                                         ),
                                       ),
                                     );
@@ -145,13 +186,20 @@ class HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   children: <Widget>[
                     Container(
-                      width:MediaQuery.of(context).size.width ,
+                      width: MediaQuery.of(context).size.width,
                       decoration: new BoxDecoration(
                         gradient: LinearGradient(
                           colors: [Color(0xffF9A533), Color(0xffF77C08)],
                         ),
                       ),
-                      child: Text('Our Services',textAlign: TextAlign.center,style: TextStyle(color: Colors.white,fontSize: 20.0),),
+                      child: Text(
+                        'Our Services',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
                     StreamBuilder(
                       stream: Firestore.instance
@@ -188,7 +236,7 @@ class HomeScreenState extends State<HomeScreen> {
 
     for (var i = 0; i < snapshot.data.documents.length; i++)
       data.add(Service(snapshot.data.documents[i].documentID,
-          snapshot.data.documents[i].data['url']));
+          snapshot.data.documents[i].data['url'],snapshot.data.documents[i].data['status']));
 
     return Container(
         height: MediaQuery.of(context).size.height * 0.49,
@@ -211,7 +259,7 @@ class HomeScreenState extends State<HomeScreen> {
               crossAxisCount: 3,
               children: List.generate(data.length, (index) {
                 return CategoryCard(
-                    data[index].serviceName, data[index].serviceUrl);
+                    data[index].serviceName, data[index].serviceUrl,data[index].serviceStat,_scaffoldKey);
               }),
             ),
           ),
@@ -235,9 +283,44 @@ class HomeScreenState extends State<HomeScreen> {
     List<DocumentSnapshot> documents = result.documents;
     for (int i = 0; i < documents.length; i++) {
       imgList.add(documents[i].data['url']);
+      cat.add(documents[i].data['cat']);
+      subCat.add(documents[i].data['subCat']);
     }
     setState(() {
       print(imgList.length);
     });
+  }
+
+  void getDocument(String c1, String c2) async {
+    user = await FirebaseAuth.instance.currentUser();
+
+    StreamBuilder(
+        stream: Firestore.instance
+            .collection('ServiceTypes')
+            .document(c1)
+            .collection('sub')
+            .document(c2)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return new Text("Loading");
+          }
+          var userDocument = snapshot.data;
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => Desc(
+                service: SubServiceModel(
+                  c2,
+                  userDocument['price'],
+                  userDocument['sid'],
+                  userDocument['desc'],
+                  userDocument['prov'],
+                  userDocument['url'],
+                ),
+                user: user,
+              ),
+            ),
+          );
+        });
   }
 }

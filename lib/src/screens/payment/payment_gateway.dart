@@ -99,7 +99,7 @@ class PaymentGateway extends StatefulWidget {
   final String notes;
   final Profile address;
   final SubServiceModel service;
-  final DateTime serviceDate;
+  final String serviceDate;
 
   PaymentGateway(
       {Key key,
@@ -165,12 +165,13 @@ class PaymentGatewayState extends State<PaymentGateway> {
 
   final String _fixrUPI = "6370971229@upi";
   Map<String, dynamic> _tDetails = {
-    "responseStatus": "none",
+    "responseStatus": "Processing",
     "responseMsg": ""
   };
   String _tid;
 
   Widget build(BuildContext context) {
+    print(widget.serviceDate);
     return SafeArea(
       child: Scaffold(
         key: _pgKey,
@@ -323,7 +324,7 @@ class PaymentGatewayState extends State<PaymentGateway> {
 
                         _tDetails["paymentMode"] = "COD";
 
-                        Map<String, String> paymentData = {"status": "SUCCESS"};
+                        Map<String, String> paymentData = {"status": "SUCCESS","txnRef":_tid};
 
                         bool status = true;
                         DateTime now = DateTime.now();
@@ -341,9 +342,7 @@ class PaymentGatewayState extends State<PaymentGateway> {
 
                         _tDetails["serviceDetails"] = widget.service.toMap();
 
-                        _tDetails["serviceDateandTime"] =
-                            DateFormat('dd-MM-yyyy – kk:mm:ss')
-                                .format(widget.serviceDate).toString();
+                        _tDetails["serviceDateandTime"] =widget.serviceDate;
 
                         _tDetails["paymentDetails"] = paymentData;
 
@@ -474,7 +473,7 @@ class PaymentGatewayState extends State<PaymentGateway> {
                       _tDetails["serviceDetails"] = widget.service.toMap();
 
                       _tDetails["serviceDateandTime"] =
-                          widget.serviceDate.toString();
+                          widget.serviceDate;
 
                       _tDetails["paymentDetails"] = paymentData;
 

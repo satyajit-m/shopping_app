@@ -23,7 +23,8 @@ String beautifulDate(DateTime uglyObject) {
   if (hh.length == 1) hh = '0' + hh;
   if (mm.length == 1) mm = '0' + mm;
 
-  return "$hh:$mm $twelve, $wd, $d $m, $y";
+  //return "$hh:$mm $twelve, $wd, $d $m, $y";
+  return "$wd, $d $m, $y";
 }
 String beautifulDateOnly(DateTime uglyObject) {
   

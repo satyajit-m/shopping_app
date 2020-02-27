@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 
 import '../utils/beautiful_date.dart';
 
@@ -39,60 +40,34 @@ class CartState extends State<Cart> {
   }
 
   DateTime serviceDate;
+  
+  String slot = '10  AM - 12 PM';
 
   var _scaffoldKey = GlobalKey<ScaffoldState>();
-  final Duration bookTimeDelay = Duration(hours: 1);
+  final Duration bookTimeDelay = Duration(days: 1);
   final String bookTimeDelayMsg =
-      "Please choose time and date atleast 1 hour from now.";
+      "Please choose time and date atleast 1 day from today.";
 
   TextEditingController notesController;
 
-  Future<DateTime> datePicker(BuildContext ctxt, DateTime initTime) async {
-    DateTime returnValue = serviceDate;
-
-    DateTime currentTime = DateTime.now();
-
-    if (initTime == null) {
-      initTime = currentTime.add(bookTimeDelay);
-    }
-
-    await showModalBottomSheet(
-      context: ctxt,
-      builder: (ctxt) {
-        return Container(
-          height: MediaQuery.of(context).size.height / 3,
-          child: CupertinoTheme(
-            data: CupertinoThemeData(
-              textTheme: CupertinoTextThemeData(
-                dateTimePickerTextStyle: TextStyle(
-                  fontFamily: 'roboto',
-                  fontSize: 18,
-                ),
-              ),
-            ),
-            child: CupertinoDatePicker(
-              mode: CupertinoDatePickerMode.dateAndTime,
-              use24hFormat: false,
-              initialDateTime: initTime,
-              maximumDate: currentTime.add(Duration(days: 7)),
-              minimumDate: currentTime.subtract(Duration(days: 1)),              
-              onDateTimeChanged: (value) {
-                print(returnValue.toString());
-                returnValue = value;
-              },
-            ),
-          ),
-        );
-      },
-    );
-    return returnValue;
+  DateTime _dateTime = DateTime.now();
+  Future<DateTime> selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: _dateTime.add(Duration(days: 1)),
+        firstDate: _dateTime.add(Duration(days: 1)),
+        lastDate: _dateTime.add(Duration(days: 10)));
+    if (picked != null && picked != _dateTime) {
+      return picked;
+    } else
+      return null;
   }
 
   void getAddress() async {
     final DocumentSnapshot result =
         await Firestore.instance.document('users/' + widget.user.uid).get();
     setState(() {
-      if (result.data.keys.length>1) {
+      if (result.data.keys.length > 1) {
         address = Profile.mapToProfile(result.data);
         addressPresent = true;
       }
@@ -105,10 +80,11 @@ class CartState extends State<Cart> {
         SizedBox(height: MediaQuery.of(context).size.height * 0.01);
 
     return Scaffold(
-     
       body: CustomScrollView(
         slivers: <Widget>[
-          SliverAppBar(title: Text(widget.service.name),),
+          SliverAppBar(
+            title: Text(widget.service.name),
+          ),
           SliverList(
             delegate: SliverChildListDelegate(
               <Widget>[
@@ -145,7 +121,7 @@ class CartState extends State<Cart> {
             children: <Widget>[
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.green,
+                  color: Colors.deepOrange[100],
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10),
@@ -162,7 +138,7 @@ class CartState extends State<Cart> {
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          color: Colors.white),
+                          color: Colors.deepOrangeAccent),
                     ),
                     SizedBox(
                       width: 10,
@@ -178,25 +154,11 @@ class CartState extends State<Cart> {
                     ),
                     InkWell(
                       onTap: () async {
-                        DateTime pickedDate =
-                            await datePicker(context, serviceDate);
-                        if (pickedDate.difference(DateTime.now()).isNegative) {
-                          _scaffoldKey.currentState.showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                bookTimeDelayMsg,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        } else {
-                          setState(() {
-                            serviceDate = pickedDate;
-                          });
-                        }
+                        DateTime pickedDate = await selectDate(context);
+
+                        setState(() {
+                          serviceDate = pickedDate;
+                        });
                       },
                       child: Icon(serviceDate == null ? Icons.add : Icons.edit),
                     ),
@@ -206,9 +168,59 @@ class CartState extends State<Cart> {
               serviceDate != null
                   ? Container(
                       padding: EdgeInsets.all(10),
-                      child: Text(
-                        beautifulDate(serviceDate),
-                        softWrap: true,
+                      child: Container(
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              child: Text(
+                                beautifulDate(serviceDate),
+                                softWrap: true,
+                              ),
+                              alignment: Alignment.topLeft,
+                            ),
+                            Container(
+                              child: Row(
+                                children: <Widget>[
+                                  Text('Choose Slot'),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  DropdownButton<String>(
+                                    hint: Text('Choose Slot'),
+                                    value: slot,
+                                    icon: Icon(Icons.arrow_downward),
+                                    iconSize: 18,
+                                    elevation: 20,
+                                    style: TextStyle(color: Colors.black),
+                                    underline: Container(
+                                      height: 2,
+                                      color: Colors.deepPurple,
+                                    ),
+                                    onChanged: (String newValue) {
+                                      setState(() {
+                                        slot = newValue;
+                                        
+                                      });
+                                    },
+                                    items: <String>[
+                                      '10  AM - 12 PM',
+                                      '12  PM - 2 PM',
+                                      ' 2  PM - 4 PM',
+                                      ' 4  PM - 6 PM',
+                                      ' 6  PM - 8 PM'
+                                    ].map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     )
                   : SizedBox(),
@@ -219,12 +231,13 @@ class CartState extends State<Cart> {
     );
   }
 
-  Card serviceMessage() {
-    return Card(
-      elevation: 10,
+  Container serviceMessage() {
+    return Container(
+      // elevation: 10,
       child: ListTile(
-        title: Text(
-          "It is recommended to book this service atleast 1 day in advance.",
+        title: Text('Order Details',textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25)),
+        subtitle: Text(
+          "Service can be booked atleast 1day and atmost upto 10days in advance.",
         ),
         enabled: true,
       ),
@@ -245,7 +258,7 @@ class CartState extends State<Cart> {
             children: <Widget>[
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.green,
+                  color: Colors.deepOrange[100],
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(10.0),
                     topRight: Radius.circular(10.0),
@@ -260,7 +273,7 @@ class CartState extends State<Cart> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: Colors.deepOrangeAccent,
                       ),
                     ),
                     SizedBox(
@@ -320,7 +333,7 @@ class CartState extends State<Cart> {
             children: <Widget>[
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.green,
+                  color: Colors.orange[100],
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
                 padding: EdgeInsets.only(top: 10, bottom: 10),
@@ -457,7 +470,7 @@ class CartState extends State<Cart> {
                               _scaffoldKey.currentState.showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                    "Please choose time and date for the service.",
+                                    "Please choose date for the service.",
                                     style: TextStyle(
                                       color: Colors.white,
                                     ),
@@ -486,7 +499,11 @@ class CartState extends State<Cart> {
                                 MaterialPageRoute(
                                   builder: (context) => PaymentGateway(
                                     service: widget.service,
-                                    serviceDate: serviceDate,
+                                    serviceDate: DateFormat('dd-MM-yyyy')
+                                            .format(serviceDate)
+                                            .toString() +
+                                        ' ( ' +
+                                        slot.toString()+' )',
                                     address: address,
                                     notes: notes,
                                   ),
@@ -527,7 +544,7 @@ class CartState extends State<Cart> {
             children: <Widget>[
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.green,
+                  color: Colors.deepOrange[100],
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(10.0),
                     topRight: Radius.circular(10.0),
@@ -541,11 +558,11 @@ class CartState extends State<Cart> {
                       width: 15,
                     ),
                     Text(
-                      "Addtional Notes",
+                      "Additional Notes",
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          color: Colors.white),
+                          color: Colors.deepOrangeAccent),
                     ),
                   ],
                 ),

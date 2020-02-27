@@ -135,7 +135,7 @@ class _HelpScreenState extends State<HelpScreen> {
                             color: Colors.orange,
                             iconSize: ht * 0.04,
                             onPressed: (){
-                              _launchEmail("fixrglobal@gmail.com");
+                              _launchEmail("care@fixr.in");
                             },
                           ),
                           radius: ht * 0.035,
@@ -172,7 +172,7 @@ class _HelpScreenState extends State<HelpScreen> {
                             color: Colors.orange,
                             iconSize: ht * 0.04,
                             onPressed: (){
-                              _launchCaller("+916370971229");
+                              _launchCaller("+919090022001");
                             },
                           ),
                           radius: ht * 0.035,

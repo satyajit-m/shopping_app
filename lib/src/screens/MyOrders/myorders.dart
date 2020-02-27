@@ -208,7 +208,7 @@ class OrderList extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => OrderDetails(document.data)),
+                  builder: (context) => OrderDetails(document.data,usid,document.documentID)),
             );
           },
           child: ListTile(
