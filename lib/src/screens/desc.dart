@@ -1,13 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity_wrapper/connectivity_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shopping_app/constants/color_const.dart';
+import 'package:shopping_app/constants/string_constants.dart';
 
 import '../models/sub_service_model.dart';
 
 import './cart.dart';
-
-import '../models/profile_model.dart';
 
 class Desc extends StatefulWidget {
   final SubServiceModel service;
@@ -27,111 +28,116 @@ class DescState extends State<Desc> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            title: Text(widget.service.name),
-            pinned: true,
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              <Widget>[
-                Container(
-                  //padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
-                  height: MediaQuery.of(context).size.height * 0.3,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: NetworkImage(widget.service.img),
-                        fit: BoxFit.cover),
-                  ),
-                ),
-                textCard(
-                    context,
-                    '❖	 ' + widget.service.desc.split('.').join('\n❖  '),
-                    widget.h1),
-                textCard(
-                    context,
-                    '●  ' + widget.service.prov.split('.').join('\n●  '),
-                    widget.h2),
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.15,
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Column(
-                          children: <Widget>[
-                            Expanded(
-                              flex: 1,
-                              child: Image.asset(
-                                'assets/images/why1.png',
-                              ),
-                            ),
-                            Expanded(
-                                child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'Verified Personnel',
-                                textAlign: TextAlign.center,
-                              ),
-                            ))
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        width: 5.0,
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: <Widget>[
-                            Expanded(
-                              flex: 1,
-                              child: Image.asset(
-                                'assets/images/why3.png',
-                              ),
-                            ),
-                            Expanded(
-                                child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'Rework Assurance',
-                                textAlign: TextAlign.center,
-                              ),
-                            ))
-                          ],
-                        ),
-                        //width: MediaQuery.of(context).size.width * 0.2),
-                      ),
-                      SizedBox(
-                        width: 5.0,
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: <Widget>[
-                            Expanded(
-                              flex: 1,
-                              child: Image.asset(
-                                'assets/images/why4.png',
-                              ),
-                            ),
-                            Expanded(
-                                child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'Professional Support',
-                                textAlign: TextAlign.center,
-                              ),
-                            ))
-                          ],
-                        ),
-                        //width: MediaQuery.of(context).size.width * 0.2),
-                      ),
-                    ],
-                  ),
-                )
-              ],
+      body: ConnectivityWidgetWrapper(
+        disableInteraction: true,
+                      message: intMsg,
+
+        child: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+              title: Text(widget.service.name),
+              pinned: true,
             ),
-          ),
-        ],
+            SliverList(
+              delegate: SliverChildListDelegate(
+                <Widget>[
+                  Container(
+                    //padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: NetworkImage(widget.service.img),
+                          fit: BoxFit.cover),
+                    ),
+                  ),
+                  textCard(
+                      context,
+                      '❖	 ' + widget.service.desc.split('.').join('\n❖  '),
+                      widget.h1),
+                  textCard(
+                      context,
+                      '●  ' + widget.service.prov.split('.').join('\n●  '),
+                      widget.h2),
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.15,
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Column(
+                            children: <Widget>[
+                              Expanded(
+                                flex: 1,
+                                child: Image.asset(
+                                  'assets/images/why1.png',
+                                ),
+                              ),
+                              Expanded(
+                                  child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'Verified Personnel',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ))
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 5.0,
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: <Widget>[
+                              Expanded(
+                                flex: 1,
+                                child: Image.asset(
+                                  'assets/images/why3.png',
+                                ),
+                              ),
+                              Expanded(
+                                  child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'Rework Assurance',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ))
+                            ],
+                          ),
+                          //width: MediaQuery.of(context).size.width * 0.2),
+                        ),
+                        SizedBox(
+                          width: 5.0,
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: <Widget>[
+                              Expanded(
+                                flex: 1,
+                                child: Image.asset(
+                                  'assets/images/why4.png',
+                                ),
+                              ),
+                              Expanded(
+                                  child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'Professional Support',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ))
+                            ],
+                          ),
+                          //width: MediaQuery.of(context).size.width * 0.2),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: bottomBar(context),
     );
@@ -156,13 +162,55 @@ class DescState extends State<Desc> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text(
-                        'Price Starts from - ${widget.service.price}',
-                        //width: ,
-                        style: TextStyle(
-                            backgroundColor: Colors.orange[200],
-                            fontSize:
-                                MediaQuery.of(context).size.height * 0.03),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text('Price Starts from - ${widget.service.price}',
+                              //width: ,
+                              style: TextStyle(
+                                  color: Colors.deepPurple,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold)),
+                          MaterialButton(
+                            onPressed: () {
+                              showDialog(
+                                  barrierDismissible: true,
+                                  context: context,
+                                  child: new AlertDialog(
+                                    scrollable: true,
+                                    actions: <Widget>[
+                                      Center(
+                                          child: FlatButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: Text('OK')))
+                                    ],
+                                    title: Container(color: backText,child: Center(child: new Text("Rate Card"))),
+                                    content: Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.5,width: MediaQuery.of(context).size.width ,
+                                      child: SingleChildScrollView(scrollDirection: Axis.horizontal,
+                                        child: CachedNetworkImage(
+                                          imageUrl: widget.service.rate,
+                                          placeholder: (context, url) {
+                                            return Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ));
+                            },
+                            child: Text(
+                              'View Rate Card',
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.indigo),
+                            ),
+                          ),
+                        ],
                       ),
                       bottomButton(context),
                     ],
@@ -184,7 +232,7 @@ class DescState extends State<Desc> {
           _scaffoldKey.currentState.showSnackBar(
             SnackBar(
               content: Text("Please login to continue"),
-              backgroundColor: Colors.red,
+              backgroundColor: Colors.red[400],
             ),
           );
         } else {
@@ -200,7 +248,7 @@ class DescState extends State<Desc> {
         }
       },
       elevation: 1.5,
-      color: Colors.orange,
+      color: Colors.blue,
       textColor: Colors.white,
     );
   }

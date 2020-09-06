@@ -1,3 +1,4 @@
+import 'package:connectivity_wrapper/connectivity_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -63,7 +64,8 @@ class ProfileFormState extends State<ProfileForm> {
             child: Text("Profile"),
           ),
         ),
-        body: dataloaded ? getForm() : loader(),
+        body: ConnectivityWidgetWrapper(
+      disableInteraction: true,child: dataloaded ? getForm() : loader()),
       ),
     );
   }

@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_wrapper/connectivity_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shopping_app/constants/string_constants.dart';
 import '../../models/sub_service_model.dart';
 import '../../screens/desc.dart';
+import 'package:shopping_app/constants/color_const.dart';
+import 'package:line_icons/line_icons.dart';
 
 class ServicesCat extends StatefulWidget {
   final String something;
@@ -21,6 +25,8 @@ class ServicesCatState extends State<ServicesCat> {
   List<int> subsSid = [];
   List<String> subsProv = [];
   List<String> subsDesc = [];
+  List<String> subsRate = [];
+
   bool load;
   String head;
   double ht, wt;
@@ -39,125 +45,67 @@ class ServicesCatState extends State<ServicesCat> {
       appBar: AppBar(
         title: Text('$something'),
       ),
-      body: Container(
-        child: load == true
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : ListView.builder(
-                itemCount: subs.length,
-                itemBuilder: (context, position) {
-                  return Container(
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => Desc(
-                              service: SubServiceModel(
-                                  subs[position],
-                                  subsPrice[position],
-                                  subsSid[position],
-                                  subsDesc[position],
-                                  subsProv[position],
-                                  subsImg[position]),
-                              user: user,
-                            ),
-                          ),
-                        );
-                      },
-                      child: Column(
-                        children: <Widget>[
-                          ListTile(
-                              title: Text(
-                                '${subs[position]}',
-                                style: TextStyle(
-                                    fontSize: ht * 0.03,
-                                    color: Colors.orange[400]),
+      body: ConnectivityWidgetWrapper(
+        disableInteraction: true,
+        message: intMsg,
+        child: Container(
+          child: load == true
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : ListView.builder(
+                  itemCount: subs.length,
+                  itemBuilder: (context, position) {
+                    return Container(
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => Desc(
+                                service: SubServiceModel(
+                                    subs[position],
+                                    subsPrice[position],
+                                    subsSid[position],
+                                    subsDesc[position],
+                                    subsProv[position],
+                                    subsImg[position],
+                                    subsRate[position]),
+                                user: user,
                               ),
-                              trailing: Icon(Icons.arrow_forward_ios,
-                                  color: Colors.deepOrange[300])),
-                          Divider()
-                        ],
+                            ),
+                          );
+                        },
+                        child: Column(
+                          children: <Widget>[
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                              color: backText,
+                              child: ListTile(
+                                  title: Text(
+                                    '${subs[position]}',
+                                    style: TextStyle(
+                                        fontSize: ht * 0.03,
+                                        color: profileText),
+                                  ),
+                                  trailing: Icon(
+                                    Icons.arrow_forward,
+                                    color: profileText,
+                                  )),
+                            ),
+                            SizedBox(
+                              height: 8,
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  }),
+        ),
       ),
     );
-    // : CustomScrollView(
-    //     slivers: <Widget>[
-    //       SliverAppBar(
-    //         elevation: 10,
-    //         forceElevated: true,
-    //         expandedHeight: 200.0,
-    //         floating: true,
-    //         pinned: true,
-    //         flexibleSpace: FlexibleSpaceBar(
-    //           centerTitle: true,
-    //           title: Text(
-    //             something,
-    //             style: TextStyle(
-    //               color: Colors.white,
-    //               fontSize: 16.0,
-    //             ),
-    //           ),
-    //           background: Image.network(
-    //             "https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
-    //             fit: BoxFit.cover,
-    //           ),
-    //         ),
-    //       ),
-    //       SliverList(
-    //         // Use a delegate to build items as they're scrolled on screen.
-    //         delegate: SliverChildBuilderDelegate(
-    //           (context, position) {
-
-    //                   },
-    //                   childCount: subs.length,
-    //                 ),
-    //               )
-    //             ],
-    //             scrollDirection: Axis.vertical,
-    //             shrinkWrap: true,
-    //           ),
-    //   ),
-    // );
   }
-
-  // ListView.builder(
-  //                         itemCount: subs.length,
-  //                         itemBuilder: (context, position) {
-  //return
-  //                         },
-  //                       ),
-
-  //      return Card(
-  //        elevation: 5.0,
-
-  //         child: Row(
-  //           mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //           children: <Widget>[
-  //             Container(
-  //               padding: EdgeInsets.fromLTRB(20.0, 0, 0, 0),
-  //               child: Image.network(subsImg[position]),
-  //               height: 100,
-  //             ),
-  //             Container(
-  //               padding: EdgeInsets.all(20.0),
-  //               child: Text(
-  //                 subs[position],
-  //                 style: TextStyle(fontSize: 18.0),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     );
-  //   },
-  //   itemCount: subs.length,
-  // ),
-  // ),
-  //);
 
   void getsubs(String something) async {
     user = await FirebaseAuth.instance.currentUser();
@@ -175,6 +123,7 @@ class ServicesCatState extends State<ServicesCat> {
       subsSid.add(documents[i].data['sid']);
       subsDesc.add(documents[i].data['desc']);
       subsProv.add(documents[i].data['prov']);
+      subsRate.add(documents[i].data['rate']);
     }
     setState(() {
       load = false;

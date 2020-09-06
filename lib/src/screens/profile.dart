@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as prefix0;
-import 'package:shopping_app/auth/auth_page.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:shopping_app/src/screens/MyOrders/myorders.dart';
 import 'package:shopping_app/src/screens/help.dart';
+import 'package:shopping_app/constants/color_const.dart';
 
 class ProfileScreen extends StatefulWidget {
   // FirebaseUser user;
@@ -20,18 +21,6 @@ class ProfileScreenState extends State<ProfileScreen> {
   String picUrl = "";
   bool _lOut = false;
   double ht, wd;
-  ProfileScreenState() {
-    getUser();
-  }
-
-  Future getUser() async {
-    user = await FirebaseAuth.instance.currentUser();
-    if (user != null) {
-      phone = user.phoneNumber.toString();
-      picUrl = user.photoUrl.toString();
-      setState(() {});
-    }
-  }
 
   Widget build(BuildContext context) {
     ht = MediaQuery.of(context).size.height;
@@ -41,195 +30,23 @@ class ProfileScreenState extends State<ProfileScreen> {
         title: Text('Profile'),
       ),
       body: Container(
-        decoration: new BoxDecoration(
-          image: new DecorationImage(
-            fit: BoxFit.cover,
-            colorFilter: new ColorFilter.mode(
-                Colors.blueGrey.withOpacity(0.25), BlendMode.dstATop),
-            image: AssetImage('assets/images/back.png'),
-          ),
-        ),
         height: ht,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: ht * 0.01,
-              ),
-              Container(
-                width: wd ,
-                height: ht * 0.2,
-                
-                child: Image.asset('assets/images/logo_in.png',height: ht*0.2,),
-              ),
-              SizedBox(height: 8.0),
-              phone == ""
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        //SizedBox(height: ,),
-                        Container(
-                          margin: EdgeInsets.fromLTRB(12.0, 0.0, 6.0, 0.0),
-                          height: 40.0,
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context, '/phoneAuth');
-                            },
-                            child: Material(
-                              borderRadius: BorderRadius.circular(10.0),
-                              shadowColor: Colors.deepOrangeAccent,
-                              color: Colors.orange[400],
-                              elevation: 5.0,
-                              child: Center(
-                                child: Text(
-                                  'Login ',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: 'Montserrat'),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  : Card(
-                      color: Colors.deepOrange[50],
-                      elevation: 10.0,
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            color: Colors.orange[600],
-                            child: new ListTile(
-                              contentPadding:
-                                  EdgeInsets.fromLTRB(0.0, 2.0, wd * 0.1, 5.0),
-                              leading: Icon(
-                                Icons.person,
-                                size: ht * 0.09,
-                                color: Colors.white60,
-                              ),
-                              title: Text(
-                                'My Account',
-                                style: TextStyle(
-                                    fontSize: ht * 0.03, color: Colors.white),
-                              ),
-                              subtitle: Column(
-                                children: <Widget>[
-                                  SizedBox(
-                                    height: 2.0,
-                                  ),
-                                  Divider(
-                                    thickness: 2.0,
-                                    color: Colors.white54,
-                                  ),
-                                  SizedBox(
-                                    height: 2.0,
-                                  ),
-                                  Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        new Text(
-                                          "$phone",
-                                          style: TextStyle(
-                                              fontSize: ht * 0.03,
-                                              color: Colors.white),
-                                        ),
-                                        Text('')
-                                      ]),
-                                ],
-                              ),
-                              isThreeLine: true,
-                            ),
-                          ),
-                          // Divider(
-                          //   thickness: 1.0,
-                          // ),
-                          ListView(
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            children:
-                                ListTile.divideTiles(context: context, tiles: [
-                              ListTile(
-                                  leading: Icon(Icons.assignment,
-                                      color: Colors.blue),
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                MyOrders(user)));
-                                  },
-                                  title: Text(
-                                    'My Orders',
-                                    style: TextStyle(
-                                        fontSize: ht * 0.03,
-                                        color: Colors.orange[400]),
-                                  ),
-                                  trailing: Icon(Icons.arrow_forward_ios,
-                                      color: Colors.deepOrange[300])),
-                              ListTile(
-                                  leading:
-                                      Icon(Icons.help, color: Colors.green),
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                HelpScreen()));
-                                  },
-                                  title: Text(
-                                    'Help & Support',
-                                    style: TextStyle(
-                                        fontSize: ht * 0.03,
-                                        color: Colors.orange[400]),
-                                  ),
-                                  trailing: Icon(Icons.arrow_forward_ios,
-                                      color: Colors.deepOrange[300])),
-                              ListTile(
-                                leading: Icon(Icons.location_city,
-                                    color: Colors.purple),
-                                title: Text(
-                                  'My Address',
-                                  style: TextStyle(
-                                      fontSize: ht * 0.03,
-                                      color: Colors.orange[400]),
-                                ),
-                                trailing: Icon(Icons.arrow_forward_ios,
-                                    color: Colors.deepOrange[300]),
-                                onTap: () {
-                                  Navigator.of(context)
-                                      .pushNamed('/profile/form');
-                                },
-                              ),
-                              ListTile(
-                                leading:
-                                    Icon(Icons.exit_to_app, color: Colors.red),
-                                onTap: () {
-                                  setState(() {
-                                    _lOut = true;
-                                  });
-                                  logOut();
-                                },
-                                title: Text(
-                                  'Logout',
-                                  style: TextStyle(
-                                      fontSize: ht * 0.03,
-                                      color: Colors.orange[400]),
-                                ),
-                                trailing: Icon(Icons.arrow_forward_ios,
-                                    color: Colors.deepOrange[300]),
-                              ),
-                            ]).toList(),
-                          ),
-                        ],
-                      ),
-                    ),
-            ],
-          ),
-        ),
+        child: StreamBuilder(
+            stream: FirebaseAuth.instance.currentUser().asStream(),
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.waiting:
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                default:
+                  if (snapshot.data == null) {
+                    return notLogged();
+                  }
+                  user = snapshot.data;
+                  return logged(snapshot);
+              }
+            }),
       ),
     );
   }
@@ -240,22 +57,292 @@ class ProfileScreenState extends State<ProfileScreen> {
     //Navigator.of(context).popUntil((route) => route.isFirst);
     //Navigator.of(context).pushNamed("/");
   }
-}
 
-class getClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    var path = new Path();
-
-    path.lineTo(0.0, size.height / 2.2);
-    path.lineTo(size.width + 125, 0.0);
-    path.close();
-    return path;
+  Widget notLogged() {
+    return Container(
+      height: ht * 0.8,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(
+            height: ht * 0.1,
+          ),
+          Container(
+            width: wd,
+            height: ht * 0.2,
+            child: Image.asset(
+              'assets/images/logo.png',
+              height: ht * 0.2,
+            ),
+          ),
+          SizedBox(
+            height: ht * 0.1,
+          ),
+          Container(
+            margin: EdgeInsets.fromLTRB(12.0, 0.0, 6.0, 0.0),
+            height: 40.0,
+            width: wd * 0.6,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/phoneAuth');
+              },
+              child: Material(
+                borderRadius: BorderRadius.circular(8.0),
+                shadowColor: Colors.indigoAccent,
+                color: Colors.blue,
+                elevation: 5.0,
+                child: Center(
+                  child: Text(
+                    'Login ',
+                    style: TextStyle(
+                        color: Colors.white, fontFamily: 'Montserrat'),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    // TODO: implement shouldReclip
-    return true;
+  Widget logged(AsyncSnapshot<dynamic> snapshot) {
+    return ListView(
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      children: <Widget>[
+        Card(
+          color: Colors.deepOrange[50],
+          elevation: 5,
+          child: Column(children: <Widget>[
+            Container(
+              color: Colors.white,
+              child: new ListTile(
+                contentPadding: EdgeInsets.fromLTRB(0.0, 2.0, wd * 0.1, 5.0),
+                leading: Icon(
+                  Icons.person,
+                  size: ht * 0.1,
+                  color: Colors.black,
+                ),
+                title: Text(
+                  'My Account',
+                  style: TextStyle(fontSize: ht * 0.03, color: Colors.black),
+                ),
+                subtitle: Column(
+                  children: <Widget>[
+                    SizedBox(
+                      height: 2.0,
+                    ),
+                    Divider(
+                      thickness: 2.0,
+                      color: Colors.grey,
+                    ),
+                    SizedBox(
+                      height: 2.0,
+                    ),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          new Text(
+                            "${snapshot.data.phoneNumber}",
+                            style: TextStyle(
+                                fontSize: ht * 0.03, color: Colors.black),
+                          ),
+                          Text('')
+                        ]),
+                  ],
+                ),
+                isThreeLine: true,
+              ),
+            ),
+          ]),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        // Divider(
+        //   thickness: 1.0,
+        // ),
+
+        SizedBox(
+          height: 15,
+        ),
+        Container(
+          color: backText,
+          child: ListTile(
+            leading: Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: iconBack,
+                ),
+                child: Icon(
+                  LineIcons.map_signs,
+                  color: Colors.purple,
+                  size: 30,
+                )),
+            title: Text(
+              'My Address',
+              style: TextStyle(fontSize: ht * 0.03, color: Colors.black),
+            ),
+            trailing: Icon(Icons.arrow_forward_ios, color: profileText),
+            onTap: () {
+              Navigator.of(context).pushNamed('/profile/form');
+            },
+          ),
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        Container(
+          color: backText,
+          child: ListTile(
+              leading: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: iconBack,
+                  ),
+                  child: Icon(
+                    Icons.assignment,
+                    color: Colors.blue,
+                    size: 30,
+                  )),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MyOrders(user)));
+              },
+              title: Text(
+                'My Orders',
+                style: TextStyle(fontSize: ht * 0.03, color: profileText),
+              ),
+              trailing: Icon(Icons.arrow_forward_ios, color: profileText)),
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        Container(
+          color: backText,
+          child: ListTile(
+              leading: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: iconBack,
+                  ),
+                  child: Icon(
+                    Icons.help,
+                    color: Colors.green,
+                    size: 30,
+                  )),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HelpScreen()));
+              },
+              title: Text(
+                'Help & Support',
+                style: TextStyle(fontSize: ht * 0.03, color: profileText),
+              ),
+              trailing: Icon(Icons.arrow_forward_ios, color: profileText)),
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        Container(
+          color: backText,
+          child: ListTile(
+            leading: Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: iconBack,
+                ),
+                child: Icon(
+                  Icons.share,
+                  color: Colors.indigo,
+                  size: 30,
+                )),
+            onTap: () {
+              setState(() {
+                //_lOut = true;
+              });
+              //logOut();
+            },
+            title: Text(
+              'Share App',
+              style: TextStyle(fontSize: ht * 0.03, color: profileText),
+            ),
+            trailing: Icon(Icons.arrow_forward_ios, color: profileText),
+          ),
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        Container(
+          color: backText,
+          child: ListTile(
+            leading: Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: iconBack,
+                ),
+                child: Icon(
+                  Icons.star,
+                  color: Colors.yellow[700],
+                  size: 30,
+                )),
+            onTap: () {
+              setState(() {
+                //  _lOut = true;
+              });
+              //logOut();
+            },
+            title: Text(
+              'Rate & Review',
+              style: TextStyle(fontSize: ht * 0.03, color: profileText),
+            ),
+            trailing: Icon(Icons.arrow_forward_ios, color: profileText),
+          ),
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        Container(
+          color: backText,
+          child: ListTile(
+            leading: Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: iconBack,
+                ),
+                child: Icon(
+                  Icons.power_settings_new,
+                  color: Colors.red,
+                  size: 30,
+                )),
+            onTap: () {
+              setState(() {
+                _lOut = true;
+              });
+              logOut();
+            },
+            title: Text(
+              'Logout',
+              style: TextStyle(fontSize: ht * 0.03, color: profileText),
+            ),
+            trailing: Icon(Icons.arrow_forward_ios, color: profileText),
+          ),
+        ),
+      ],
+    );
   }
 }

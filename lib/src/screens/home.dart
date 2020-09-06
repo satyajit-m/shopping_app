@@ -1,10 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_wrapper/connectivity_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shopping_app/constants/color_const.dart';
+import 'package:shopping_app/constants/string_constants.dart';
 import 'package:shopping_app/src/models/sub_service_model.dart';
 import 'package:shopping_app/src/screens/CustomShapeClipper.dart';
+import 'package:shopping_app/src/utils/Dialogs.dart';
 import '../widgets/CategoryCard.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -21,13 +26,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-    var _scaffoldKey = GlobalKey<ScaffoldState>();
+  var _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
 
   void dispose() {
     super.dispose();
   }
 
   HomeScreenState() {
+    getalert();
     getOffers();
   }
   FirebaseUser user;
@@ -51,53 +59,79 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.deepOrange[700]
-    ));
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: Colors.indigo));
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
+          backgroundColor: Colors.white,
           title: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 2,
-            //child: Image.asset('assets/images/logo_in.png',height: 60,),
+            children: <Widget>[
+              Expanded(
+                flex: 3,
+                //child: Image.asset('assets/images/logo_in.png',height: 60,),
 
-            child: Text(
-              'F i x r',
-              style: GoogleFonts.abrilFatface(
-                  fontSize: MediaQuery.of(context).size.height * 0.04),
+                child: Container(
+                  child: Row(
+                    children: <Widget>[
+                      Image.asset(
+                        'assets/images/logo_in.png',
+                        height: MediaQuery.of(context).size.height * 0.03,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text(
+                        'Mr. F i x r',
+                        style: GoogleFonts.noticiaText(
+                            fontSize:
+                                MediaQuery.of(context).size.height * 0.032,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Container(
+                  child: FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Row(
+                      children: <Widget>[
+                        Icon(Icons.location_on, color: Colors.black),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text('Bhubaneswar',
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 20)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )),
+      body: ConnectivityWidgetWrapper(
+        disableInteraction: true,
+        message: intMsg,
+              child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [catColor, catColor],
             ),
           ),
-          Expanded(
-            flex: 1,
-            child: Icon(Icons.location_on),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text('Bhubaneswar'),
-          ),
-        ],
-      )),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xffF9A533), Color(0xffF77C08)],
-          ),
-        ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+          child: ListView(
             children: <Widget>[
               Container(
                 //clipper: CustomShapeClipper(),
                 child: Container(
-                  height: MediaQuery.of(context).size.height * 0.27,
+                  height: MediaQuery.of(context).size.height * 0.29,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Color(0xffF9A533), Color(0xffF77C08)],
+                      colors: [catColor, catColor],
                     ),
                   ),
                   child: imgList.length == 0
@@ -109,19 +143,19 @@ class HomeScreenState extends State<HomeScreen> {
                       : Column(
                           children: <Widget>[
                             SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.03,
+                              height: MediaQuery.of(context).size.height * 0.02,
                             ),
                             carouselSlider = CarouselSlider(
-                              height: MediaQuery.of(context).size.height * 0.19,
+                              height: MediaQuery.of(context).size.height * 0.22,
                               initialPage: 0,
                               enlargeCenterPage: true,
                               autoPlay: true,
                               reverse: false,
                               enableInfiniteScroll: true,
-                              autoPlayInterval: Duration(seconds: 5),
+                              autoPlayInterval: Duration(seconds: 3),
                               autoPlayAnimationDuration:
-                                  Duration(milliseconds: 5000),
-                              pauseAutoPlayOnTouch: Duration(seconds: 10),
+                                  Duration(milliseconds: 800),
+                              pauseAutoPlayOnTouch: Duration(seconds: 5),
                               scrollDirection: Axis.horizontal,
                               onPageChanged: (index) {
                                 setState(() {
@@ -132,9 +166,11 @@ class HomeScreenState extends State<HomeScreen> {
                                 return Builder(
                                   builder: (BuildContext context) {
                                     return Container(
+                                      height: MediaQuery.of(context).size.height *
+                                          0.22,
                                       width: MediaQuery.of(context).size.width,
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: 10.0),
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 5.0),
                                       decoration: BoxDecoration(
                                         color: Colors.transparent,
                                       ),
@@ -146,10 +182,36 @@ class HomeScreenState extends State<HomeScreen> {
                                             // print(cat[_current]);
                                             // getDocument(cat[_current],
                                             //     subCat[_current]);
+                                            _handleSubmit(context, cat[_current],
+                                                subCat[_current]);
+                                            //                 Navigator.of(context).push(
+                                            // MaterialPageRoute(
+                                            //   builder: (context) => Desc(
+                                            //     service: SubServiceModel(
+                                            //         subs[position],
+                                            //         subsPrice[position],
+                                            //         subsSid[position],
+                                            //         subsDesc[position],
+                                            //         subsProv[position],
+                                            //         subsImg[position],
+                                            //         subsRate[position]),
+                                            //     user: user,
+                                            //   ),
+                                            // ),
                                           },
-                                          child: Image.network(
-                                            imgUrl,
+                                          child: CachedNetworkImage(
+                                            imageUrl: imgUrl,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.22,
                                             fit: BoxFit.fill,
+                                            placeholder: (context, url) {
+                                              return Image.asset(
+                                                  'assets/images/pcarousel.png');
+                                            },
+                                            errorWidget: (context, url, error) =>
+                                                Icon(Icons.error),
                                           ),
                                         ),
                                       ),
@@ -173,7 +235,7 @@ class HomeScreenState extends State<HomeScreen> {
                                     shape: BoxShape.circle,
                                     color: _current == index
                                         ? Colors.blue
-                                        : Colors.white,
+                                        : Colors.grey,
                                   ),
                                 );
                               }),
@@ -185,22 +247,6 @@ class HomeScreenState extends State<HomeScreen> {
               Container(
                 child: Column(
                   children: <Widget>[
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: new BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Color(0xffF9A533), Color(0xffF77C08)],
-                        ),
-                      ),
-                      child: Text(
-                        'Our Services',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
                     StreamBuilder(
                       stream: Firestore.instance
                           .collection('ServiceTypes')
@@ -235,14 +281,16 @@ class HomeScreenState extends State<HomeScreen> {
     List<Service> data = List<Service>();
 
     for (var i = 0; i < snapshot.data.documents.length; i++)
-      data.add(Service(snapshot.data.documents[i].documentID,
-          snapshot.data.documents[i].data['url'],snapshot.data.documents[i].data['status']));
+      data.add(Service(
+          snapshot.data.documents[i].documentID,
+          snapshot.data.documents[i].data['url'],
+          snapshot.data.documents[i].data['status']));
 
     return Container(
-        height: MediaQuery.of(context).size.height * 0.49,
+        height: MediaQuery.of(context).size.height * 0.57,
         decoration: new BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xffF9A533), Color(0xffF77C08)],
+            colors: [catColor, catColor],
           ),
         ),
         child: ClipRRect(
@@ -250,17 +298,44 @@ class HomeScreenState extends State<HomeScreen> {
               topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
           child: Container(
             padding: EdgeInsets.fromLTRB(
-                0, MediaQuery.of(context).size.height * 0.02, 0, 0),
+                0, MediaQuery.of(context).size.height * 0.01, 0, 0),
             decoration: new BoxDecoration(
-              color: Colors.grey[200],
+              color: Colors.white,
             ),
-            child: GridView.count(
-              primary: false,
-              crossAxisCount: 3,
-              children: List.generate(data.length, (index) {
-                return CategoryCard(
-                    data[index].serviceName, data[index].serviceUrl,data[index].serviceStat,_scaffoldKey);
-              }),
+            child: Column(
+              children: <Widget>[
+                Container(
+                  height: 35,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: new BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.white, Colors.white],
+                    ),
+                  ),
+                  child: Text(
+                    'Our Services',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.tenaliRamakrishna(
+                        color: Colors.black,
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  child: GridView.count(
+                    primary: false,
+                    crossAxisCount: 3,
+                    children: List.generate(data.length, (index) {
+                      return CategoryCard(
+                          data[index].serviceName,
+                          data[index].serviceUrl,
+                          data[index].serviceStat,
+                          _scaffoldKey);
+                    }),
+                  ),
+                ),
+              ],
             ),
           ),
         ));
@@ -277,7 +352,6 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   getOffers() async {
-    print(imgList.length);
     final QuerySnapshot result =
         await Firestore.instance.collection('offers').getDocuments();
     List<DocumentSnapshot> documents = result.documents;
@@ -291,36 +365,69 @@ class HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void getDocument(String c1, String c2) async {
+  void getalert() async {
+    final QuerySnapshot result =
+        await Firestore.instance.collection('alerts').getDocuments();
+    if (result.documents.length != 0) {
+      String k = result.documents[0].data.keys.toString();
+      k = k.split('(')[1];
+      k = k.split(')')[0];
+      String v = result.documents[0].data.values.toString();
+      v = v.split('(')[1];
+      v = v.split(')')[0];
+      showAlert(k, v);
+    }
+  }
+
+  Future<void> showAlert(String k, String v) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: Text(k),
+          content: Text(
+            v,
+            textAlign: TextAlign.justify,
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _handleSubmit(BuildContext context, String c1, String c2) async {
+    Dialogs.showLoadingDialog(context, _keyLoader); //invoking login
+
     user = await FirebaseAuth.instance.currentUser();
 
-    StreamBuilder(
-        stream: Firestore.instance
-            .collection('ServiceTypes')
-            .document(c1)
-            .collection('sub')
-            .document(c2)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return new Text("Loading");
-          }
-          var userDocument = snapshot.data;
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => Desc(
-                service: SubServiceModel(
-                  c2,
-                  userDocument['price'],
-                  userDocument['sid'],
-                  userDocument['desc'],
-                  userDocument['prov'],
-                  userDocument['url'],
-                ),
-                user: user,
-              ),
-            ),
-          );
-        });
+    await Firestore.instance
+        .collection('ServiceTypes')
+        .document(c1)
+        .collection('sub')
+        .document(c2)
+        .get()
+        .then((value) {
+       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => Desc(
+            service: SubServiceModel(c2, value['price'], value['sid'],
+                value['desc'], value['prov'], value['url'], value['rate']),
+            user: user,
+          ),
+        ),
+      );
+    });
   }
 }

@@ -5,7 +5,7 @@ https://stackoverflow.com/questions/45155104/displaying-notification-badge-on-bo
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shopping_app/src/screens/MyOrders/myorders.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:shopping_app/src/screens/help.dart';
 
 import 'screens/home.dart';
@@ -19,7 +19,7 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> {
- static FirebaseUser user;
+  static FirebaseUser user;
 
   void initState() {
     getUser();
@@ -30,7 +30,7 @@ class AppState extends State<App> {
     HomeScreen(key: PageStorageKey("HomeScreen")),
     //Locations(key: PageStorageKey("Locations")),
     HelpScreen(key: PageStorageKey("HelpScreen")),
-   // MyOrders(user),
+    // MyOrders(user),
     ProfileScreen(key: PageStorageKey("ProfileScreen")),
   ];
 
@@ -67,27 +67,30 @@ class AppState extends State<App> {
         bottomNavigationBar: BottomNavigationBar(
           elevation: 10,
           showUnselectedLabels: true,
-          selectedItemColor: Colors.deepOrange,
-          unselectedItemColor: Colors.orange[200],
+          selectedItemColor: Colors.blue[500],
+          unselectedItemColor: Colors.blue[100],
           type: BottomNavigationBarType.fixed,
           unselectedIconTheme: IconThemeData(
-            color: Colors.orange[200],
+            color: Colors.blue[100],
             opacity: 1.0,
           ),
           selectedIconTheme: IconThemeData(
-            color: Colors.deepOrange,
+            color: Colors.blue[500],
             opacity: 1.0,
           ),
           onTap: (index) => bottomTapped(index),
           currentIndex: bottomNavBarIndex,
           items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.home), title: Text('Home')),
             //BottomNavigationBarItem(icon: Icon(Icons.location_on), title: Text('Locations')),
-            BottomNavigationBarItem(icon: Icon(Icons.help), title: Text('Help')),
-            
-           // BottomNavigationBarItem(icon: Icon(Icons.view_list), title: Text('My Orders')),
+            BottomNavigationBarItem(
+                icon: Icon(LineIcons.question_circle), title: Text('Support')),
 
-            BottomNavigationBarItem(icon: Icon(Icons.person), title: Text('Profile'))
+            // BottomNavigationBarItem(icon: Icon(Icons.view_list), title: Text('My Orders')),
+
+            BottomNavigationBarItem(
+                icon: Icon(Icons.person), title: Text('Profile'))
           ],
         ),
       ),

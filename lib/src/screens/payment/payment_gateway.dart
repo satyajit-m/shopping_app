@@ -1,13 +1,14 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_wrapper/connectivity_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:intl/intl.dart';
-import 'package:shopping_app/src/utils/beautiful_date.dart';
+
 import 'package:device_apps/device_apps.dart';
+import 'package:shopping_app/constants/string_constants.dart';
 import '../../models/sub_service_model.dart';
 import 'package:flutter/material.dart';
+import 'package:shopping_app/constants/color_const.dart';
 
 import '../../utils/random_string.dart';
 import '../../models/profile_model.dart';
@@ -173,35 +174,39 @@ class PaymentGatewayState extends State<PaymentGateway> {
   Widget build(BuildContext context) {
     print(widget.serviceDate);
     return SafeArea(
-      child: Scaffold(
-        key: _pgKey,
-        body: CustomScrollView(
-          slivers: <Widget>[
-            SliverAppBar(
-              iconTheme: IconThemeData(
-                color: Colors.black,
-              ),
-              backgroundColor: Colors.white,
-              floating: false,
-              pinned: false,
-              elevation: 10,
-              forceElevated: true,
-              flexibleSpace: FlexibleSpaceBar(
-                title: Text(
-                  "Paying ₹" + widget.service.price.toString(),
-                  style: TextStyle(color: Colors.blue),
+      child: ConnectivityWidgetWrapper(
+        disableInteraction: true,
+        message: intMsg,
+        child: Scaffold(
+          key: _pgKey,
+          body: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                iconTheme: IconThemeData(
+                  color: Colors.black,
+                ),
+                backgroundColor: Colors.white,
+                floating: false,
+                pinned: false,
+                elevation: 10,
+                forceElevated: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  title: Text(
+                    "Paying ₹" + widget.service.price.toString(),
+                    style: TextStyle(color: Colors.blue),
+                  ),
                 ),
               ),
-            ),
-            SliverFixedExtentList(
-              itemExtent: MediaQuery.of(context).size.height * 0.15,
-              delegate: upiAppsList(context),
-            ),
-          ],
-          // body: Container(
-          //   color: Colors.teal[100],
-          //   child: upiAppsList(context),
-          // ),
+              SliverFixedExtentList(
+                itemExtent: MediaQuery.of(context).size.height * 0.1,
+                delegate: upiAppsList(context),
+              ),
+            ],
+            // body: Container(
+            //   color: Colors.teal[100],
+            //   child: upiAppsList(context),
+            // ),
+          ),
         ),
       ),
     );
@@ -282,262 +287,253 @@ class PaymentGatewayState extends State<PaymentGateway> {
   }
 
   SliverChildBuilderDelegate upiAppsList(BuildContext context) {
-    const int listLength = 5;
+    const int listLength = 6;
 
     const appPackageList = [
+      UPIApps.PayTM,
       UPIApps.GooglePay,
       UPIApps.BHIMUPI,
       UPIApps.AmazonPay,
       UPIApps.PhonePe,
     ];
 
-    const appNameList = ["Google Pay", "BHIM UPI", "Amazon Pay", "Phone Pe"];
+    const appNameList = [
+      "PayTM",
+      "Google Pay",
+      "BHIM UPI",
+      "Amazon Pay",
+      "Phone Pe"
+    ];
 
-    const appLogoList = ["gpay.png", "bhim.png", "apay.png", "ppay.png"];
+    const appLogoList = [
+      "paytm.png",
+      "gpay.png",
+      "bhim.png",
+      "apay.png",
+      "ppay.png"
+    ];
 
     return SliverChildBuilderDelegate(
       (context, index) {
         // For COD
         if (index == listLength - 1) {
           return Container(
-              padding: const EdgeInsets.all(5),
-              child: Card(
-                elevation: 10,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5.0),
-                    gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [Colors.white12, Colors.deepOrange[100]]),
+            padding: const EdgeInsets.all(5),
+            child: Container(
+              color: backText,
+              child: ListTile(
+                  leading: Image.asset(
+                    "assets/images/cod.png",
+                    height: 40,
+                    width: 40,
                   ),
-                  child: Container(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListTile(
-                      leading: Image.asset("assets/images/cod.png"),
-                      title: Text("Cash On Delivery"),
-                      onTap: () async {
-                        makePageWait("please wait..", context);
+                  title: Text("Cash On Delivery"),
+                  onTap: () async {
+                    makePageWait("please wait..", context);
 
-                        _tDetails["paymentMode"] = "COD";
+                    _tDetails["paymentMode"] = "COD";
 
-                        Map<String, String> paymentData = {"status": "SUCCESS","txnRef":_tid};
+                    Map<String, String> paymentData = {
+                      "status": "SUCCESS",
+                      "txnRef": _tid
+                    };
 
-                        bool status = true;
-                        DateTime now = DateTime.now();
+                    bool status = true;
+                    //DateTime now = DateTime.now();
 
-                        _tDetails["transactionDate"] =
-                            DateFormat('dd-MM-yyyy – kk:mm:ss')
-                                .format(now)
-                                .toString();
-                        //_tDetails["transactionDate"] = now;
+                    _tDetails["transactionDate"] = DateTime.now();
 
-                        _tDetails["notes"] = widget.notes;
+                    //_tDetails["transactionDate"] = now;
 
-                        _tDetails["serviceAddress"] =
-                            Profile.profileToMap(widget.address);
+                    _tDetails["notes"] = widget.notes;
 
-                        _tDetails["serviceDetails"] = widget.service.toMap();
+                    _tDetails["serviceAddress"] =
+                        Profile.profileToMap(widget.address);
 
-                        _tDetails["serviceDateandTime"] =widget.serviceDate;
+                    _tDetails["serviceDetails"] = widget.service.toMap();
 
-                        _tDetails["paymentDetails"] = paymentData;
+                    _tDetails["serviceDateandTime"] = widget.serviceDate;
 
-                        bool _datapushed = await _pushCriticalData();
+                    _tDetails["paymentDetails"] = paymentData;
 
-                        Navigator.of(context, rootNavigator: true)
-                            .pop(); //for makePageWait
+                    bool _datapushed = await _pushCriticalData();
 
-                        if (!_datapushed) {
-                          await interruptMessage(
-                            "Sorry",
-                            "We couldn't contact our servers.",
-                            false,
-                            context,
-                          );
-                        }
+                    Navigator.of(context, rootNavigator: true)
+                        .pop(); //for makePageWait
 
-                        if (status) {
-                          showDialog(
-                            context: context,
-                            child: AlertDialog(
-                              content: Icon(
-                                Icons.check_circle_outline,
-                                color: Colors.green,
-                                size: 80,
-                              ),
-                              title: Text('Order Successful'),
-                            ),
-                          );
+                    if (!_datapushed) {
+                      await interruptMessage(
+                        "Sorry",
+                        "We couldn't contact our servers.",
+                        false,
+                        context,
+                      );
+                    }
 
-                          Future.delayed(const Duration(milliseconds: 2000),
-                              () {
-                            Navigator.of(context)
-                                .popUntil(ModalRoute.withName("/home"));
-                            
-                          });
-                        } else {
-                          showDialog(
-                            context: context,
-                            child: AlertDialog(
-                              content: Icon(
-                                Icons.cancel,
-                                color: Colors.redAccent,
-                                size: 80,
-                              ),
-                              title: Text('Sorry Order Unsuccessful'),
-                            ),
-                          );
-                          Future.delayed(const Duration(milliseconds: 2000),
-                              () {
-                            Navigator.of(context, rootNavigator: true).pop();
-                          });
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ));
+                    if (status) {
+                      showDialog(
+                        context: context,
+                        child: AlertDialog(
+                          content: Icon(
+                            Icons.check_circle_outline,
+                            color: Colors.green,
+                            size: 80,
+                          ),
+                          title: Center(
+                            child: Text('Order Successful'),
+                          ),
+                        ),
+                      );
+
+                      Future.delayed(const Duration(milliseconds: 2000), () {
+                        Navigator.of(context)
+                            .popUntil(ModalRoute.withName("/home"));
+                      });
+                    } else {
+                      showDialog(
+                        context: context,
+                        child: AlertDialog(
+                          content: Icon(
+                            Icons.cancel,
+                            color: Colors.redAccent,
+                            size: 80,
+                          ),
+                          title: Center(
+                            child: Text('Sorry Order Unsuccessful'),
+                          ),
+                        ),
+                      );
+                      Future.delayed(const Duration(milliseconds: 2000), () {
+                        Navigator.of(context, rootNavigator: true).pop();
+                      });
+                    }
+                  },
+                  trailing: Icon(Icons.arrow_forward)),
+            ),
+          );
         }
 
         return Container(
-            padding: const EdgeInsets.all(5),
-            child: Card(
-              elevation: 10,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5.0),
+          padding: const EdgeInsets.all(5),
+          child: Container(
+            color: backText,
+            child: ListTile(
+              leading: Image.asset(
+                "assets/images/" + appLogoList[index],
+                height: 40,
+                fit: BoxFit.fill,
+                width: 40,
               ),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5.0),
-                  gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Colors.white12, Colors.deepOrange[100]]),
-                ),
-                child: Container(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    leading: Image.asset("assets/images/" + appLogoList[index]),
-                    title: Text(appNameList[index]),
-                    onTap: () async {
-                      bool isInstalled = await DeviceApps.isAppInstalled(
-                          appPackageList[index]);
+              title: Text(appNameList[index]),
+              onTap: () async {
+                bool isInstalled =
+                    await DeviceApps.isAppInstalled(appPackageList[index]);
 
-                      if (!isInstalled) {
-                        _pgKey.currentState.removeCurrentSnackBar();
-                        _pgKey.currentState.showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "${appNameList[index]} is not installed on your device.",
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                        return;
-                      }
+                if (!isInstalled) {
+                  _pgKey.currentState.removeCurrentSnackBar();
+                  _pgKey.currentState.showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        "${appNameList[index]} is not installed on your device.",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
 
-                      makePageWait("Waiting for payment", context);
+                makePageWait("Waiting for payment", context);
 
-                      _tDetails["paymentMode"] = "UPI";
+                _tDetails["paymentMode"] = "UPI";
 
-                      Map<String, String> paymentData =
-                          await makePayment(appPackageList[index]);
+                Map<String, String> paymentData =
+                    await makePayment(appPackageList[index]);
 
-                      print(paymentData["status"]);
+                print(paymentData["status"]);
 
-                      bool status =
-                          paymentData["status"].toLowerCase() == "success"
-                              ? true
-                              : false;
+                bool status = paymentData["status"].toLowerCase() == "success"
+                    ? true
+                    : false;
 
-                      DateTime now = DateTime.now();
+                // DateTime now = DateTime.now();
 
-                      _tDetails["transactionDate"] =
-                          DateFormat('dd-MM-yyyy – kk:mm:ss')
-                              .format(now)
-                              .toString();
-                      //_tDetails["transactionDate"] = now;
+                _tDetails["transactionDate"] = DateTime.now();
+                //_tDetails["transactionDate"] = now;
 
-                      _tDetails["notes"] = widget.notes;
+                _tDetails["notes"] = widget.notes;
 
-                      _tDetails["serviceAddress"] =
-                          Profile.profileToMap(widget.address);
+                _tDetails["serviceAddress"] =
+                    Profile.profileToMap(widget.address);
 
-                      _tDetails["serviceDetails"] = widget.service.toMap();
+                _tDetails["serviceDetails"] = widget.service.toMap();
 
-                      _tDetails["serviceDateandTime"] =
-                          widget.serviceDate;
+                _tDetails["serviceDateandTime"] = widget.serviceDate;
 
-                      _tDetails["paymentDetails"] = paymentData;
+                _tDetails["paymentDetails"] = paymentData;
 
-                      if (!status) {
-                        await interruptMessage(
-                            "Unsuccessful",
-                            "Something went wrong, if money was deducted from your account, we will refund it within 24 hours.",
-                            true,
-                            context);
-                      }
+                if (!status) {
+                  await interruptMessage(
+                      "Unsuccessful",
+                      "Something went wrong, if money was deducted from your account, we will refund it within 24 hours.",
+                      true,
+                      context);
+                }
 
-                      bool _datapushed = await _pushCriticalData();
+                bool _datapushed = await _pushCriticalData();
 
-                      Navigator.of(context, rootNavigator: true)
-                          .pop(); //for makePageWait
+                Navigator.of(context, rootNavigator: true)
+                    .pop(); //for makePageWait
 
-                      if (!_datapushed) {
-                        await interruptMessage(
-                          "Sorry",
-                          "Couldn't reach our servers, if money was deducted from your account, please contact us.",
-                          false,
-                          context,
-                        );
-                      }
+                if (!_datapushed) {
+                  await interruptMessage(
+                    "Sorry",
+                    "Couldn't reach our servers, if money was deducted from your account, please contact us.",
+                    false,
+                    context,
+                  );
+                }
 
-                      if (status) {
-                        showDialog(
-                          context: context,
-                          child: AlertDialog(
-                            content: Icon(
-                              Icons.check_circle_outline,
-                              color: Colors.green,
-                              size: 80,
-                            ),
-                            title: Text('Order Successful'),
-                          ),
-                        );
+                if (status) {
+                  showDialog(
+                    context: context,
+                    child: AlertDialog(
+                      content: Icon(
+                        Icons.check_circle_outline,
+                        color: Colors.green,
+                        size: 80,
+                      ),
+                      title: Text('Order Successful'),
+                    ),
+                  );
 
-                        Future.delayed(const Duration(milliseconds: 2000), () {
-                          Navigator.of(context)
-                              .popUntil(ModalRoute.withName("/home"));
-                          
-                        });
-                      } else {
-                        showDialog(
-                          context: context,
-                          child: AlertDialog(
-                            content: Icon(
-                              Icons.cancel,
-                              color: Colors.redAccent,
-                              size: 80,
-                            ),
-                            title: Text('Sorry Order Unsuccessful'),
-                          ),
-                        );
-                        Future.delayed(const Duration(milliseconds: 2000), () {
-                          Navigator.of(context, rootNavigator: true).pop();
-                        });
-                      }
-                    },
-                  ),
-                ),
-              ),
-            ));
+                  Future.delayed(const Duration(milliseconds: 2000), () {
+                    Navigator.of(context)
+                        .popUntil(ModalRoute.withName("/home"));
+                  });
+                } else {
+                  showDialog(
+                    context: context,
+                    child: AlertDialog(
+                      content: Icon(
+                        Icons.cancel,
+                        color: Colors.redAccent,
+                        size: 80,
+                      ),
+                      title: Text('Sorry Order Unsuccessful'),
+                    ),
+                  );
+                  Future.delayed(const Duration(milliseconds: 2000), () {
+                    Navigator.of(context, rootNavigator: true).pop();
+                  });
+                }
+              },
+              trailing: Icon(Icons.arrow_forward),
+            ),
+          ),
+        );
       },
       childCount: listLength,
     );

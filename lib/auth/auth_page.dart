@@ -1,8 +1,10 @@
 import 'dart:ui';
 
+import 'package:connectivity_wrapper/connectivity_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shopping_app/constants/string_constants.dart';
 
 import '../size_config.dart';
 
@@ -43,129 +45,134 @@ class AuthPageState extends State<AuthPage> {
   }
 
   final PageColor = Colors.white;
-  final LogoColor = Colors.orange;
+  final LogoColor = Colors.teal;
   final TextColor = Colors.white;
   final TextBoxColor = Colors.transparent;
   final IconColor = Colors.white;
 
   Widget build(BuildContext context) {
-    if (!userLoaded) {
-      return SafeArea(
-        child: Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
-      );
-    }
-
     SizeConfig().init(context);
-    if (_isLoading) {
-      return SafeArea(
-        child: Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
-      );
-    }
+
     return SafeArea(
       child: Scaffold(
-        body: Container(
-          decoration: new BoxDecoration(
-            image: new DecorationImage(
-              fit: BoxFit.cover,
-              colorFilter: new ColorFilter.mode(
-                  Colors.blueGrey.withOpacity(0.25), BlendMode.dstATop),
-              image: new ExactAssetImage('assets/images/back.png'),
-            ),
-          ),
-          child: new Container(
-            child: Stack(
-              children: <Widget>[
-                Scaffold(
-                  key: _scaffoldKey,
-                  backgroundColor: Colors.transparent,
-                  body: Builder(builder: (BuildContext context) {
-                    return Container(
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Container(
-                              width: SizeConfig.blockSizeHorizontal * 70,
-                              child: Image.asset(
-                                'assets/images/logo_in.png',
-                              ),
-                            ),
-                            SizedBox(
-                              height: 25.0,
-                            ),
-                            Container(
-                              color: TextBoxColor,
-                              width: SizeConfig.blockSizeHorizontal * 60,
-                              child: RaisedButton.icon(
-                                color: Colors.orange,
-                                textColor: PageColor,
-                                disabledColor: Colors.grey,
-                                icon: Icon(
-                                  Icons.phone,
-                                  color: IconColor,
-                                ),
-                                label: Text(
-                                  "Sign In With Phone",
-                                  style: TextStyle(
-                                    color: TextColor,
-                                  ),
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
-                                onPressed: () {
-                                  Navigator.pushNamed(context, '/phoneAuth');
-                                },
-                              ),
-                            ),
-                            FlatButton(
-                              textColor: TextColor,
-                              child: Text(
-                                "Skip",
-                                style: TextStyle(
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize:
-                                        MediaQuery.of(context).size.height *
-                                            0.025),
-                              ),
-                              onPressed: () {
-                                Navigator.pushReplacementNamed(
-                                    context, '/home');
-                              },
-                            ),
-                          ],
+          body: ConnectivityWidgetWrapper(
+        disableInteraction: true,
+        message: intMsg,
+        child: Container(
+          height: double.maxFinite,
+          child: Stack(
+            children: <Widget>[
+              Positioned(
+                child: Align(
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 50,
+                      ),
+                      Container(
+                        height: 200,
+                        width: SizeConfig.blockSizeHorizontal * 70,
+                        child: Image.asset(
+                          'assets/images/logo.png',
                         ),
                       ),
-                    );
-                  }),
+                      SizedBox(
+                        height: 100.0,
+                      ),
+                      userLoaded == false
+                          ? CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.blue),
+                            )
+                          : Column(
+                              children: <Widget>[
+                                Container(
+                                  color: TextBoxColor,
+                                  width: SizeConfig.blockSizeHorizontal * 70,
+                                  child: RaisedButton.icon(
+                                    color: Colors.blue,
+                                    textColor: PageColor,
+                                    disabledColor: Colors.grey,
+                                    icon: Icon(
+                                      Icons.phone,
+                                      color: IconColor,
+                                    ),
+                                    label: Text(
+                                      "Sign In With Phone",
+                                      style: TextStyle(
+                                        color: TextColor,
+                                      ),
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.pushNamed(
+                                          context, '/phoneAuth');
+                                    },
+                                  ),
+                                ),
+                                FlatButton(
+                                  textColor: TextColor,
+                                  child: Text(
+                                    "Skip For Now",
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            MediaQuery.of(context).size.height *
+                                                0.025),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pushReplacementNamed(
+                                        context, '/home');
+                                  },
+                                ),
+                              ],
+                            ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
+              ),
+              Positioned(
+                  bottom: 0,
+                  child: Align(
+                    alignment: FractionalOffset.bottomCenter,
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          child: Image.asset(
+                            'assets/images/name.png',
+                          ),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: Image.asset(
+                            'assets/images/hands.png',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ))
+            ],
           ),
         ),
-      ),
+      )),
     );
   }
 
   void getUser() async {
-    user = await FirebaseAuth.instance.currentUser();
+    Future.delayed(Duration(seconds: 3), () async {
+      user = await FirebaseAuth.instance.currentUser();
 
-    if (user != null) {
-      Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      setState(() {
-        userLoaded = true;
-      });
-    }
+      if (user != null) {
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        setState(() {
+          userLoaded = true;
+        });
+      }
+    });
   }
 }

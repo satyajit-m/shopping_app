@@ -1,11 +1,10 @@
+import 'package:connectivity_wrapper/connectivity_wrapper.dart';
 import 'package:flutter/material.dart';
-import 'package:shopping_app/auth/otp_page.dart';
+import 'package:shopping_app/constants/color_const.dart';
 import 'package:shopping_app/src/app.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import 'auth/auth_page.dart';
 import 'auth/phone_auth.dart';
-import 'src/screens/MyOrders/myorders.dart';
 
 import 'src/forms/profile_form.dart';
 
@@ -15,22 +14,24 @@ class MyApp extends StatelessWidget {
   // }
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        accentColor: Colors.orangeAccent,
-        primaryColor: Colors.deepOrange[400],
-        iconTheme: IconThemeData(color: Colors.deepOrange),
-      
+    return ConnectivityAppWrapper(
+      app: MaterialApp(
+        theme: ThemeData(
+          accentColor: Colors.blue,
+          primaryColor: backText,
+          iconTheme: IconThemeData(color: Colors.blue),
+        ),
+        //onGenerateRoute: Navigation.router.generator,
+        debugShowCheckedModeBanner: false,
+        routes: {
+          // '/': (context) => Splash(),
+          '/': (context) => AuthPage(),
+          '/home': (context) => App(),
+          '/phoneAuth': (context) => PhoneAuth(),
+          '/profile/form': (context) => ProfileForm(),
+          //'/profile/myOrders': (context) => MyOrders(FirebaseUser user),
+        },
       ),
-      //onGenerateRoute: Navigation.router.generator,
-      debugShowCheckedModeBanner: false,
-      routes: {
-        '/': (context) => AuthPage(),
-        '/home': (context) => App(),
-        '/phoneAuth': (context) => PhoneAuth(),
-        '/profile/form': (context) => ProfileForm(),
-        //'/profile/myOrders': (context) => MyOrders(FirebaseUser user),
-      },
     );
   }
 }

@@ -1,8 +1,12 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_wrapper/connectivity_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:shopping_app/constants/color_const.dart';
+import 'package:shopping_app/constants/string_constants.dart';
 import 'package:shopping_app/src/screens/MyOrders/order_details.dart';
 
 class MyOrders extends StatefulWidget {
@@ -19,128 +23,88 @@ class _MyOrdersState extends State<MyOrders> {
     h = MediaQuery.of(context).size.height;
     w = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            child: Column(
-              children: <Widget>[
-                SizedBox(
-                  height: h * 0.04,
-                ),
-                Container(
-                  alignment: Alignment(-1.0, -1.0),
-                  padding: EdgeInsets.only(left: 10.0),
-                  child: Row(
+      body: ConnectivityWidgetWrapper(
+      disableInteraction: true,
+              message: intMsg,
+
+              child: SafeArea(
+          child: SingleChildScrollView(
+            child: Container(
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: h * 0.04,
+                  ),
+                  Container(
+                    alignment: Alignment(-1.0, -1.0),
+                    padding: EdgeInsets.only(left: 10.0),
+                    child: Row(
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Icon(
+                            Icons.chevron_left,
+                            color: Colors.black,
+                            size: h * 0.054,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10.0,
+                        ),
+                        Text(
+                          "My Orders",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: h * 0.04,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Icon(
-                          Icons.chevron_left,
-                          color: Colors.deepOrange[300],
-                          size: h * 0.054,
+                      SizedBox(),
+                      Container(
+                        //alignment: Alignment(-1.0, -1.0),
+                        child: Container(
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: Colors.green,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(12.0),
+                              ),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  top: 3.0, bottom: 3.0, left: 8.0, right: 8.0),
+                              child: const Text(
+                                'All Orders',
+                                style: TextStyle(
+                                    fontSize: 20.0, color: Colors.white),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
-                      Text(
-                        "My Orders",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30.0,
-                        ),
-                      ),
+                     
+                      SizedBox(),
                     ],
                   ),
-                ),
-                SizedBox(
-                  height: h * 0.04,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    SizedBox(),
-                    Container(
-                      //alignment: Alignment(-1.0, -1.0),
-                      child: Container(
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: Colors.deepOrange[300],
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(12.0),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                top: 3.0, bottom: 3.0, left: 8.0, right: 8.0),
-                            child: const Text(
-                              'All Orders',
-                              style: TextStyle(
-                                  fontSize: 20.0, color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Container(
-                    //   //alignment: Alignment(-1.0, -1.0),
-                    //   padding: EdgeInsets.only(left: 15.0),
-                    //   child: Container(
-                    //     child: DecoratedBox(
-                    //       decoration: BoxDecoration(
-                    //         color: Colors.green,
-                    //         borderRadius: BorderRadius.all(
-                    //           Radius.circular(15.0),
-                    //         ),
-                    //       ),
-                    //       child: Padding(
-                    //         padding: EdgeInsets.only(
-                    //             top: 3.0, bottom: 3.0, left: 7.0, right: 7.0),
-                    //         child: const Text(
-                    //           'Success',
-                    //           style: TextStyle(
-                    //               fontSize: 20.0, color: Colors.white),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                    // Container(
-                    //   //alignment: Alignment(-1.0, -1.0),
-                    //   padding: EdgeInsets.only(left: 15.0),
-                    //   child: Container(
-                    //     child: DecoratedBox(
-                    //       decoration: BoxDecoration(
-                    //         color: Colors.red,
-                    //         borderRadius: BorderRadius.all(
-                    //           Radius.circular(15.0),
-                    //         ),
-                    //       ),
-                    //       child: Padding(
-                    //         padding: EdgeInsets.only(
-                    //             top: 3.0, bottom: 3.0, left: 7.0, right: 7.0),
-                    //         child: const Text(
-                    //           'Failed',
-                    //           style: TextStyle(
-                    //               fontSize: 20.0, color: Colors.white),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    //),
-                    SizedBox(),
-                  ],
-                ),
-                SizedBox(
-                  height: h * 0.04,
-                ),
-                Container(
-                  margin: EdgeInsets.only(right: 10.0, left: 10.0),
-                  child: OrderList(widget.user),
-                )
-              ],
+                  SizedBox(
+                    height: h * 0.04,
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(right: 10.0, left: 10.0),
+                    child: OrderList(widget.user),
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -195,8 +159,10 @@ class OrderList extends StatelessWidget {
   }
 
   Widget _buildListItems(BuildContext context, DocumentSnapshot document) {
-    // String dt =
-    //     beautifulDateOnly(DateTime.parse('${document['transactionDate']}'));
+    String dt = DateFormat('dd-MM-yyyy – kk:mm:ss')
+        .format((document['transactionDate'].toDate()))
+        .toString();
+    //DateTime.parse(document['transactionDate']).toString();
     return Container(
       margin: const EdgeInsets.all(1),
       padding: const EdgeInsets.all(1),
@@ -208,63 +174,43 @@ class OrderList extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => OrderDetails(document.data,usid,document.documentID)),
+                  builder: (context) =>
+                      OrderDetails(document.data, usid, document.documentID)),
             );
           },
           child: ListTile(
-              //leading: FlutterLogo(size: 72.0),
-              title: Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    FittedBox(
-                      fit: BoxFit.contain,
-                      child: Text(
-                        document['serviceDetails']['name'],
-                      ),
-                    )
+            //leading: FlutterLogo(size: 72.0),
+            title: Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  FittedBox(
+                    fit: BoxFit.contain,
+                    child: Text(
+                      document['serviceDetails']['name'],
+                    ),
+                  )
 
-                    //Text('Id: ${document.documentID}'),
-                  ],
-                ),
+                  //Text('Id: ${document.documentID}'),
+                ],
               ),
-              subtitle: Container(
-                height: MediaQuery.of(context).size.height * 0.06,
-                child: FittedBox(
-                  fit: BoxFit.contain,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text('${document['transactionDate']}'),
-                      Icon(
-                        Icons.chevron_right,
-                        color: Colors.deepOrange,
-                      ),
-
-                      // document['paymentDetails']['status'] == 'FAILURE'
-                      //     ? Icon(
-                      //         Icons.cancel,
-                      //         color: Colors.red,
-                      //         size: 30.0,
-                      //       )
-                      //     : Icon(
-                      //         Icons.done_outline,
-                      //         color: Colors.green,
-                      //         size: 30.0,
-                      //       )
-                    ],
-                  ),
-                ),
-              )
-              // trailing: Icon(
-              //   Icons.chevron_right,
-              //   color: Colors.blue,
-              //   size: 40.0,
-              // ),
+            ),
+            subtitle: Container(
+              height: MediaQuery.of(context).size.height * 0.06,
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Text(dt),
               ),
+            ),
+            trailing: Icon(
+              Icons.chevron_right,
+              color: Colors.blue,
+              size: 40.0,
+            ),
+          ),
         ),
         decoration: BoxDecoration(
-          color: Colors.deepOrange[50],
+          color: iconBack,
           border: new Border.all(color: Colors.grey[300]),
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
         ),

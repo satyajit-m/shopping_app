@@ -1,8 +1,11 @@
+import 'package:connectivity_wrapper/connectivity_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'package:shopping_app/constants/color_const.dart';
+import 'package:shopping_app/constants/string_constants.dart';
 
 import '../utils/beautiful_date.dart';
 
@@ -40,7 +43,7 @@ class CartState extends State<Cart> {
   }
 
   DateTime serviceDate;
-  
+
   String slot = '10  AM - 12 PM';
 
   var _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -79,30 +82,35 @@ class CartState extends State<Cart> {
     SizedBox theSpaceBetweenCards =
         SizedBox(height: MediaQuery.of(context).size.height * 0.01);
 
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            title: Text(widget.service.name),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              <Widget>[
-                theSpaceBetweenCards, //
-                serviceMessage(),
-                theSpaceBetweenCards, //
-                addressFetched
-                    ? (addressPresent ? yesAddress() : noAddress())
-                    : loadingAddress(),
-                theSpaceBetweenCards, //
-                datePickerWidget(context),
-                theSpaceBetweenCards, //
-                addNotes(),
-                theSpaceBetweenCards, //
-              ],
+    return ConnectivityWidgetWrapper(
+      disableInteraction: true,
+                    message: intMsg,
+
+          child: Scaffold(
+        body: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+              title: Text(widget.service.name),
             ),
-          ),
-        ],
+            SliverList(
+              delegate: SliverChildListDelegate(
+                <Widget>[
+                  theSpaceBetweenCards, //
+                  serviceMessage(),
+                  theSpaceBetweenCards, //
+                  addressFetched
+                      ? (addressPresent ? yesAddress() : noAddress())
+                      : loadingAddress(),
+                  theSpaceBetweenCards, //
+                  datePickerWidget(context),
+                  theSpaceBetweenCards, //
+                  addNotes(),
+                  theSpaceBetweenCards, //
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -121,7 +129,7 @@ class CartState extends State<Cart> {
             children: <Widget>[
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.deepOrange[100],
+                  color: iconBack,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10),
@@ -138,7 +146,7 @@ class CartState extends State<Cart> {
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          color: Colors.deepOrangeAccent),
+                          color: Colors.blue),
                     ),
                     SizedBox(
                       width: 10,
@@ -199,7 +207,6 @@ class CartState extends State<Cart> {
                                     onChanged: (String newValue) {
                                       setState(() {
                                         slot = newValue;
-                                        
                                       });
                                     },
                                     items: <String>[
@@ -232,10 +239,12 @@ class CartState extends State<Cart> {
   }
 
   Container serviceMessage() {
-    return Container(
+    return Container(color: catColor,
       // elevation: 10,
       child: ListTile(
-        title: Text('Order Details',textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25)),
+        title: Text('Order Details',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
         subtitle: Text(
           "Service can be booked atleast 1day and atmost upto 10days in advance.",
         ),
@@ -258,7 +267,7 @@ class CartState extends State<Cart> {
             children: <Widget>[
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.deepOrange[100],
+                  color: iconBack,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(10.0),
                     topRight: Radius.circular(10.0),
@@ -273,7 +282,7 @@ class CartState extends State<Cart> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
-                        color: Colors.deepOrangeAccent,
+                        color: Colors.blue,
                       ),
                     ),
                     SizedBox(
@@ -431,6 +440,7 @@ class CartState extends State<Cart> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       Expanded(
+                        flex: 3,
                         child: Container(
                           padding: EdgeInsets.only(
                               top: 10, left: 10, right: 10, bottom: 5),
@@ -455,70 +465,77 @@ class CartState extends State<Cart> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 10.0),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: RaisedButton(
-                          onPressed: () {
-                            if (!addressPresent) {
-                              _scaffoldKey.currentState.showSnackBar(
-                                SnackBar(
-                                  content: Text("Please add your Address"),
-                                ),
-                              );
-                            } else if (serviceDate == null) {
-                              _scaffoldKey.currentState.showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    "Please choose date for the service.",
-                                    style: TextStyle(
-                                      color: Colors.white,
+                      Expanded(
+                        flex: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: RaisedButton(
+                            onPressed: () {
+                              if (!addressPresent) {
+                                _scaffoldKey.currentState.showSnackBar(
+                                  SnackBar(
+                                    content: Text("Please add your Address"),
+                                  ),
+                                );
+                              } else if (serviceDate == null) {
+                                _scaffoldKey.currentState.showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      "Please choose date for the service.",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              } else if (serviceDate
+                                  .difference(DateTime.now())
+                                  .isNegative) {
+                                _scaffoldKey.currentState.showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      bookTimeDelayMsg,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              } else {
+                                String notes = notesController.value.text;
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PaymentGateway(
+                                      service: widget.service,
+                                      serviceDate: DateFormat('dd-MM-yyyy')
+                                              .format(serviceDate)
+                                              .toString() +
+                                          ' ( ' +
+                                          slot.toString() +
+                                          ' )',
+                                      address: address,
+                                      notes: notes,
                                     ),
                                   ),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            } else if (serviceDate
-                                .difference(DateTime.now())
-                                .isNegative) {
-                              _scaffoldKey.currentState.showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    bookTimeDelayMsg,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            } else {
-                              String notes = notesController.value.text;
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PaymentGateway(
-                                    service: widget.service,
-                                    serviceDate: DateFormat('dd-MM-yyyy')
-                                            .format(serviceDate)
-                                            .toString() +
-                                        ' ( ' +
-                                        slot.toString()+' )',
-                                    address: address,
-                                    notes: notes,
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                          elevation: 1.5,
-                          color: Colors.orange,
-                          child: Center(
-                            child: Text(
-                              'Pay Now',
+                                );
+                              }
+                            },
+                            elevation: 1.5,
+                            splashColor: Colors.indigo,
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                side: BorderSide(color: Colors.indigo)),
+                            child: Center(
+                              child: Text(
+                                'Pay Now',
+                              ),
                             ),
+                            textColor: Colors.indigo,
                           ),
-                          textColor: Colors.white,
                         ),
                       ),
                     ],
@@ -544,7 +561,7 @@ class CartState extends State<Cart> {
             children: <Widget>[
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.deepOrange[100],
+                  color: iconBack,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(10.0),
                     topRight: Radius.circular(10.0),
@@ -562,7 +579,7 @@ class CartState extends State<Cart> {
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          color: Colors.deepOrangeAccent),
+                          color: Colors.blue),
                     ),
                   ],
                 ),
